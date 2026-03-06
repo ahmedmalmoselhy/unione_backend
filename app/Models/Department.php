@@ -18,13 +18,15 @@ class Department extends Model
         'is_preparatory',
         'head_id',
         'is_active',
+        'is_mandatory',
     ];
 
     protected function casts(): array
     {
         return [
             'is_preparatory' => 'boolean',
-            'is_active' => 'boolean',
+            'is_active'      => 'boolean',
+            'is_mandatory'   => 'boolean',
         ];
     }
 

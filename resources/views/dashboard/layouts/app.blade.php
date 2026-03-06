@@ -20,6 +20,8 @@
 
         {{-- Navigation --}}
         <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+
+            {{-- General --}}
             <a href="{{ route('dashboard.home') }}"
                class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
                       {{ request()->routeIs('dashboard.home')
@@ -31,6 +33,26 @@
                 </svg>
                 Home
             </a>
+
+            {{-- Admin-only section --}}
+            @if(auth()->user()->hasActiveRole('admin'))
+                <div class="pt-4 pb-1 px-3">
+                    <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Administration</p>
+                </div>
+
+                <a href="{{ route('dashboard.faculties.index') }}"
+                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          {{ request()->routeIs('dashboard.faculties.*') || request()->routeIs('dashboard.departments.*')
+                                ? 'bg-blue-50 text-blue-700'
+                                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                    </svg>
+                    Faculties
+                </a>
+            @endif
+
         </nav>
 
         {{-- User info + Logout --}}

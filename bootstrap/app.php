@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->alias([
             'dashboard' => \App\Http\Middleware\DashboardMiddleware::class,
+            'admin'     => \App\Http\Middleware\AdminMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
