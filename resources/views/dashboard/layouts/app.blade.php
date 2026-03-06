@@ -40,6 +40,18 @@
                     <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Administration</p>
                 </div>
 
+                <a href="{{ route('dashboard.university.show') }}"
+                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          {{ request()->routeIs('dashboard.university.*')
+                                ? 'bg-blue-50 text-blue-700'
+                                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    University
+                </a>
+
                 <a href="{{ route('dashboard.faculties.index') }}"
                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
                           {{ request()->routeIs('dashboard.faculties.*') || request()->routeIs('dashboard.departments.*')
