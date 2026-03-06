@@ -51,6 +51,14 @@ class User extends Authenticatable
             ->withPivot('granted_at', 'revoked_at');
     }
 
+    public function hasActiveRole(string|array $roles): bool
+    {
+        return $this->roles()
+            ->wherePivotNull('revoked_at')
+            ->whereIn('roles.name', (array) $roles)
+            ->exists();
+    }
+
     public function professor(): HasOne
     {
         return $this->hasOne(Professor::class);

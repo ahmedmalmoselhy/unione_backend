@@ -16,7 +16,8 @@ return [
     'failed'      => 'These credentials do not match our records.',
     'password'    => 'The provided password is incorrect.',
     'throttle'    => 'Too many login attempts. Please try again in :seconds seconds.',
-    'credentials' => 'Invalid credentials.',
-    'logout'      => 'Logged out successfully.',
+    'credentials'        => 'Invalid credentials.',
+    'logout'             => 'Logged out successfully.',
+    'dashboard_no_access' => 'You do not have permission to access the dashboard.',
 
 ];
