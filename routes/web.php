@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\AcademicTermController;
 use App\Http\Controllers\Dashboard\AuthController;
 use App\Http\Controllers\Dashboard\CourseController;
 use App\Http\Controllers\Dashboard\DepartmentController;
@@ -47,6 +48,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::resource('employees', EmployeeController::class);
 
             Route::resource('courses', CourseController::class);
+
+            Route::resource('academic-terms', AcademicTermController::class);
 
             Route::get('/university', [UniversityController::class, 'show'])->name('university.show');
             Route::get('/university/edit', [UniversityController::class, 'edit'])->name('university.edit');

@@ -1,0 +1,286 @@
+{{--
+    Shared form fields for AcademicTerm create/edit.
+    Variables expected:
+      $academicTerm — AcademicTerm model (edit) or null (create)
+--}}
+
+@php
+    $isEdit = isset($academicTerm) && $academicTerm !== null;
+    $semesters = [
+        'first'  => 'First Semester',
+        'second' => 'Second Semester',
+        'summer' => 'Summer Semester',
+    ];
+@endphp
+
+{{-- Section: Term Identity --}}
+<div class="mb-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Term Identity</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+        {{-- Name (EN) --}}
+        <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">Name (English) <span class="text-red-500">*</span></label>
+            <input
+                id="name"
+                type="text"
+                name="name"
+                value="{{ old('name', $academicTerm?->name) }}"
+                required
+                autocomplete="off"
+                placeholder="e.g. First Semester 2025/2026"
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('name') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            />
+            @error('name')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Name (AR) --}}
+        <div>
+            <label for="name_ar" class="block text-sm font-medium text-gray-700 mb-1.5">Name (Arabic) <span class="text-red-500">*</span></label>
+            <input
+                id="name_ar"
+                type="text"
+                name="name_ar"
+                value="{{ old('name_ar', $academicTerm?->name_ar) }}"
+                required
+                autocomplete="off"
+                dir="rtl"
+                placeholder="e.g. الفصل الأول 2025/2026"
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('name_ar') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            />
+            @error('name_ar')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Academic Year --}}
+        <div>
+            <label for="academic_year" class="block text-sm font-medium text-gray-700 mb-1.5">Academic Year (Start) <span class="text-red-500">*</span></label>
+            <input
+                id="academic_year"
+                type="number"
+                name="academic_year"
+                value="{{ old('academic_year', $academicTerm?->academic_year) }}"
+                required
+                min="2000"
+                max="2099"
+                placeholder="e.g. 2025"
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('academic_year') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            />
+            @error('academic_year')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Semester --}}
+        <div>
+            <label for="semester" class="block text-sm font-medium text-gray-700 mb-1.5">Semester <span class="text-red-500">*</span></label>
+            <select
+                id="semester"
+                name="semester"
+                required
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('semester') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            >
+                <option value="">Select semester...</option>
+                @foreach($semesters as $value => $label)
+                    <option value="{{ $value }}" {{ old('semester', $academicTerm?->semester) === $value ? 'selected' : '' }}>
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </select>
+            @error('semester')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+    </div>
+</div>
+
+{{-- Section: Dates --}}
+<div class="mb-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Semester Dates</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+        {{-- Starts At --}}
+        <div>
+            <label for="starts_at" class="block text-sm font-medium text-gray-700 mb-1.5">Semester Start <span class="text-red-500">*</span></label>
+            <input
+                id="starts_at"
+                type="date"
+                name="starts_at"
+                value="{{ old('starts_at', $academicTerm?->starts_at?->format('Y-m-d')) }}"
+                required
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('starts_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            />
+            @error('starts_at')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Ends At --}}
+        <div>
+            <label for="ends_at" class="block text-sm font-medium text-gray-700 mb-1.5">Semester End <span class="text-red-500">*</span></label>
+            <input
+                id="ends_at"
+                type="date"
+                name="ends_at"
+                value="{{ old('ends_at', $academicTerm?->ends_at?->format('Y-m-d')) }}"
+                required
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('ends_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            />
+            @error('ends_at')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+    </div>
+</div>
+
+{{-- Section: Registration --}}
+<div class="mb-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Registration Period</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+        {{-- Registration Starts At --}}
+        <div>
+            <label for="registration_starts_at" class="block text-sm font-medium text-gray-700 mb-1.5">Registration Opens <span class="text-red-500">*</span></label>
+            <input
+                id="registration_starts_at"
+                type="date"
+                name="registration_starts_at"
+                value="{{ old('registration_starts_at', $academicTerm?->registration_starts_at?->format('Y-m-d')) }}"
+                required
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('registration_starts_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            />
+            @error('registration_starts_at')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Registration Ends At --}}
+        <div>
+            <label for="registration_ends_at" class="block text-sm font-medium text-gray-700 mb-1.5">Registration Closes <span class="text-red-500">*</span></label>
+            <input
+                id="registration_ends_at"
+                type="date"
+                name="registration_ends_at"
+                value="{{ old('registration_ends_at', $academicTerm?->registration_ends_at?->format('Y-m-d')) }}"
+                required
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('registration_ends_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            />
+            @error('registration_ends_at')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Withdrawal Deadline --}}
+        <div>
+            <label for="withdrawal_deadline" class="block text-sm font-medium text-gray-700 mb-1.5">Withdrawal Deadline <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <input
+                id="withdrawal_deadline"
+                type="date"
+                name="withdrawal_deadline"
+                value="{{ old('withdrawal_deadline', $academicTerm?->withdrawal_deadline?->format('Y-m-d')) }}"
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('withdrawal_deadline') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            />
+            @error('withdrawal_deadline')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+    </div>
+</div>
+
+{{-- Section: Exams & Grading --}}
+<div class="mb-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Exams &amp; Grading</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+        {{-- Exam Starts At --}}
+        <div>
+            <label for="exam_starts_at" class="block text-sm font-medium text-gray-700 mb-1.5">Exam Period Start <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <input
+                id="exam_starts_at"
+                type="date"
+                name="exam_starts_at"
+                value="{{ old('exam_starts_at', $academicTerm?->exam_starts_at?->format('Y-m-d')) }}"
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('exam_starts_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            />
+            @error('exam_starts_at')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Exam Ends At --}}
+        <div>
+            <label for="exam_ends_at" class="block text-sm font-medium text-gray-700 mb-1.5">Exam Period End <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <input
+                id="exam_ends_at"
+                type="date"
+                name="exam_ends_at"
+                value="{{ old('exam_ends_at', $academicTerm?->exam_ends_at?->format('Y-m-d')) }}"
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('exam_ends_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            />
+            @error('exam_ends_at')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        {{-- Grade Submission Deadline --}}
+        <div>
+            <label for="grade_submission_deadline" class="block text-sm font-medium text-gray-700 mb-1.5">Grade Submission Deadline <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <input
+                id="grade_submission_deadline"
+                type="date"
+                name="grade_submission_deadline"
+                value="{{ old('grade_submission_deadline', $academicTerm?->grade_submission_deadline?->format('Y-m-d')) }}"
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
+                       {{ $errors->has('grade_submission_deadline') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       focus:outline-none focus:ring-2"
+            />
+            @error('grade_submission_deadline')
+                <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+    </div>
+</div>
+
+{{-- Is Active (edit only) --}}
+@if($isEdit)
+    <div class="flex items-center gap-3">
+        <input
+            id="is_active"
+            type="checkbox"
+            name="is_active"
+            value="1"
+            {{ old('is_active', $academicTerm?->is_active ?? false) ? 'checked' : '' }}
+            class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+        />
+        <label for="is_active" class="text-sm font-medium text-gray-700">Active Term <span class="text-xs font-normal text-gray-400">(only one term can be active at a time)</span></label>
+    </div>
+@endif
