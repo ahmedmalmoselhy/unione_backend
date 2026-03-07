@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dashboard\AuthController;
 use App\Http\Controllers\Dashboard\DepartmentController;
+use App\Http\Controllers\Dashboard\EmployeeController;
 use App\Http\Controllers\Dashboard\FacultyController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\ProfessorController;
@@ -41,6 +42,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::resource('departments', DepartmentController::class)->except(['show', 'create']);
 
             Route::resource('professors', ProfessorController::class);
+
+            Route::resource('employees', EmployeeController::class);
 
             Route::get('/university', [UniversityController::class, 'show'])->name('university.show');
             Route::get('/university/edit', [UniversityController::class, 'edit'])->name('university.edit');
