@@ -13,42 +13,21 @@ class UserSeeder extends Seeder
         $password = Hash::make('241996');
         $now      = now();
 
+        // Only roles that have no dedicated profile table.
+        // Students, professors, and employees are handled by their own seeders
+        // which create both the user and the profile record together.
         $users = [
             [
                 'role'        => 'admin',
                 'national_id' => '10000000000001',
-                'first_name'  => 'Omar',
-                'last_name'   => 'Hassan',
+                'first_name'  => 'Ahmed',
+                'last_name'   => 'AlMoselhy',
                 'email'       => 'admin@unione.com',
                 'gender'      => 'male',
             ],
             [
-                'role'        => 'student',
-                'national_id' => '10000000000002',
-                'first_name'  => 'Layla',
-                'last_name'   => 'Mahmoud',
-                'email'       => 'student@unione.com',
-                'gender'      => 'female',
-            ],
-            [
-                'role'        => 'professor',
-                'national_id' => '10000000000003',
-                'first_name'  => 'Karim',
-                'last_name'   => 'Nasser',
-                'email'       => 'professor@unione.com',
-                'gender'      => 'male',
-            ],
-            [
-                'role'        => 'employee',
-                'national_id' => '10000000000004',
-                'first_name'  => 'Nour',
-                'last_name'   => 'Saleh',
-                'email'       => 'employee@unione.com',
-                'gender'      => 'female',
-            ],
-            [
                 'role'        => 'department_head',
-                'national_id' => '10000000000005',
+                'national_id' => '10000000000002',
                 'first_name'  => 'Youssef',
                 'last_name'   => 'Badawi',
                 'email'       => 'depthead@unione.com',
@@ -56,7 +35,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'role'        => 'dean',
-                'national_id' => '10000000000006',
+                'national_id' => '10000000000003',
                 'first_name'  => 'Samira',
                 'last_name'   => 'Khalil',
                 'email'       => 'dean@unione.com',
@@ -65,7 +44,6 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($users as $data) {
-            // Create the user
             $userId = DB::table('users')->insertGetId([
                 'national_id'       => $data['national_id'],
                 'first_name'        => $data['first_name'],
@@ -80,7 +58,6 @@ class UserSeeder extends Seeder
                 'updated_at'        => $now,
             ]);
 
-            // Assign the role
             $roleId = DB::table('roles')->where('name', $data['role'])->value('id');
 
             DB::table('role_user')->insert([
