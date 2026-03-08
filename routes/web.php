@@ -9,6 +9,7 @@ use App\Http\Controllers\Dashboard\FacultyController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\ProfessorController;
 use App\Http\Controllers\Dashboard\SectionController;
+use App\Http\Controllers\Dashboard\StudentController;
 use App\Http\Controllers\Dashboard\UniversityController;
 use App\Http\Controllers\Dashboard\UniversityVicePresidentController;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::resource('academic-terms', AcademicTermController::class);
 
             Route::resource('sections', SectionController::class);
+
+            Route::resource('students', StudentController::class);
 
             Route::get('/university', [UniversityController::class, 'show'])->name('university.show');
             Route::get('/university/edit', [UniversityController::class, 'edit'])->name('university.edit');

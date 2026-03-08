@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Http\Controllers\Dashboard;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Dashboard\StoreStudentRequest;
+use App\Http\Requests\Dashboard\UpdateStudentRequest;
+use App\Models\Department;
+use App\Models\Faculty;
+use App\Models\Student;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
+
+class StudentController extends Controller
+{
+    public function index(): View
+    {
+        $students = Student::with(['user', 'faculty', 'department'])
+            ->join('users', 'students.user_id', '=', 'users.id')
+            ->orderBy('users.first_name')
+            ->orderBy('users.last_name')
+            ->select('students.*')
+            ->paginate(15);
+
+        return view('dashboard.students.index', compact('students'));
+    }
+
+    public function show(Student $student): View
+    {
+        $student->load(['user', 'faculty', 'department', 'enrollments.section.course', 'enrollments.section.academicTerm']);
+
+        return view('dashboard.students.show', compact('student'));
+    }
+
+    public function create(): View
+    {
+        return view('dashboard.students.create', $this->formData());
+    }
+
+    public function store(StoreStudentRequest $request): RedirectResponse
+    {
+        DB::transaction(function () use ($request) {
+            $user = User::create([
+                'national_id'   => $request->national_id,
+                'first_name'    => $request->first_name,
+                'last_name'     => $request->last_name,
+                'email'         => $request->email,
+                'password'      => $request->password,
+                'phone'         => $request->phone,
+                'gender'        => $request->gender,
+                'date_of_birth' => $request->date_of_birth,
+                'is_active'     => true,
+            ]);
+
+            Student::create([
+                'user_id'           => $user->id,
+                'student_number'    => $request->student_number,
+                'faculty_id'        => $request->faculty_id,
+                'department_id'     => $request->department_id,
+                'academic_year'     => $request->academic_year,
+                'semester'          => $request->semester,
+                'enrollment_status' => $request->enrollment_status,
+                'gpa'               => $request->gpa,
+                'enrolled_at'       => $request->enrolled_at,
+                'graduated_at'      => $request->graduated_at,
+            ]);
+
+            $roleId = DB::table('roles')->where('name', 'student')->value('id');
+
+            DB::table('role_user')->insert([
+                'user_id'    => $user->id,
+                'role_id'    => $roleId,
+                'granted_at' => now(),
+            ]);
+        });
+
+        return redirect()->route('dashboard.students.index')
+            ->with('success', 'Student created successfully.');
+    }
+
+    public function edit(Student $student): View
+    {
+        $student->load('user');
+
+        return view('dashboard.students.edit', array_merge(
+            compact('student'),
+            $this->formData()
+        ));
+    }
+
+    public function update(UpdateStudentRequest $request, Student $student): RedirectResponse
+    {
+        DB::transaction(function () use ($request, $student) {
+            $userData = [
+                'national_id'   => $request->national_id,
+                'first_name'    => $request->first_name,
+                'last_name'     => $request->last_name,
+                'email'         => $request->email,
+                'phone'         => $request->phone,
+                'gender'        => $request->gender,
+                'date_of_birth' => $request->date_of_birth,
+                'is_active'     => $request->boolean('is_active'),
+            ];
+
+            if ($request->filled('password')) {
+                $userData['password'] = $request->password;
+            }
+
+            $student->user->update($userData);
+
+            $student->update([
+                'student_number'    => $request->student_number,
+                'faculty_id'        => $request->faculty_id,
+                'department_id'     => $request->department_id,
+                'academic_year'     => $request->academic_year,
+                'semester'          => $request->semester,
+                'enrollment_status' => $request->enrollment_status,
+                'gpa'               => $request->gpa,
+                'enrolled_at'       => $request->enrolled_at,
+                'graduated_at'      => $request->graduated_at,
+            ]);
+        });
+
+        return redirect()->route('dashboard.students.index')
+            ->with('success', 'Student updated successfully.');
+    }
+
+    public function destroy(Student $student): RedirectResponse
+    {
+        try {
+            $student->user->delete();
+        } catch (\Illuminate\Database\QueryException) {
+            return back()->withErrors(['delete' => 'This student cannot be deleted because they have associated records (enrollments, grades, etc.).']);
+        }
+
+        return redirect()->route('dashboard.students.index')
+            ->with('success', 'Student deleted successfully.');
+    }
+
+    private function formData(): array
+    {
+        return [
+            'faculties'   => Faculty::where('is_active', true)->orderBy('name')->get(),
+            'departments' => Department::where('type', 'academic')
+                ->where('is_active', true)
+                ->with('faculty')
+                ->orderBy('name')
+                ->get(),
+        ];
+    }
+}
