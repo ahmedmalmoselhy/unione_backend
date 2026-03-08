@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exports\EmployeesExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreEmployeeRequest;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Dashboard\UpdateEmployeeRequest;
 use App\Models\Department;
 use App\Models\Employee;
@@ -148,6 +150,18 @@ class EmployeeController extends Controller
 
         return redirect()->route('dashboard.employees.index')
             ->with('success', 'Employee deleted successfully.');
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(
+            new EmployeesExport(
+                facultyId:    $this->scopedFacultyId(),
+                departmentId: $this->scopedDepartmentId(),
+                filters:      $request->only(['department_id', 'employment_type']),
+            ),
+            'employees_' . now()->format('Y-m-d') . '.xlsx',
+        );
     }
 
     private function managerialDepartments()

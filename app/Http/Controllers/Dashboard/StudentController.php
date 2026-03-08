@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exports\StudentsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreStudentRequest;
+use App\Imports\StudentsImport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Dashboard\UpdateStudentRequest;
 use App\Models\Department;
 use App\Models\Faculty;
@@ -191,6 +194,60 @@ class StudentController extends Controller
 
         return redirect()->route('dashboard.students.index')
             ->with('success', 'Student deleted successfully.');
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(
+            new StudentsExport(
+                facultyId:    $this->scopedFacultyId(),
+                departmentId: $this->scopedDepartmentId(),
+                filters:      $request->only(['faculty_id', 'enrollment_status']),
+            ),
+            'students_' . now()->format('Y-m-d') . '.xlsx',
+        );
+    }
+
+    public function importTemplate()
+    {
+        $headers = [
+            'national_id', 'first_name', 'last_name', 'email', 'phone',
+            'gender', 'date_of_birth', 'student_number', 'faculty', 'department',
+            'academic_year', 'semester', 'enrollment_status',
+        ];
+        $example = [
+            '1234567890', 'John', 'Doe', 'john.doe@example.com', '+1234567890',
+            'male', '1990-01-01', 'STU-001', 'Faculty of Engineering', 'Computer Science',
+            '2', '1', 'active',
+        ];
+
+        return response()->streamDownload(function () use ($headers, $example) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, $headers);
+            fputcsv($handle, $example);
+            fclose($handle);
+        }, 'students_import_template.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function import(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:csv,txt,xlsx,xls', 'max:5120'],
+        ]);
+
+        $import = new StudentsImport(
+            scopedFacultyId:    $this->scopedFacultyId(),
+            scopedDepartmentId: $this->scopedDepartmentId(),
+        );
+
+        Excel::import($import, $request->file('file'));
+
+        if (! empty($import->importErrors)) {
+            return back()->with('import_errors', $import->importErrors);
+        }
+
+        return redirect()->route('dashboard.students.index')
+            ->with('success', "{$import->importedCount} students imported successfully.");
     }
 
     private function formData(): array

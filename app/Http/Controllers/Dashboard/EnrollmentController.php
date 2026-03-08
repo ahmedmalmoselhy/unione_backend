@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exports\EnrollmentsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreEnrollmentRequest;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Dashboard\UpdateEnrollmentRequest;
 use App\Models\AcademicTerm;
 use App\Models\Enrollment;
@@ -95,6 +97,18 @@ class EnrollmentController extends Controller
         return redirect()
             ->route('dashboard.enrollments.index')
             ->with('success', 'Enrollment deleted successfully.');
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(
+            new EnrollmentsExport(
+                facultyId:    $this->scopedFacultyId(),
+                departmentId: $this->scopedDepartmentId(),
+                filters:      $request->only(['term_id', 'status']),
+            ),
+            'enrollments_' . now()->format('Y-m-d') . '.xlsx',
+        );
     }
 
     private function formData(): array

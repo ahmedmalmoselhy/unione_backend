@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exports\ProfessorsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreProfessorRequest;
+use App\Imports\ProfessorsImport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Dashboard\UpdateProfessorRequest;
 use App\Models\Department;
 use App\Models\Professor;
@@ -147,6 +150,60 @@ class ProfessorController extends Controller
 
         return redirect()->route('dashboard.professors.index')
             ->with('success', 'Professor deleted successfully.');
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(
+            new ProfessorsExport(
+                facultyId:    $this->scopedFacultyId(),
+                departmentId: $this->scopedDepartmentId(),
+                filters:      $request->only(['department_id', 'rank']),
+            ),
+            'professors_' . now()->format('Y-m-d') . '.xlsx',
+        );
+    }
+
+    public function importTemplate()
+    {
+        $headers = [
+            'national_id', 'first_name', 'last_name', 'email', 'phone',
+            'gender', 'date_of_birth', 'staff_number', 'department',
+            'specialization', 'academic_rank', 'office_location', 'hired_at',
+        ];
+        $example = [
+            '1234567891', 'Jane', 'Smith', 'jane.smith@example.com', '+1234567891',
+            'female', '1985-03-20', 'PROF-001', 'Computer Science',
+            'Algorithms', 'associate_professor', 'A-201', '2020-09-01',
+        ];
+
+        return response()->streamDownload(function () use ($headers, $example) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, $headers);
+            fputcsv($handle, $example);
+            fclose($handle);
+        }, 'professors_import_template.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function import(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:csv,txt,xlsx,xls', 'max:5120'],
+        ]);
+
+        $import = new ProfessorsImport(
+            scopedFacultyId:    $this->scopedFacultyId(),
+            scopedDepartmentId: $this->scopedDepartmentId(),
+        );
+
+        Excel::import($import, $request->file('file'));
+
+        if (! empty($import->importErrors)) {
+            return back()->with('import_errors', $import->importErrors);
+        }
+
+        return redirect()->route('dashboard.professors.index')
+            ->with('success', "{$import->importedCount} professors imported successfully.");
     }
 
     private function academicDepartments()

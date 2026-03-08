@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exports\GradesExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreGradeRequest;
+use App\Imports\GradesImport;
+use Illuminate\Http\RedirectResponse;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Dashboard\UpdateGradeRequest;
 use App\Models\AcademicTerm;
 use App\Models\AuditLog;
@@ -150,6 +154,52 @@ class GradeController extends Controller
         return redirect()
             ->route('dashboard.grades.index')
             ->with('success', 'Grade deleted successfully.');
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(
+            new GradesExport(
+                facultyId:    $this->scopedFacultyId(),
+                departmentId: $this->scopedDepartmentId(),
+                filters:      $request->only(['term_id', 'letter_grade']),
+            ),
+            'grades_' . now()->format('Y-m-d') . '.xlsx',
+        );
+    }
+
+    public function importTemplate()
+    {
+        $headers = ['enrollment_id', 'midterm', 'coursework', 'final', 'total', 'letter_grade', 'grade_points'];
+        $example = ['1', '85', '90', '88', '88', 'B+', '3.3'];
+
+        return response()->streamDownload(function () use ($headers, $example) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, $headers);
+            fputcsv($handle, $example);
+            fclose($handle);
+        }, 'grades_import_template.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function import(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:csv,txt,xlsx,xls', 'max:5120'],
+        ]);
+
+        $import = new GradesImport(
+            scopedFacultyId:    $this->scopedFacultyId(),
+            scopedDepartmentId: $this->scopedDepartmentId(),
+        );
+
+        Excel::import($import, $request->file('file'));
+
+        if (! empty($import->importErrors)) {
+            return back()->with('import_errors', $import->importErrors);
+        }
+
+        return redirect()->route('dashboard.grades.index')
+            ->with('success', "{$import->importedCount} grades imported/updated successfully.");
     }
 
     private function recalculateGpa(int $studentId): void

@@ -76,19 +76,35 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::get('/departments/create/managerial', [DepartmentController::class, 'createManagerial'])->name('departments.create.managerial');
             Route::resource('departments', DepartmentController::class)->except(['create']);
 
+            // Professors (export + import before resource)
+            Route::get('/professors/export', [ProfessorController::class, 'export'])->name('professors.export');
+            Route::get('/professors/import-template', [ProfessorController::class, 'importTemplate'])->name('professors.import-template');
+            Route::post('/professors/import', [ProfessorController::class, 'import'])->name('professors.import');
             Route::resource('professors', ProfessorController::class);
 
+            // Employees (export only)
+            Route::get('/employees/export', [EmployeeController::class, 'export'])->name('employees.export');
             Route::resource('employees', EmployeeController::class);
 
             Route::resource('courses', CourseController::class);
 
             Route::resource('sections', SectionController::class);
 
+            // Students (export + import before resource)
+            Route::get('/students/export', [StudentController::class, 'export'])->name('students.export');
+            Route::get('/students/import-template', [StudentController::class, 'importTemplate'])->name('students.import-template');
+            Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
             Route::resource('students', StudentController::class);
             Route::post('/students/{student}/transfer', [StudentController::class, 'transfer'])->name('students.transfer');
 
+            // Enrollments (export only)
+            Route::get('/enrollments/export', [EnrollmentController::class, 'export'])->name('enrollments.export');
             Route::resource('enrollments', EnrollmentController::class);
 
+            // Grades (export + import before resource)
+            Route::get('/grades/export', [GradeController::class, 'export'])->name('grades.export');
+            Route::get('/grades/import-template', [GradeController::class, 'importTemplate'])->name('grades.import-template');
+            Route::post('/grades/import', [GradeController::class, 'import'])->name('grades.import');
             Route::resource('grades', GradeController::class);
 
             Route::resource('announcements', AnnouncementController::class);
