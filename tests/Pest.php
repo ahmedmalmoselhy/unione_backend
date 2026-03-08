@@ -16,6 +16,9 @@ pest()
     ->use(RefreshDatabase::class)
     ->in('Feature', 'Unit');
 
+// Load shared API test helpers
+require_once __DIR__ . '/Feature/Api/helpers.php';
+
 /*
 |--------------------------------------------------------------------------
 | Expectations

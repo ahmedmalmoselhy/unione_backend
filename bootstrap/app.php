@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin'           => \App\Http\Middleware\AdminMiddleware::class,
             'scoped.admin'    => \App\Http\Middleware\ScopedAdminMiddleware::class,
             'force.password'  => \App\Http\Middleware\ForcePasswordChange::class,
+            'api.role'        => \App\Http\Middleware\EnsureApiRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
