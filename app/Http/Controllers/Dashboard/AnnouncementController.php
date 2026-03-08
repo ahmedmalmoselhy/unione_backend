@@ -13,10 +13,20 @@ use Illuminate\Http\Request;
 
 class AnnouncementController extends Controller
 {
+    use Concerns\DashboardScopeAware;
+
     public function index(Request $request)
     {
         $announcements = Announcement::with('author')
             ->withCount('reads')
+            ->when($this->scopedFacultyId(), fn ($q, $id) => $q->where(function ($q) use ($id) {
+                $q->where('visibility', 'university')
+                  ->orWhere(fn ($q) => $q->where('visibility', 'faculty')->where('target_id', $id));
+            }))
+            ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->where(function ($q) use ($id) {
+                $q->where('visibility', 'university')
+                  ->orWhere(fn ($q) => $q->where('visibility', 'department')->where('target_id', $id));
+            }))
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
                 $q->where('title', 'ilike', '%' . $request->search . '%')
                   ->orWhere('body', 'ilike', '%' . $request->search . '%');

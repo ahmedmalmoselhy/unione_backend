@@ -14,9 +14,13 @@ use Illuminate\View\View;
 
 class DepartmentController extends Controller
 {
+    use Concerns\DashboardScopeAware;
+
     public function index(Request $request): View
     {
         $departments = Department::with(['faculty', 'head'])
+            ->when($this->scopedFacultyId(), fn ($q, $id) => $q->where('faculty_id', $id))
+            ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->where('id', $id))
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
                 $q->where('name', 'ilike', '%' . $request->search . '%')
                   ->orWhere('name_ar', 'ilike', '%' . $request->search . '%')

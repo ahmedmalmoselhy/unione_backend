@@ -48,10 +48,12 @@
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $rankStyles[$professor->academic_rank] ?? 'bg-gray-100 text-gray-600' }}">
                 {{ $rankLabels[$professor->academic_rank] ?? ucfirst($professor->academic_rank) }}
             </span>
-            <a href="{{ route('dashboard.professors.edit', $professor) }}"
-               class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                Edit Professor
-            </a>
+            @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
+                <a href="{{ route('dashboard.professors.edit', $professor) }}"
+                   class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                    Edit Professor
+                </a>
+            @endif
         </div>
     </div>
 

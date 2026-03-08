@@ -14,6 +14,8 @@ class RoleUser extends Pivot
     protected $fillable = [
         'user_id',
         'role_id',
+        'faculty_id',
+        'department_id',
         'granted_at',
         'revoked_at',
     ];

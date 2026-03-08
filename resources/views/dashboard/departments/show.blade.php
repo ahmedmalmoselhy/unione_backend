@@ -35,7 +35,11 @@
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $department->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
                 {{ $department->is_active ? 'Active' : 'Inactive' }}
             </span>
-            @if(auth()->user()->hasActiveRole('admin'))
+            @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
+                <a href="{{ route('dashboard.departments.assign-admin', $department) }}"
+                   class="px-3 py-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-lg transition-colors">
+                    Assign Admin
+                </a>
                 <a href="{{ route('dashboard.departments.edit', $department) }}"
                    class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
                     Edit

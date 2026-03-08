@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 
 class GradeController extends Controller
 {
+    use Concerns\DashboardScopeAware;
+
     public function index(Request $request)
     {
         $grades = Grade::with([
@@ -22,6 +24,8 @@ class GradeController extends Controller
             'enrollment.academicTerm',
             'gradedBy',
         ])
+            ->when($this->scopedFacultyId(), fn ($q, $id) => $q->whereHas('enrollment.student', fn ($s) => $s->where('faculty_id', $id)))
+            ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->whereHas('enrollment.student', fn ($s) => $s->where('department_id', $id)))
             ->when($request->filled('search'), fn ($q) => $q->whereHas('enrollment', function ($e) use ($request) {
                 $e->whereHas('student.user', fn ($u) => $u->where('first_name', 'ilike', '%' . $request->search . '%')
                       ->orWhere('last_name', 'ilike', '%' . $request->search . '%'))

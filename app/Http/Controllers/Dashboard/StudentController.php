@@ -17,10 +17,14 @@ use Illuminate\View\View;
 
 class StudentController extends Controller
 {
+    use Concerns\DashboardScopeAware;
+
     public function index(Request $request): View
     {
         $students = Student::with(['user', 'faculty', 'department'])
             ->join('users', 'students.user_id', '=', 'users.id')
+            ->when($this->scopedFacultyId(), fn ($q, $id) => $q->where('students.faculty_id', $id))
+            ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->where('students.department_id', $id))
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
                 $q->where('users.first_name', 'ilike', '%' . $request->search . '%')
                   ->orWhere('users.last_name', 'ilike', '%' . $request->search . '%')

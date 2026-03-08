@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
 {
+    use Concerns\DashboardScopeAware;
+
     public function index(Request $request)
     {
         $enrollments = Enrollment::with([
@@ -20,6 +22,8 @@ class EnrollmentController extends Controller
             'section.course',
             'academicTerm',
         ])
+            ->when($this->scopedFacultyId(), fn ($q, $id) => $q->whereHas('student', fn ($s) => $s->where('faculty_id', $id)))
+            ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->whereHas('student', fn ($s) => $s->where('department_id', $id)))
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
                 $q->whereHas('student.user', fn ($u) => $u->where('first_name', 'ilike', '%' . $request->search . '%')
                       ->orWhere('last_name', 'ilike', '%' . $request->search . '%'))

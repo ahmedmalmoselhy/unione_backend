@@ -29,13 +29,15 @@
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">{{ $announcements->total() }} {{ Str::plural('announcement', $announcements->total()) }} total</p>
-    <a href="{{ route('dashboard.announcements.create') }}"
-       class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-        </svg>
-        New Announcement
-    </a>
+    @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
+        <a href="{{ route('dashboard.announcements.create') }}"
+           class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            New Announcement
+        </a>
+    @endif
 </div>
 
 {{-- Table --}}
@@ -94,19 +96,21 @@
                                    class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
                                     View
                                 </a>
-                                <a href="{{ route('dashboard.announcements.edit', $announcement) }}"
-                                   class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                                    Edit
-                                </a>
-                                <form method="POST" action="{{ route('dashboard.announcements.destroy', $announcement) }}"
-                                      onsubmit="return confirm('Delete this announcement?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                                        Delete
-                                    </button>
-                                </form>
+                                @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
+                                    <a href="{{ route('dashboard.announcements.edit', $announcement) }}"
+                                       class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                                        Edit
+                                    </a>
+                                    <form method="POST" action="{{ route('dashboard.announcements.destroy', $announcement) }}"
+                                          onsubmit="return confirm('Delete this announcement?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                            Delete
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         </td>
                     </tr>

@@ -26,7 +26,11 @@
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $faculty->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
                 {{ $faculty->is_active ? 'Active' : 'Inactive' }}
             </span>
-            @if(auth()->user()->hasActiveRole('admin'))
+            @if(auth()->user()->isSystemAdmin())
+                <a href="{{ route('dashboard.faculties.assign-admin', $faculty) }}"
+                   class="px-3 py-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-lg transition-colors">
+                    Assign Admin
+                </a>
                 <a href="{{ route('dashboard.faculties.edit', $faculty) }}"
                    class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
                     Edit Faculty
@@ -82,7 +86,7 @@
             {{ $faculty->departments->count() }}
         </span>
     </h3>
-    @if(auth()->user()->hasActiveRole('admin'))
+    @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
         <div class="flex items-center gap-2">
             <a href="{{ route('dashboard.departments.create.academic') }}?faculty_id={{ $faculty->id }}"
                class="inline-flex items-center gap-2 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
@@ -117,7 +121,7 @@
         @if($academic->isEmpty())
             <div class="px-6 py-10 text-center text-sm text-gray-400">
                 No academic departments yet.
-                @if(auth()->user()->hasActiveRole('admin'))
+                @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
                     <a href="{{ route('dashboard.departments.create.academic') }}?faculty_id={{ $faculty->id }}" class="text-blue-600 hover:underline">Add one</a>
                 @endif
             </div>
@@ -129,9 +133,7 @@
                         <th class="px-5 py-3 text-start">Code</th>
                         <th class="px-5 py-3 text-start">Head</th>
                         <th class="px-5 py-3 text-start">Status</th>
-                        @if(auth()->user()->hasActiveRole('admin'))
-                            <th class="px-5 py-3 text-end">Actions</th>
-                        @endif
+                        <th class="px-5 py-3 text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -163,9 +165,13 @@
                                     {{ $department->is_active ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
-                            @if(auth()->user()->hasActiveRole('admin'))
-                                <td class="px-5 py-3.5">
-                                    <div class="flex items-center justify-end gap-2">
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="{{ route('dashboard.departments.show', $department) }}"
+                                       class="px-3 py-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors">
+                                        View
+                                    </a>
+                                    @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
                                         <a href="{{ route('dashboard.departments.edit', $department) }}"
                                            class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                                             Edit
@@ -181,9 +187,13 @@
                                                 </button>
                                             </form>
                                         @endif
-                                    </div>
-                                </td>
-                            @endif
+                                        <a href="{{ route('dashboard.departments.assign-admin', $department) }}"
+                                           class="px-3 py-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition-colors">
+                                            Assign Admin
+                                        </a>
+                                    @endif
+                                </div>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -202,7 +212,7 @@
         @if($managerial->isEmpty())
             <div class="px-6 py-10 text-center text-sm text-gray-400">
                 No managerial departments yet.
-                @if(auth()->user()->hasActiveRole('admin'))
+                @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
                     <a href="{{ route('dashboard.departments.create.managerial') }}?faculty_id={{ $faculty->id }}" class="text-purple-600 hover:underline">Add one</a>
                 @endif
             </div>
@@ -214,9 +224,7 @@
                         <th class="px-5 py-3 text-start">Code</th>
                         <th class="px-5 py-3 text-start">Manager</th>
                         <th class="px-5 py-3 text-start">Status</th>
-                        @if(auth()->user()->hasActiveRole('admin'))
-                            <th class="px-5 py-3 text-end">Actions</th>
-                        @endif
+                        <th class="px-5 py-3 text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -241,9 +249,13 @@
                                     {{ $department->is_active ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
-                            @if(auth()->user()->hasActiveRole('admin'))
-                                <td class="px-5 py-3.5">
-                                    <div class="flex items-center justify-end gap-2">
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="{{ route('dashboard.departments.show', $department) }}"
+                                       class="px-3 py-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors">
+                                        View
+                                    </a>
+                                    @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
                                         <a href="{{ route('dashboard.departments.edit', $department) }}"
                                            class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                                             Edit
@@ -259,9 +271,9 @@
                                                 </button>
                                             </form>
                                         @endif
-                                    </div>
-                                </td>
-                            @endif
+                                    @endif
+                                </div>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

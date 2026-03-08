@@ -27,6 +27,7 @@ class User extends Authenticatable
         'date_of_birth',
         'avatar_path',
         'is_active',
+        'must_change_password',
     ];
 
     protected $hidden = [
@@ -37,10 +38,11 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'date_of_birth' => 'date',
-            'is_active' => 'boolean',
+            'email_verified_at'    => 'datetime',
+            'password'             => 'hashed',
+            'date_of_birth'        => 'date',
+            'is_active'            => 'boolean',
+            'must_change_password' => 'boolean',
         ];
     }
 
@@ -48,7 +50,7 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class, 'role_user')
             ->using(RoleUser::class)
-            ->withPivot('granted_at', 'revoked_at');
+            ->withPivot('granted_at', 'revoked_at', 'faculty_id', 'department_id');
     }
 
     public function hasActiveRole(string|array $roles): bool
@@ -57,6 +59,43 @@ class User extends Authenticatable
             ->wherePivotNull('revoked_at')
             ->whereIn('roles.name', (array) $roles)
             ->exists();
+    }
+
+    public function isSystemAdmin(): bool
+    {
+        return $this->hasActiveRole('admin');
+    }
+
+    public function isFacultyAdmin(): bool
+    {
+        return $this->hasActiveRole('faculty_admin');
+    }
+
+    public function isDepartmentAdmin(): bool
+    {
+        return $this->hasActiveRole('department_admin');
+    }
+
+    /** Returns the scoped faculty_id for faculty_admin users, null otherwise. */
+    public function scopedFacultyId(): ?int
+    {
+        $row = $this->roles()
+            ->wherePivotNull('revoked_at')
+            ->where('roles.name', 'faculty_admin')
+            ->first();
+
+        return $row?->pivot->faculty_id;
+    }
+
+    /** Returns the scoped department_id for department_admin users, null otherwise. */
+    public function scopedDepartmentId(): ?int
+    {
+        $row = $this->roles()
+            ->wherePivotNull('revoked_at')
+            ->where('roles.name', 'department_admin')
+            ->first();
+
+        return $row?->pivot->department_id;
     }
 
     public function professor(): HasOne

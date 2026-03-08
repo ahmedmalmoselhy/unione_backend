@@ -29,10 +29,12 @@
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $course->is_elective ? 'bg-purple-50 text-purple-700' : 'bg-teal-50 text-teal-700' }}">
                 {{ $course->is_elective ? 'Elective' : 'Required' }}
             </span>
-            <a href="{{ route('dashboard.courses.edit', $course) }}"
-               class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                Edit Course
-            </a>
+            @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
+                <a href="{{ route('dashboard.courses.edit', $course) }}"
+                   class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                    Edit Course
+                </a>
+            @endif
         </div>
     </div>
 

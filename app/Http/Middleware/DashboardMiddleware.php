@@ -15,7 +15,7 @@ class DashboardMiddleware
             return redirect()->route('dashboard.login');
         }
 
-        if (! Auth::user()->hasActiveRole(['admin', 'employee'])) {
+        if (! Auth::user()->hasActiveRole(['admin', 'employee', 'faculty_admin', 'department_admin'])) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();

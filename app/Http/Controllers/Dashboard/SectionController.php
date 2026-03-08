@@ -15,9 +15,13 @@ use Illuminate\View\View;
 
 class SectionController extends Controller
 {
+    use Concerns\DashboardScopeAware;
+
     public function index(Request $request): View
     {
         $sections = Section::with(['course', 'professor.user', 'academicTerm'])
+            ->when($this->scopedFacultyId(), fn ($q, $id) => $q->whereHas('course.departments', fn ($d) => $d->where('faculty_id', $id)))
+            ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->whereHas('professor', fn ($p) => $p->where('department_id', $id)))
             ->when($request->filled('search'), fn ($q) => $q->whereHas('course', function ($q) use ($request) {
                 $q->where('code', 'ilike', '%' . $request->search . '%')
                   ->orWhere('name', 'ilike', '%' . $request->search . '%');

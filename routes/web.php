@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Dashboard\AcademicTermController;
+use App\Http\Controllers\Dashboard\AdminAssignmentController;
 use App\Http\Controllers\Dashboard\AnnouncementController;
 use App\Http\Controllers\Dashboard\AuthController;
+use App\Http\Controllers\Dashboard\ChangePasswordController;
 use App\Http\Controllers\Dashboard\CourseController;
 use App\Http\Controllers\Dashboard\DepartmentController;
 use App\Http\Controllers\Dashboard\EmployeeController;
@@ -37,13 +39,34 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Protected by session auth + role check
-    Route::middleware('dashboard')->group(function () {
+    Route::middleware(['dashboard', 'force.password'])->group(function () {
+        Route::get('/change-password', [ChangePasswordController::class, 'show'])->name('password.change');
+        Route::put('/change-password', [ChangePasswordController::class, 'update'])->name('password.update');
+
         Route::get('/', [HomeController::class, 'index'])->name('home');
 
-        // Admin-only
+        // Admin-only (system-level)
         Route::middleware('admin')->group(function () {
             Route::resource('faculties', FacultyController::class)->except(['show']);
 
+            Route::resource('academic-terms', AcademicTermController::class);
+
+            Route::get('/university', [UniversityController::class, 'show'])->name('university.show');
+            Route::get('/university/edit', [UniversityController::class, 'edit'])->name('university.edit');
+            Route::put('/university', [UniversityController::class, 'update'])->name('university.update');
+
+            Route::resource('university/vice-presidents', UniversityVicePresidentController::class)
+                ->only(['create', 'store', 'edit', 'update', 'destroy'])
+                ->names('university.vice-presidents');
+
+            // Assign faculty admin (system admin only)
+            Route::get('/faculties/{faculty}/assign-admin', [AdminAssignmentController::class, 'editFacultyAdmin'])->name('faculties.assign-admin');
+            Route::post('/faculties/{faculty}/assign-admin', [AdminAssignmentController::class, 'assignFacultyAdmin'])->name('faculties.assign-admin.store');
+            Route::delete('/faculties/{faculty}/assign-admin', [AdminAssignmentController::class, 'revokeFacultyAdmin'])->name('faculties.assign-admin.revoke');
+        });
+
+        // Scoped admin (system admin + faculty admin + department admin)
+        Route::middleware('scoped.admin')->group(function () {
             Route::get('/departments/create/academic',   [DepartmentController::class, 'createAcademic'])->name('departments.create.academic');
             Route::get('/departments/create/managerial', [DepartmentController::class, 'createManagerial'])->name('departments.create.managerial');
             Route::resource('departments', DepartmentController::class)->except(['create']);
@@ -53,8 +76,6 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::resource('employees', EmployeeController::class);
 
             Route::resource('courses', CourseController::class);
-
-            Route::resource('academic-terms', AcademicTermController::class);
 
             Route::resource('sections', SectionController::class);
 
@@ -67,13 +88,10 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
             Route::resource('announcements', AnnouncementController::class);
 
-            Route::get('/university', [UniversityController::class, 'show'])->name('university.show');
-            Route::get('/university/edit', [UniversityController::class, 'edit'])->name('university.edit');
-            Route::put('/university', [UniversityController::class, 'update'])->name('university.update');
-
-            Route::resource('university/vice-presidents', UniversityVicePresidentController::class)
-                ->only(['create', 'store', 'edit', 'update', 'destroy'])
-                ->names('university.vice-presidents');
+            // Assign department admin (system admin + faculty admin of that faculty)
+            Route::get('/departments/{department}/assign-admin', [AdminAssignmentController::class, 'editDepartmentAdmin'])->name('departments.assign-admin');
+            Route::post('/departments/{department}/assign-admin', [AdminAssignmentController::class, 'assignDepartmentAdmin'])->name('departments.assign-admin.store');
+            Route::delete('/departments/{department}/assign-admin', [AdminAssignmentController::class, 'revokeDepartmentAdmin'])->name('departments.assign-admin.revoke');
         });
 
         // Faculty show — accessible to all dashboard users (admin + employee)

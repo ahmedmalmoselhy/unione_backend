@@ -29,10 +29,12 @@
                 {{ $grade->enrollment?->section?->course?->name }}
             </p>
         </div>
-        <a href="{{ route('dashboard.grades.edit', $grade) }}"
-           class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors shrink-0">
-            Edit Grade
-        </a>
+        @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
+            <a href="{{ route('dashboard.grades.edit', $grade) }}"
+               class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors shrink-0">
+                Edit Grade
+            </a>
+        @endif
     </div>
 
     <dl class="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-5 text-sm mb-6">

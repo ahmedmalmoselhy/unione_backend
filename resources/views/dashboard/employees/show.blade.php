@@ -46,10 +46,12 @@
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $typeStyles[$employee->employment_type] ?? 'bg-gray-100 text-gray-600' }}">
                 {{ $typeLabels[$employee->employment_type] ?? ucfirst($employee->employment_type) }}
             </span>
-            <a href="{{ route('dashboard.employees.edit', $employee) }}"
-               class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                Edit Employee
-            </a>
+            @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
+                <a href="{{ route('dashboard.employees.edit', $employee) }}"
+                   class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                    Edit Employee
+                </a>
+            @endif
         </div>
     </div>
 
