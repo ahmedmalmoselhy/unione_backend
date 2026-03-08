@@ -3,6 +3,7 @@
 use App\Http\Controllers\Dashboard\AcademicTermController;
 use App\Http\Controllers\Dashboard\AdminAssignmentController;
 use App\Http\Controllers\Dashboard\AnnouncementController;
+use App\Http\Controllers\Dashboard\AuditLogController;
 use App\Http\Controllers\Dashboard\AuthController;
 use App\Http\Controllers\Dashboard\ChangePasswordController;
 use App\Http\Controllers\Dashboard\CourseController;
@@ -63,6 +64,9 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::get('/faculties/{faculty}/assign-admin', [AdminAssignmentController::class, 'editFacultyAdmin'])->name('faculties.assign-admin');
             Route::post('/faculties/{faculty}/assign-admin', [AdminAssignmentController::class, 'assignFacultyAdmin'])->name('faculties.assign-admin.store');
             Route::delete('/faculties/{faculty}/assign-admin', [AdminAssignmentController::class, 'revokeFacultyAdmin'])->name('faculties.assign-admin.revoke');
+
+            // Audit log (system admin only)
+            Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
         });
 
         // Scoped admin (system admin + faculty admin + department admin)

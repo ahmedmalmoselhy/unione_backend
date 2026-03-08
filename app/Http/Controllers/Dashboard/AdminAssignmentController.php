@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Dashboard\Concerns\DashboardScopeAware;
+use App\Models\AuditLog;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Faculty;
@@ -67,6 +68,15 @@ class AdminAssignmentController extends Controller
             User::where('id', $request->employee_user_id)->update(['must_change_password' => true]);
         });
 
+        $assignedUser = User::find($request->employee_user_id);
+        AuditLog::record(
+            action: 'assigned',
+            auditableType: 'FacultyAdmin',
+            auditableId: $faculty->id,
+            description: "Assigned {$assignedUser->first_name} {$assignedUser->last_name} as faculty admin for {$faculty->name}",
+            newValues: ['user_id' => $assignedUser->id, 'faculty_id' => $faculty->id],
+        );
+
         return redirect()->route('dashboard.faculties.assign-admin', $faculty)
             ->with('success', 'Faculty administrator assigned successfully. They will be required to set a new password on next login.');
     }
@@ -75,11 +85,30 @@ class AdminAssignmentController extends Controller
     {
         $roleId = DB::table('roles')->where('name', 'faculty_admin')->value('id');
 
+        $currentRow = DB::table('role_user')
+            ->where('role_id', $roleId)
+            ->where('faculty_id', $faculty->id)
+            ->whereNull('revoked_at')
+            ->first();
+
         DB::table('role_user')
             ->where('role_id', $roleId)
             ->where('faculty_id', $faculty->id)
             ->whereNull('revoked_at')
             ->update(['revoked_at' => now()]);
+
+        if ($currentRow) {
+            $revokedUser = User::find($currentRow->user_id);
+            if ($revokedUser) {
+                AuditLog::record(
+                    action: 'revoked',
+                    auditableType: 'FacultyAdmin',
+                    auditableId: $faculty->id,
+                    description: "Revoked faculty admin role from {$revokedUser->first_name} {$revokedUser->last_name} for {$faculty->name}",
+                    oldValues: ['user_id' => $revokedUser->id, 'faculty_id' => $faculty->id],
+                );
+            }
+        }
 
         return redirect()->route('dashboard.faculties.assign-admin', $faculty)
             ->with('success', 'Faculty administrator role revoked.');
@@ -146,6 +175,15 @@ class AdminAssignmentController extends Controller
             User::where('id', $request->employee_user_id)->update(['must_change_password' => true]);
         });
 
+        $assignedUser = User::find($request->employee_user_id);
+        AuditLog::record(
+            action: 'assigned',
+            auditableType: 'DepartmentAdmin',
+            auditableId: $department->id,
+            description: "Assigned {$assignedUser->first_name} {$assignedUser->last_name} as department admin for {$department->name}",
+            newValues: ['user_id' => $assignedUser->id, 'department_id' => $department->id],
+        );
+
         return redirect()->route('dashboard.departments.assign-admin', $department)
             ->with('success', 'Department administrator assigned successfully. They will be required to set a new password on next login.');
     }
@@ -158,11 +196,30 @@ class AdminAssignmentController extends Controller
 
         $roleId = DB::table('roles')->where('name', 'department_admin')->value('id');
 
+        $currentRow = DB::table('role_user')
+            ->where('role_id', $roleId)
+            ->where('department_id', $department->id)
+            ->whereNull('revoked_at')
+            ->first();
+
         DB::table('role_user')
             ->where('role_id', $roleId)
             ->where('department_id', $department->id)
             ->whereNull('revoked_at')
             ->update(['revoked_at' => now()]);
+
+        if ($currentRow) {
+            $revokedUser = User::find($currentRow->user_id);
+            if ($revokedUser) {
+                AuditLog::record(
+                    action: 'revoked',
+                    auditableType: 'DepartmentAdmin',
+                    auditableId: $department->id,
+                    description: "Revoked department admin role from {$revokedUser->first_name} {$revokedUser->last_name} for {$department->name}",
+                    oldValues: ['user_id' => $revokedUser->id, 'department_id' => $department->id],
+                );
+            }
+        }
 
         return redirect()->route('dashboard.departments.assign-admin', $department)
             ->with('success', 'Department administrator role revoked.');

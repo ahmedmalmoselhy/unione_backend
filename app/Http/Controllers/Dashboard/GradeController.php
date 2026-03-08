@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreGradeRequest;
 use App\Http\Requests\Dashboard\UpdateGradeRequest;
 use App\Models\AcademicTerm;
+use App\Models\AuditLog;
 use App\Models\Enrollment;
 use App\Models\Grade;
 use App\Models\Student;
@@ -68,6 +69,18 @@ class GradeController extends Controller
             'graded_at' => now(),
         ]));
 
+        $grade->load('enrollment.student.user', 'enrollment.section.course');
+        $studentName = $grade->enrollment->student->user->first_name . ' ' . $grade->enrollment->student->user->last_name;
+        $courseName  = $grade->enrollment->section->course->name;
+
+        AuditLog::record(
+            action: 'created',
+            auditableType: 'Grade',
+            auditableId: $grade->id,
+            description: "Recorded grade for {$studentName} in {$courseName}",
+            newValues: $grade->only(['midterm', 'final', 'coursework', 'total', 'letter_grade', 'grade_points']),
+        );
+
         $this->recalculateGpa($grade->enrollment->student_id);
 
         return redirect()
@@ -87,10 +100,24 @@ class GradeController extends Controller
 
     public function update(UpdateGradeRequest $request, Grade $grade)
     {
+        $grade->load('enrollment.student.user', 'enrollment.section.course');
+        $oldValues   = $grade->only(['midterm', 'final', 'coursework', 'total', 'letter_grade', 'grade_points']);
+        $studentName = $grade->enrollment->student->user->first_name . ' ' . $grade->enrollment->student->user->last_name;
+        $courseName  = $grade->enrollment->section->course->name;
+
         $grade->update(array_merge($request->validated(), [
             'graded_by' => auth()->id(),
             'graded_at' => now(),
         ]));
+
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'Grade',
+            auditableId: $grade->id,
+            description: "Updated grade for {$studentName} in {$courseName}",
+            oldValues: $oldValues,
+            newValues: $grade->only(['midterm', 'final', 'coursework', 'total', 'letter_grade', 'grade_points']),
+        );
 
         $this->recalculateGpa($grade->enrollment->student_id);
 
@@ -101,8 +128,22 @@ class GradeController extends Controller
 
     public function destroy(Grade $grade)
     {
-        $studentId = $grade->enrollment->student_id;
+        $grade->load('enrollment.student.user', 'enrollment.section.course');
+        $studentId   = $grade->enrollment->student_id;
+        $studentName = $grade->enrollment->student->user->first_name . ' ' . $grade->enrollment->student->user->last_name;
+        $courseName  = $grade->enrollment->section->course->name;
+        $oldValues   = $grade->only(['midterm', 'final', 'coursework', 'total', 'letter_grade', 'grade_points']);
+        $gradeId     = $grade->id;
+
         $grade->delete();
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'Grade',
+            auditableId: $gradeId,
+            description: "Deleted grade for {$studentName} in {$courseName}",
+            oldValues: $oldValues,
+        );
 
         $this->recalculateGpa($studentId);
 
