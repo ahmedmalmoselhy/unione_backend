@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Api\AnnouncementController;
 use App\Http\Controllers\Api\ProfessorController;
+use App\Http\Controllers\Api\ProfessorGradeController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\StudentEnrollmentController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use Illuminate\Support\Facades\Route;
@@ -36,12 +38,15 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::middleware('api.role:student')->prefix('student')->group(function () {
         Route::get('/profile',     [StudentController::class, 'profile']);
         Route::get('/enrollments', [StudentController::class, 'enrollments']);
+        Route::post('/enrollments', [StudentEnrollmentController::class, 'store']);
+        Route::delete('/enrollments/{enrollment}', [StudentEnrollmentController::class, 'destroy']);
     });
 
     // ── Professor portal ─────────────────────────────────────────────────
     Route::middleware('api.role:professor')->prefix('professor')->group(function () {
         Route::get('/profile',  [ProfessorController::class, 'profile']);
         Route::get('/sections', [ProfessorController::class, 'sections']);
+        Route::post('/sections/{section}/grades', [ProfessorGradeController::class, 'store']);
     });
 
     // ── Announcements (any authenticated user) ───────────────────────────

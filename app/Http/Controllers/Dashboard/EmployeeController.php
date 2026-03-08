@@ -27,10 +27,10 @@ class EmployeeController extends Controller
             ->when($this->scopedFacultyId(), fn ($q, $id) => $q->whereHas('department', fn ($d) => $d->where('faculty_id', $id)))
             ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->where('employees.department_id', $id))
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
-                $q->where('users.first_name', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('users.last_name', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('users.email', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('employees.staff_number', 'ilike', '%' . $request->search . '%');
+                $q->whereIlike('users.first_name', '%' . $request->search . '%')
+                  ->orWhereIlike('users.last_name', '%' . $request->search . '%')
+                  ->orWhereIlike('users.email', '%' . $request->search . '%')
+                  ->orWhereIlike('employees.staff_number', '%' . $request->search . '%');
             }))
             ->when($request->filled('department_id'), fn ($q) => $q->where('employees.department_id', $request->department_id))
             ->when($request->filled('employment_type'), fn ($q) => $q->where('employees.employment_type', $request->employment_type))

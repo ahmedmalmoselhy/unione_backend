@@ -22,9 +22,9 @@ class CourseController extends Controller
             ->when($this->scopedFacultyId(), fn ($q, $id) => $q->whereHas('departments', fn ($d) => $d->where('faculty_id', $id)))
             ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->whereHas('departments', fn ($d) => $d->where('departments.id', $id)))
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
-                $q->where('code', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('name', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('name_ar', 'ilike', '%' . $request->search . '%');
+                $q->whereIlike('code', '%' . $request->search . '%')
+                  ->orWhereIlike('name', '%' . $request->search . '%')
+                  ->orWhereIlike('name_ar', '%' . $request->search . '%');
             }))
             ->when($request->filled('level'), fn ($q) => $q->where('level', $request->level))
             ->when($request->filled('is_elective'), fn ($q) => $q->where('is_elective', $request->is_elective === '1'))

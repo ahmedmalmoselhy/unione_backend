@@ -32,10 +32,10 @@ class GradeController extends Controller
             ->when($this->scopedFacultyId(), fn ($q, $id) => $q->whereHas('enrollment.student', fn ($s) => $s->where('faculty_id', $id)))
             ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->whereHas('enrollment.student', fn ($s) => $s->where('department_id', $id)))
             ->when($request->filled('search'), fn ($q) => $q->whereHas('enrollment', function ($e) use ($request) {
-                $e->whereHas('student.user', fn ($u) => $u->where('first_name', 'ilike', '%' . $request->search . '%')
-                      ->orWhere('last_name', 'ilike', '%' . $request->search . '%'))
-                  ->orWhereHas('section.course', fn ($c) => $c->where('code', 'ilike', '%' . $request->search . '%')
-                      ->orWhere('name', 'ilike', '%' . $request->search . '%'));
+                $e->whereHas('student.user', fn ($u) => $u->whereIlike('first_name', '%' . $request->search . '%')
+                      ->orWhereIlike('last_name', '%' . $request->search . '%'))
+                  ->orWhereHas('section.course', fn ($c) => $c->whereIlike('code', '%' . $request->search . '%')
+                      ->orWhereIlike('name', '%' . $request->search . '%'));
             }))
             ->when($request->filled('term_id'), fn ($q) => $q->whereHas('enrollment', fn ($e) => $e->where('academic_term_id', $request->term_id)))
             ->when($request->filled('letter_grade'), fn ($q) => $q->where('letter_grade', $request->letter_grade))

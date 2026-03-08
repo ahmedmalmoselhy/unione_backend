@@ -46,8 +46,8 @@ class AnnouncementController extends Controller
 
         $announcements = $query
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
-                $q->where('title', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('body', 'ilike', '%' . $request->search . '%');
+                $q->whereIlike('title', '%' . $request->search . '%')
+                  ->orWhereIlike('body', '%' . $request->search . '%');
             }))
             ->when($request->filled('type'), fn ($q) => $q->where('type', $request->type))
             ->when($request->filled('visibility'), fn ($q) => $q->where('visibility', $request->visibility))

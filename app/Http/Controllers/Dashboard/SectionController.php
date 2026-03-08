@@ -23,8 +23,8 @@ class SectionController extends Controller
             ->when($this->scopedFacultyId(), fn ($q, $id) => $q->whereHas('course.departments', fn ($d) => $d->where('faculty_id', $id)))
             ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->whereHas('professor', fn ($p) => $p->where('department_id', $id)))
             ->when($request->filled('search'), fn ($q) => $q->whereHas('course', function ($q) use ($request) {
-                $q->where('code', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('name', 'ilike', '%' . $request->search . '%');
+                $q->whereIlike('code', '%' . $request->search . '%')
+                  ->orWhereIlike('name', '%' . $request->search . '%');
             }))
             ->when($request->filled('course_id'), fn ($q) => $q->where('course_id', $request->course_id))
             ->when($request->filled('term_id'), fn ($q) => $q->where('academic_term_id', $request->term_id))

@@ -18,9 +18,9 @@ class FacultyController extends Controller
     {
         $faculties = Faculty::with('dean')
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
-                $q->where('name', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('name_ar', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('code', 'ilike', '%' . $request->search . '%');
+                $q->whereIlike('name', '%' . $request->search . '%')
+                  ->orWhereIlike('name_ar', '%' . $request->search . '%')
+                  ->orWhereIlike('code', '%' . $request->search . '%');
             }))
             ->when($request->filled('status'), fn ($q) => $q->where('is_active', $request->status === 'active'))
             ->when($request->filled('enrollment_type'), fn ($q) => $q->where('enrollment_type', $request->enrollment_type))

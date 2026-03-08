@@ -23,9 +23,9 @@ class DepartmentController extends Controller
             ->when($this->scopedFacultyId(), fn ($q, $id) => $q->where('faculty_id', $id))
             ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->where('id', $id))
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
-                $q->where('name', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('name_ar', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('code', 'ilike', '%' . $request->search . '%');
+                $q->whereIlike('name', '%' . $request->search . '%')
+                  ->orWhereIlike('name_ar', '%' . $request->search . '%')
+                  ->orWhereIlike('code', '%' . $request->search . '%');
             }))
             ->when($request->filled('type'), fn ($q) => $q->where('type', $request->type))
             ->when($request->filled('faculty_id'), fn ($q) => $q->where('faculty_id', $request->faculty_id))

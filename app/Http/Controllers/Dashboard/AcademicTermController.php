@@ -16,9 +16,9 @@ class AcademicTermController extends Controller
     {
         $terms = AcademicTerm::query()
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
-                $q->where('name', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('name_ar', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('academic_year', 'ilike', '%' . $request->search . '%');
+                $q->whereIlike('name', '%' . $request->search . '%')
+                  ->orWhereIlike('name_ar', '%' . $request->search . '%')
+                  ->orWhereIlike('academic_year', '%' . $request->search . '%');
             }))
             ->when($request->filled('semester'), fn ($q) => $q->where('semester', $request->semester))
             ->when($request->filled('status'), fn ($q) => $q->where('is_active', $request->status === 'active'))

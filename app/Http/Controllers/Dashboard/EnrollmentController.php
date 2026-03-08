@@ -27,11 +27,11 @@ class EnrollmentController extends Controller
             ->when($this->scopedFacultyId(), fn ($q, $id) => $q->whereHas('student', fn ($s) => $s->where('faculty_id', $id)))
             ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->whereHas('student', fn ($s) => $s->where('department_id', $id)))
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
-                $q->whereHas('student.user', fn ($u) => $u->where('first_name', 'ilike', '%' . $request->search . '%')
-                      ->orWhere('last_name', 'ilike', '%' . $request->search . '%'))
-                  ->orWhereHas('student', fn ($s) => $s->where('student_number', 'ilike', '%' . $request->search . '%'))
-                  ->orWhereHas('section.course', fn ($c) => $c->where('code', 'ilike', '%' . $request->search . '%')
-                      ->orWhere('name', 'ilike', '%' . $request->search . '%'));
+                $q->whereHas('student.user', fn ($u) => $u->whereIlike('first_name', '%' . $request->search . '%')
+                      ->orWhereIlike('last_name', '%' . $request->search . '%'))
+                  ->orWhereHas('student', fn ($s) => $s->whereIlike('student_number', '%' . $request->search . '%'))
+                  ->orWhereHas('section.course', fn ($c) => $c->whereIlike('code', '%' . $request->search . '%')
+                      ->orWhereIlike('name', '%' . $request->search . '%'));
             }))
             ->when($request->filled('term_id'), fn ($q) => $q->where('academic_term_id', $request->term_id))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))

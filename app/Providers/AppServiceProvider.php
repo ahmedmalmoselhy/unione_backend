@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Faculty;
 use App\Observers\FacultyObserver;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +26,22 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Faculty::observe(FacultyObserver::class);
+
+        // Cross-database case-insensitive LIKE: uses native ilike on pgsql,
+        // falls back to LOWER() LIKE on SQLite (used in tests).
+        Builder::macro('whereIlike', function (string $column, string $value): static {
+            if ($this->connection->getDriverName() === 'pgsql') {
+                return $this->where($column, 'ilike', $value);
+            }
+            return $this->whereRaw('LOWER(' . $this->grammar->wrap($column) . ') LIKE ?', [strtolower($value)]);
+        });
+
+        Builder::macro('orWhereIlike', function (string $column, string $value): static {
+            if ($this->connection->getDriverName() === 'pgsql') {
+                return $this->orWhere($column, 'ilike', $value);
+            }
+            return $this->orWhereRaw('LOWER(' . $this->grammar->wrap($column) . ') LIKE ?', [strtolower($value)]);
+        });
 
         // Strict throttle for login: 5 attempts per minute per IP
         RateLimiter::for('api.login', function (Request $request) {

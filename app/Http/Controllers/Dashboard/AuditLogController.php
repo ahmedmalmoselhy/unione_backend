@@ -15,11 +15,11 @@ class AuditLogController extends Controller
             ->when($request->filled('action'), fn ($q) => $q->where('action', $request->action))
             ->when($request->filled('type'), fn ($q) => $q->where('auditable_type', $request->type))
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
-                $q->where('description', 'ilike', '%' . $request->search . '%')
+                $q->whereIlike('description', '%' . $request->search . '%')
                   ->orWhereHas('user', fn ($u) =>
-                      $u->where('first_name', 'ilike', '%' . $request->search . '%')
-                        ->orWhere('last_name',  'ilike', '%' . $request->search . '%')
-                        ->orWhere('email',       'ilike', '%' . $request->search . '%')
+                      $u->whereIlike('first_name', '%' . $request->search . '%')
+                        ->orWhereIlike('last_name',  '%' . $request->search . '%')
+                        ->orWhereIlike('email',       '%' . $request->search . '%')
                   );
             }))
             ->when($request->filled('date_from'), fn ($q) => $q->whereDate('created_at', '>=', $request->date_from))

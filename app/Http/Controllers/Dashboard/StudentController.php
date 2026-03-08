@@ -30,10 +30,10 @@ class StudentController extends Controller
             ->when($this->scopedFacultyId(), fn ($q, $id) => $q->where('students.faculty_id', $id))
             ->when($this->scopedDepartmentId(), fn ($q, $id) => $q->where('students.department_id', $id))
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
-                $q->where('users.first_name', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('users.last_name', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('users.email', 'ilike', '%' . $request->search . '%')
-                  ->orWhere('students.student_number', 'ilike', '%' . $request->search . '%');
+                $q->whereIlike('users.first_name', '%' . $request->search . '%')
+                  ->orWhereIlike('users.last_name', '%' . $request->search . '%')
+                  ->orWhereIlike('users.email', '%' . $request->search . '%')
+                  ->orWhereIlike('students.student_number', '%' . $request->search . '%');
             }))
             ->when($request->filled('faculty_id'), fn ($q) => $q->where('students.faculty_id', $request->faculty_id))
             ->when($request->filled('enrollment_status'), fn ($q) => $q->where('students.enrollment_status', $request->enrollment_status))
