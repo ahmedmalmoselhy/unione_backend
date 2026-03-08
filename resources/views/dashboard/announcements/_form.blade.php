@@ -79,8 +79,11 @@
                    {{ $errors->has('visibility') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                    focus:outline-none focus:ring-2"
         >
-            @foreach(['university' => 'University-wide', 'faculty' => 'Faculty', 'department' => 'Department', 'section' => 'Section'] as $val => $label)
-                <option value="{{ $val }}" {{ old('visibility', $announcement?->visibility ?? 'university') === $val ? 'selected' : '' }}>{{ $label }}</option>
+            @php
+                $defaultVis = old('visibility', $announcement?->visibility ?? array_key_first($allowedVisibilities ?? ['university' => 'University-wide']));
+            @endphp
+            @foreach($allowedVisibilities ?? ['university' => 'University-wide', 'faculty' => 'Faculty', 'department' => 'Department', 'section' => 'Section'] as $val => $label)
+                <option value="{{ $val }}" {{ $defaultVis === $val ? 'selected' : '' }}>{{ $label }}</option>
             @endforeach
         </select>
         @error('visibility')
@@ -96,9 +99,12 @@
             name="target_id_faculty"
             class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-200 focus:outline-none focus:ring-2"
         >
-            <option value="">Select faculty...</option>
+            @if($faculties->count() !== 1)
+                <option value="">Select faculty...</option>
+            @endif
             @foreach($faculties as $faculty)
-                <option value="{{ $faculty->id }}" {{ (int) old('target_id', $announcement?->target_id) === $faculty->id && old('visibility', $announcement?->visibility) === 'faculty' ? 'selected' : '' }}>
+                <option value="{{ $faculty->id }}"
+                    {{ ($faculties->count() === 1 || ((int) old('target_id', $announcement?->target_id) === $faculty->id && old('visibility', $announcement?->visibility) === 'faculty')) ? 'selected' : '' }}>
                     {{ $faculty->name }}
                 </option>
             @endforeach
@@ -113,9 +119,12 @@
             name="target_id_department"
             class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-200 focus:outline-none focus:ring-2"
         >
-            <option value="">Select department...</option>
+            @if($departments->count() !== 1)
+                <option value="">Select department...</option>
+            @endif
             @foreach($departments as $dept)
-                <option value="{{ $dept->id }}" {{ (int) old('target_id', $announcement?->target_id) === $dept->id && old('visibility', $announcement?->visibility) === 'department' ? 'selected' : '' }}>
+                <option value="{{ $dept->id }}"
+                    {{ ($departments->count() === 1 || ((int) old('target_id', $announcement?->target_id) === $dept->id && old('visibility', $announcement?->visibility) === 'department')) ? 'selected' : '' }}>
                     {{ $dept->name }}
                 </option>
             @endforeach

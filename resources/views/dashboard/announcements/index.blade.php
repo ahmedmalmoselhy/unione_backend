@@ -78,7 +78,23 @@
                                 {{ ucfirst($announcement->type) }}
                             </span>
                         </td>
-                        <td class="px-5 py-3.5 text-gray-600 text-xs">{{ ucfirst($announcement->visibility) }}</td>
+                        <td class="px-5 py-3.5 text-xs">
+                            @php
+                                $visColors = [
+                                    'university' => 'bg-blue-50 text-blue-700',
+                                    'faculty'    => 'bg-indigo-50 text-indigo-700',
+                                    'department' => 'bg-purple-50 text-purple-700',
+                                    'section'    => 'bg-teal-50 text-teal-700',
+                                ];
+                                $targetName = $targetLabels[$announcement->visibility][$announcement->target_id] ?? null;
+                            @endphp
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $visColors[$announcement->visibility] ?? 'bg-gray-100 text-gray-600' }}">
+                                {{ ucfirst($announcement->visibility) }}
+                            </span>
+                            @if($targetName)
+                                <p class="mt-1 text-gray-500 truncate max-w-[160px]">{{ $targetName }}</p>
+                            @endif
+                        </td>
                         <td class="px-5 py-3.5 text-gray-600">{{ $announcement->author?->first_name }} {{ $announcement->author?->last_name }}</td>
                         <td class="px-5 py-3.5 text-center text-gray-600">{{ $announcement->reads_count }}</td>
                         <td class="px-5 py-3.5">
