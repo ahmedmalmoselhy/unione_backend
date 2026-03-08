@@ -8,6 +8,7 @@ use App\Http\Controllers\Dashboard\AuthController;
 use App\Http\Controllers\Dashboard\ChangePasswordController;
 use App\Http\Controllers\Dashboard\CourseController;
 use App\Http\Controllers\Dashboard\DepartmentController;
+use App\Http\Controllers\Dashboard\DepartmentHeadController;
 use App\Http\Controllers\Dashboard\EmployeeController;
 use App\Http\Controllers\Dashboard\EnrollmentController;
 use App\Http\Controllers\Dashboard\FacultyController;
@@ -96,6 +97,11 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::get('/departments/{department}/assign-admin', [AdminAssignmentController::class, 'editDepartmentAdmin'])->name('departments.assign-admin');
             Route::post('/departments/{department}/assign-admin', [AdminAssignmentController::class, 'assignDepartmentAdmin'])->name('departments.assign-admin.store');
             Route::delete('/departments/{department}/assign-admin', [AdminAssignmentController::class, 'revokeDepartmentAdmin'])->name('departments.assign-admin.revoke');
+
+            // Assign department head (system admin + faculty admin)
+            Route::get('/departments/{department}/assign-head', [DepartmentHeadController::class, 'edit'])->name('departments.assign-head');
+            Route::post('/departments/{department}/assign-head', [DepartmentHeadController::class, 'assign'])->name('departments.assign-head.store');
+            Route::delete('/departments/{department}/assign-head', [DepartmentHeadController::class, 'revoke'])->name('departments.assign-head.revoke');
         });
 
         // Faculty show — accessible to all dashboard users (admin + employee)

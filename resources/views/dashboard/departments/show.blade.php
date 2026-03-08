@@ -36,6 +36,10 @@
                 {{ $department->is_active ? 'Active' : 'Inactive' }}
             </span>
             @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
+                <a href="{{ route('dashboard.departments.assign-head', $department) }}"
+                   class="px-3 py-1.5 text-xs font-medium text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors">
+                    Assign Head
+                </a>
                 <a href="{{ route('dashboard.departments.assign-admin', $department) }}"
                    class="px-3 py-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-lg transition-colors">
                     Assign Admin
@@ -69,9 +73,18 @@
             <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Head / Manager</dt>
             <dd class="text-gray-700">
                 @if($department->head)
-                    {{ $department->head->first_name }} {{ $department->head->last_name }}
+                    <span class="font-medium">{{ $department->head->first_name }} {{ $department->head->last_name }}</span>
+                    @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
+                        <a href="{{ route('dashboard.departments.assign-head', $department) }}"
+                           class="ml-2 text-xs text-amber-600 hover:underline">Change</a>
+                    @endif
                 @else
-                    <span class="text-gray-400">Not assigned</span>
+                    @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
+                        <a href="{{ route('dashboard.departments.assign-head', $department) }}"
+                           class="text-amber-600 hover:underline text-sm">Not assigned — click to assign</a>
+                    @else
+                        <span class="text-gray-400">Not assigned</span>
+                    @endif
                 @endif
             </dd>
         </div>
