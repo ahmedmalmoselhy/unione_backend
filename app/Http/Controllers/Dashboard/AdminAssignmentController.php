@@ -33,7 +33,7 @@ class AdminAssignmentController extends Controller
         // Current faculty admin for this faculty
         $currentAdmin = User::whereHas('roles', fn ($q) =>
             $q->where('roles.name', 'faculty_admin')
-              ->wherePivotNull('revoked_at')
+              ->whereNull('role_user.revoked_at')
               ->where('role_user.faculty_id', $faculty->id)
         )->first();
 
@@ -134,7 +134,7 @@ class AdminAssignmentController extends Controller
         // Current department admin for this department
         $currentAdmin = User::whereHas('roles', fn ($q) =>
             $q->where('roles.name', 'department_admin')
-              ->wherePivotNull('revoked_at')
+              ->whereNull('role_user.revoked_at')
               ->where('role_user.department_id', $department->id)
         )->first();
 

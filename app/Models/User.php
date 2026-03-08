@@ -56,7 +56,7 @@ class User extends Authenticatable
     public function hasActiveRole(string|array $roles): bool
     {
         return $this->roles()
-            ->wherePivotNull('revoked_at')
+            ->whereNull('role_user.revoked_at')
             ->whereIn('roles.name', (array) $roles)
             ->exists();
     }
@@ -80,7 +80,7 @@ class User extends Authenticatable
     public function scopedFacultyId(): ?int
     {
         $row = $this->roles()
-            ->wherePivotNull('revoked_at')
+            ->whereNull('role_user.revoked_at')
             ->where('roles.name', 'faculty_admin')
             ->first();
 
@@ -91,7 +91,7 @@ class User extends Authenticatable
     public function scopedDepartmentId(): ?int
     {
         $row = $this->roles()
-            ->wherePivotNull('revoked_at')
+            ->whereNull('role_user.revoked_at')
             ->where('roles.name', 'department_admin')
             ->first();
 
