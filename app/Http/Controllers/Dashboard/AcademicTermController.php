@@ -14,7 +14,7 @@ class AcademicTermController extends Controller
     public function index(): View
     {
         $terms = AcademicTerm::orderByDesc('academic_year')
-            ->orderByRaw("FIELD(semester, 'summer', 'second', 'first')")
+            ->orderByRaw("array_position(ARRAY['summer','second','first'], semester)")
             ->paginate(15);
 
         return view('dashboard.academic-terms.index', compact('terms'));

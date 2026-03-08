@@ -1062,5 +1062,99 @@ class CourseSeeder extends Seeder
                 );
             }
         }
+
+        // =====================================================================
+        // COURSE PREREQUISITES
+        // =====================================================================
+        $courseIds = DB::table('courses')->pluck('id', 'code');
+
+        $prerequisites = [
+            // CSIT
+            'MATH102'      => ['MATH101'],
+            'MATH201'      => ['MATH102'],
+            'MATH202'      => ['MATH101'],
+            'CS102'        => ['CS101'],
+            'CS103'        => ['CS101'],
+            'CS201'        => ['CS102', 'MATH202'],
+            'CS301'        => ['CS201'],
+            'CS302'        => ['CS201'],
+            'CS401'        => ['CS301'],
+            'CS402'        => ['CS301'],
+            'IS201'        => ['CS101'],
+            'IS301'        => ['IS201', 'CS103'],
+            'IS302'        => ['IS301'],
+            'IS401'        => ['IS302'],
+            'CYB201'       => ['CS101'],
+            'CYB301'       => ['CYB201'],
+            'CYB302'       => ['CYB201', 'MATH202'],
+            'CYB401'       => ['CYB301'],
+            'CYB402'       => ['CYB301'],
+            'AI201'        => ['MATH101'],
+            'AI301'        => ['AI201', 'CS102', 'MATH201'],
+            'AI302'        => ['AI301'],
+            'AI401'        => ['AI302'],
+            'AI402'        => ['AI302'],
+            // Engineering
+            'ENG002'       => ['ENG001'],
+            'CIVIL201'     => ['ENG004'],
+            'CIVIL202'     => ['ENG004'],
+            'CIVIL301'     => ['CIVIL201'],
+            'CIVIL302'     => ['CIVIL201'],
+            'CIVIL401'     => ['CIVIL301'],
+            'ELEC201'      => ['ENG004', 'ENG001'],
+            'ELEC202'      => ['ELEC201'],
+            'ELEC301'      => ['ELEC202'],
+            'ELEC401'      => ['ELEC301'],
+            'ELEC402'      => ['ELEC301'],
+            'MECH201'      => ['ENG004'],
+            'MECH301'      => ['MECH201', 'CIVIL201'],
+            'MECH302'      => ['MECH201'],
+            'MECH401'      => ['MECH301'],
+            'ARCH201'      => ['ENG003'],
+            'ARCH301'      => ['ARCH201'],
+            'ARCH401'      => ['ARCH301'],
+            // Medicine
+            'MED-INT301'   => ['MED101', 'MED102'],
+            'MED-INT401'   => ['MED-INT301'],
+            'MED-INT402'   => ['MED-INT301'],
+            'MED-SURG301'  => ['MED101', 'MED102'],
+            'MED-SURG401'  => ['MED-SURG301'],
+            'MED-PHAR301'  => ['MED103'],
+            'MED-PHAR401'  => ['MED-PHAR301'],
+            // Business
+            'MKT201'       => ['BUS001', 'BUS003'],
+            'MKT301'       => ['MKT201'],
+            'MKT302'       => ['MKT201'],
+            'MKT401'       => ['MKT301'],
+            'BUS-FIN201'   => ['BUS001', 'BUS002'],
+            'BUS-FIN301'   => ['BUS-FIN201'],
+            'BUS-FIN302'   => ['BUS-FIN301'],
+            'BUS-FIN401'   => ['BUS-FIN302'],
+            'BUS-HR201'    => ['BUS003'],
+            'BUS-HR301'    => ['BUS-HR201'],
+            'BUS-HR401'    => ['BUS-HR301'],
+            // Law
+            'LAW-PUB201'   => ['LAW101'],
+            'LAW-PUB301'   => ['LAW-PUB201'],
+            'LAW-PUB401'   => ['LAW-PUB301'],
+            'LAW-PRI201'   => ['LAW101'],
+            'LAW-PRI301'   => ['LAW-PRI201'],
+            'LAW-PRI401'   => ['LAW-PRI301'],
+        ];
+
+        foreach ($prerequisites as $courseCode => $prereqCodes) {
+            if (!isset($courseIds[$courseCode])) {
+                continue;
+            }
+            foreach ($prereqCodes as $prereqCode) {
+                if (!isset($courseIds[$prereqCode])) {
+                    continue;
+                }
+                DB::table('course_prerequisites')->updateOrInsert([
+                    'course_id'       => $courseIds[$courseCode],
+                    'prerequisite_id' => $courseIds[$prereqCode],
+                ]);
+            }
+        }
     }
 }

@@ -92,7 +92,7 @@ class SectionController extends Controller
             'courses'       => Course::where('is_active', true)->orderBy('code')->get(['id', 'code', 'name']),
             'professors'    => Professor::with('user')->get()->sortBy(fn ($p) => $p->user->first_name),
             'academicTerms' => AcademicTerm::orderByDesc('academic_year')
-                ->orderByRaw("FIELD(semester, 'summer', 'second', 'first')")
+                ->orderByRaw("array_position(ARRAY['summer','second','first'], semester)")
                 ->get(['id', 'name', 'is_active']),
         ];
     }
