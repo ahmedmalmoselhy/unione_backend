@@ -19,9 +19,15 @@
 
     <div class="flex items-start justify-between gap-4 mb-6">
         <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-lg shrink-0">
-                {{ strtoupper(substr($professor->user->first_name, 0, 1)) }}{{ strtoupper(substr($professor->user->last_name, 0, 1)) }}
-            </div>
+            @if($professor->user->avatar_path)
+                <img src="{{ Storage::disk('public')->url($professor->user->avatar_path) }}"
+                     alt="{{ $professor->user->first_name }}"
+                     class="w-14 h-14 rounded-full object-cover border border-gray-200 shrink-0">
+            @else
+                <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-lg shrink-0">
+                    {{ strtoupper(substr($professor->user->first_name, 0, 1)) }}{{ strtoupper(substr($professor->user->last_name, 0, 1)) }}
+                </div>
+            @endif
             <div>
                 <h2 class="text-xl font-bold text-gray-900">{{ $professor->user->first_name }} {{ $professor->user->last_name }}</h2>
                 <p class="text-sm text-gray-500 mt-0.5">{{ $professor->specialization }}</p>

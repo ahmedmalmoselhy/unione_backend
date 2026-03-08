@@ -14,6 +14,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfessorController extends Controller
@@ -73,6 +74,9 @@ class ProfessorController extends Controller
                 'gender'        => $request->gender,
                 'date_of_birth' => $request->date_of_birth,
                 'is_active'     => true,
+                'avatar_path'   => $request->hasFile('avatar')
+                    ? $request->file('avatar')->store('avatars/professors', 'public')
+                    : null,
             ]);
 
             Professor::create([
@@ -109,6 +113,20 @@ class ProfessorController extends Controller
     public function update(UpdateProfessorRequest $request, Professor $professor): RedirectResponse
     {
         DB::transaction(function () use ($request, $professor) {
+            $avatarPath = $professor->user->avatar_path;
+
+            if ($request->boolean('remove_avatar') && $avatarPath) {
+                Storage::disk('public')->delete($avatarPath);
+                $avatarPath = null;
+            }
+
+            if ($request->hasFile('avatar')) {
+                if ($avatarPath) {
+                    Storage::disk('public')->delete($avatarPath);
+                }
+                $avatarPath = $request->file('avatar')->store('avatars/professors', 'public');
+            }
+
             $userData = [
                 'national_id'   => $request->national_id,
                 'first_name'    => $request->first_name,
@@ -118,6 +136,7 @@ class ProfessorController extends Controller
                 'gender'        => $request->gender,
                 'date_of_birth' => $request->date_of_birth,
                 'is_active'     => $request->boolean('is_active'),
+                'avatar_path'   => $avatarPath,
             ];
 
             if ($request->filled('password')) {

@@ -17,9 +17,16 @@
 {{-- Department info card --}}
 <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
     <div class="flex items-start justify-between gap-4 mb-6">
-        <div>
-            <h2 class="text-xl font-bold text-gray-900">{{ $department->name }}</h2>
-            <p class="text-sm text-gray-400 mt-0.5" dir="rtl">{{ $department->name_ar }}</p>
+        <div class="flex items-center gap-4">
+            @if($department->logo_path)
+                <img src="{{ Storage::disk('public')->url($department->logo_path) }}"
+                     alt="{{ $department->name }} logo"
+                     class="h-14 w-14 object-contain rounded-xl border border-gray-200 bg-gray-50 p-1 shrink-0">
+            @endif
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">{{ $department->name }}</h2>
+                <p class="text-sm text-gray-400 mt-0.5" dir="rtl">{{ $department->name_ar }}</p>
+            </div>
         </div>
         <div class="flex items-center gap-2 shrink-0">
             @if($department->is_mandatory)

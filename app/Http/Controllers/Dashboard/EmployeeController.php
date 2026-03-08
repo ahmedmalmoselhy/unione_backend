@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class EmployeeController extends Controller
@@ -72,6 +73,9 @@ class EmployeeController extends Controller
                 'gender'        => $request->gender,
                 'date_of_birth' => $request->date_of_birth,
                 'is_active'     => true,
+                'avatar_path'   => $request->hasFile('avatar')
+                    ? $request->file('avatar')->store('avatars/employees', 'public')
+                    : null,
             ]);
 
             Employee::create([
@@ -108,6 +112,20 @@ class EmployeeController extends Controller
     public function update(UpdateEmployeeRequest $request, Employee $employee): RedirectResponse
     {
         DB::transaction(function () use ($request, $employee) {
+            $avatarPath = $employee->user->avatar_path;
+
+            if ($request->boolean('remove_avatar') && $avatarPath) {
+                Storage::disk('public')->delete($avatarPath);
+                $avatarPath = null;
+            }
+
+            if ($request->hasFile('avatar')) {
+                if ($avatarPath) {
+                    Storage::disk('public')->delete($avatarPath);
+                }
+                $avatarPath = $request->file('avatar')->store('avatars/employees', 'public');
+            }
+
             $userData = [
                 'national_id'   => $request->national_id,
                 'first_name'    => $request->first_name,
@@ -117,6 +135,7 @@ class EmployeeController extends Controller
                 'gender'        => $request->gender,
                 'date_of_birth' => $request->date_of_birth,
                 'is_active'     => $request->boolean('is_active'),
+                'avatar_path'   => $avatarPath,
             ];
 
             if ($request->filled('password')) {

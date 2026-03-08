@@ -39,6 +39,8 @@ class UpdateStudentRequest extends FormRequest
             'gpa'              => ['nullable', 'numeric', 'min:0', 'max:4'],
             'enrolled_at'      => ['required', 'date'],
             'graduated_at'     => ['nullable', 'date', 'after_or_equal:enrolled_at'],
+            'avatar'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_avatar'    => ['nullable', 'boolean'],
         ];
     }
 }

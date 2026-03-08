@@ -14,6 +14,7 @@ class Department extends Model
         'name',
         'name_ar',
         'code',
+        'logo_path',
         'type',
         'is_preparatory',
         'head_id',

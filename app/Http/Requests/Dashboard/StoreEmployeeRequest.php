@@ -36,6 +36,7 @@ class StoreEmployeeRequest extends FormRequest
             'employment_type'  => ['required', 'in:full_time,part_time,contract'],
             'salary'           => ['nullable', 'numeric', 'min:0'],
             'hired_at'         => ['required', 'date'],
+            'avatar'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 }

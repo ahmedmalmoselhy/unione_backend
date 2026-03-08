@@ -19,9 +19,15 @@
 
     <div class="flex items-start justify-between gap-4 mb-6">
         <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg shrink-0">
-                {{ strtoupper(substr($employee->user->first_name, 0, 1)) }}{{ strtoupper(substr($employee->user->last_name, 0, 1)) }}
-            </div>
+            @if($employee->user->avatar_path)
+                <img src="{{ Storage::disk('public')->url($employee->user->avatar_path) }}"
+                     alt="{{ $employee->user->first_name }}"
+                     class="w-14 h-14 rounded-full object-cover border border-gray-200 shrink-0">
+            @else
+                <div class="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-lg shrink-0">
+                    {{ strtoupper(substr($employee->user->first_name, 0, 1)) }}{{ strtoupper(substr($employee->user->last_name, 0, 1)) }}
+                </div>
+            @endif
             <div>
                 <h2 class="text-xl font-bold text-gray-900">{{ $employee->user->first_name }} {{ $employee->user->last_name }}</h2>
                 <p class="text-sm text-gray-500 mt-0.5">{{ $employee->job_title }}</p>

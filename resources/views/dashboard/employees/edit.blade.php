@@ -9,7 +9,7 @@
 
     <div class="bg-white rounded-2xl border border-gray-200 p-6">
 
-        <form method="POST" action="{{ route('dashboard.employees.update', $employee) }}" class="space-y-5">
+        <form method="POST" action="{{ route('dashboard.employees.update', $employee) }}" enctype="multipart/form-data" class="space-y-5">
             @csrf
             @method('PUT')
 

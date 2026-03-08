@@ -9,7 +9,7 @@
 
     <div class="bg-white rounded-2xl border border-gray-200 p-6">
 
-        <form method="POST" action="{{ route('dashboard.faculties.store') }}" class="space-y-5">
+        <form method="POST" action="{{ route('dashboard.faculties.store') }}" enctype="multipart/form-data" class="space-y-5">
             @csrf
 
             @include('dashboard.faculties._form', ['faculty' => null])

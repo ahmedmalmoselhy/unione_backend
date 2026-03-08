@@ -41,6 +41,8 @@ class UpdateProfessorRequest extends FormRequest
             'office_location' => ['nullable', 'string', 'max:255'],
             'hired_at'        => ['required', 'date'],
             'is_active'       => ['boolean'],
+            'avatar'          => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_avatar'   => ['nullable', 'boolean'],
         ];
     }
 }

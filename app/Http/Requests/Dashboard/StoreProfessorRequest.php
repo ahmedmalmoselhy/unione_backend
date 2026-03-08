@@ -36,6 +36,7 @@ class StoreProfessorRequest extends FormRequest
             'academic_rank'   => ['required', 'in:lecturer,assistant_professor,associate_professor,professor'],
             'office_location' => ['nullable', 'string', 'max:255'],
             'hired_at'        => ['required', 'date'],
+            'avatar'          => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 }

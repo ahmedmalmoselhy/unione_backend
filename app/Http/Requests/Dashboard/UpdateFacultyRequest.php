@@ -25,6 +25,8 @@ class UpdateFacultyRequest extends FormRequest
                 }
             }],
             'is_active'        => ['boolean'],
+            'logo'             => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
+            'remove_logo'      => ['nullable', 'boolean'],
         ];
     }
 }

@@ -10,6 +10,7 @@ use App\Models\Faculty;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class DepartmentController extends Controller
@@ -74,6 +75,9 @@ class DepartmentController extends Controller
             'name'           => $request->name,
             'name_ar'        => $request->name_ar,
             'code'           => strtoupper($request->code),
+            'logo_path'      => $request->hasFile('logo')
+                ? $request->file('logo')->store('logos/departments', 'public')
+                : null,
             'type'           => $request->type,
             'is_preparatory' => $request->type === 'academic' && $request->boolean('is_preparatory'),
             'head_id'        => $request->head_id,
@@ -101,11 +105,26 @@ class DepartmentController extends Controller
 
     public function update(UpdateDepartmentRequest $request, Department $department): RedirectResponse
     {
+        $logoPath = $department->logo_path;
+
+        if ($request->boolean('remove_logo') && $logoPath) {
+            Storage::disk('public')->delete($logoPath);
+            $logoPath = null;
+        }
+
+        if ($request->hasFile('logo')) {
+            if ($logoPath) {
+                Storage::disk('public')->delete($logoPath);
+            }
+            $logoPath = $request->file('logo')->store('logos/departments', 'public');
+        }
+
         $department->update([
             'faculty_id'     => $request->faculty_id,
             'name'           => $request->name,
             'name_ar'        => $request->name_ar,
             'code'           => strtoupper($request->code),
+            'logo_path'      => $logoPath,
             'is_preparatory' => $department->type === 'academic' && $request->boolean('is_preparatory'),
             'head_id'        => $request->head_id,
             'is_active'      => $request->boolean('is_active'),

@@ -10,6 +10,42 @@
     $isEdit = isset($student) && $student !== null;
 @endphp
 
+{{-- Section: Profile Picture --}}
+<div class="mb-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Profile Picture</h3>
+    <div>
+        @if($isEdit && $student->user->avatar_path)
+            <div id="current-avatar-wrapper" class="mb-3 flex items-center gap-4">
+                <img src="{{ Storage::disk('public')->url($student->user->avatar_path) }}"
+                     alt="Profile photo"
+                     class="h-16 w-16 object-cover rounded-full border border-gray-200">
+                <label class="flex items-center gap-1.5 text-sm text-red-600 cursor-pointer">
+                    <input type="checkbox" name="remove_avatar" value="1"
+                           class="rounded border-gray-300 text-red-600 focus:ring-red-400"
+                           onchange="document.getElementById('current-avatar-wrapper').style.opacity = this.checked ? '0.4' : '1'">
+                    Remove current photo
+                </label>
+            </div>
+        @endif
+        <div class="flex items-center gap-3">
+            <label class="cursor-pointer flex items-center gap-2 px-3.5 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                Choose photo
+                <input type="file" name="avatar" id="avatar" accept="image/*" class="hidden"
+                       onchange="const f=this.files[0];const p=document.getElementById('avatar-preview');if(f){p.src=URL.createObjectURL(f);p.classList.remove('hidden');document.getElementById('avatar-filename').textContent=f.name;}else{p.classList.add('hidden');document.getElementById('avatar-filename').textContent='';}">
+            </label>
+            <span id="avatar-filename" class="text-xs text-gray-400"></span>
+            <img id="avatar-preview" src="" alt="" class="hidden h-12 w-12 object-cover rounded-full border border-gray-200">
+        </div>
+        @error('avatar')
+            <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
+        @enderror
+        <p class="mt-1.5 text-xs text-gray-400">Accepted: JPG, PNG, WebP — max 2 MB</p>
+    </div>
+</div>
+
 {{-- Section: Personal Information --}}
 <div class="mb-6">
     <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Personal Information</h3>

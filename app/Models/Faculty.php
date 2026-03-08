@@ -12,6 +12,7 @@ class Faculty extends Model
         'name',
         'name_ar',
         'code',
+        'logo_path',
         'enrollment_type',
         'dean_id',
         'is_active',

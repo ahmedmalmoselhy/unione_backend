@@ -42,6 +42,8 @@ class UpdateEmployeeRequest extends FormRequest
             'hired_at'         => ['required', 'date'],
             'terminated_at'    => ['nullable', 'date', 'after_or_equal:hired_at'],
             'is_active'        => ['boolean'],
+            'avatar'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_avatar'    => ['nullable', 'boolean'],
         ];
     }
 }

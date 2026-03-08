@@ -18,9 +18,16 @@
 <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
 
     <div class="flex items-start justify-between gap-4 mb-6">
-        <div>
-            <h2 class="text-xl font-bold text-gray-900">{{ $faculty->name }}</h2>
-            <p class="text-sm text-gray-400 mt-0.5" dir="rtl">{{ $faculty->name_ar }}</p>
+        <div class="flex items-center gap-4">
+            @if($faculty->logo_path)
+                <img src="{{ Storage::disk('public')->url($faculty->logo_path) }}"
+                     alt="{{ $faculty->name }} logo"
+                     class="h-14 w-14 object-contain rounded-xl border border-gray-200 bg-gray-50 p-1 shrink-0">
+            @endif
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">{{ $faculty->name }}</h2>
+                <p class="text-sm text-gray-400 mt-0.5" dir="rtl">{{ $faculty->name_ar }}</p>
+            </div>
         </div>
         <div class="flex items-center gap-2 shrink-0">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $faculty->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">

@@ -9,6 +9,7 @@ use App\Models\Faculty;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class FacultyController extends Controller
@@ -50,6 +51,9 @@ class FacultyController extends Controller
             'name'            => $request->name,
             'name_ar'         => $request->name_ar,
             'code'            => strtoupper($request->code),
+            'logo_path'       => $request->hasFile('logo')
+                ? $request->file('logo')->store('logos/faculties', 'public')
+                : null,
             'enrollment_type' => $request->enrollment_type,
             'dean_id'         => $request->dean_id,
             'is_active'       => $request->boolean('is_active'),
@@ -68,10 +72,25 @@ class FacultyController extends Controller
 
     public function update(UpdateFacultyRequest $request, Faculty $faculty): RedirectResponse
     {
+        $logoPath = $faculty->logo_path;
+
+        if ($request->boolean('remove_logo') && $logoPath) {
+            Storage::disk('public')->delete($logoPath);
+            $logoPath = null;
+        }
+
+        if ($request->hasFile('logo')) {
+            if ($logoPath) {
+                Storage::disk('public')->delete($logoPath);
+            }
+            $logoPath = $request->file('logo')->store('logos/faculties', 'public');
+        }
+
         $faculty->update([
             'name'            => $request->name,
             'name_ar'         => $request->name_ar,
             'code'            => strtoupper($request->code),
+            'logo_path'       => $logoPath,
             'enrollment_type' => $request->enrollment_type,
             'dean_id'         => $request->dean_id,
             'is_active'       => $request->boolean('is_active'),
