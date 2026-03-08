@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             AcademicTermSeeder::class,
             SectionSeeder::class,
             EnrollmentSeeder::class,
+            GradeSeeder::class,
         ]);
     }
 }

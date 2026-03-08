@@ -7,6 +7,7 @@ use App\Http\Controllers\Dashboard\DepartmentController;
 use App\Http\Controllers\Dashboard\EmployeeController;
 use App\Http\Controllers\Dashboard\EnrollmentController;
 use App\Http\Controllers\Dashboard\FacultyController;
+use App\Http\Controllers\Dashboard\GradeController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\ProfessorController;
 use App\Http\Controllers\Dashboard\SectionController;
@@ -59,6 +60,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::resource('students', StudentController::class);
 
             Route::resource('enrollments', EnrollmentController::class);
+
+            Route::resource('grades', GradeController::class);
 
             Route::get('/university', [UniversityController::class, 'show'])->name('university.show');
             Route::get('/university/edit', [UniversityController::class, 'edit'])->name('university.edit');
