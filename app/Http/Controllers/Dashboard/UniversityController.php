@@ -7,6 +7,7 @@ use App\Http\Requests\Dashboard\UpdateUniversityRequest;
 use App\Models\Professor;
 use App\Models\University;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class UniversityController extends Controller
@@ -33,12 +34,30 @@ class UniversityController extends Controller
     {
         $university = University::firstOrFail();
 
+        $logoPath = $university->logo_path;
+
+        if ($request->boolean('remove_logo') && $logoPath) {
+            Storage::disk('public')->delete($logoPath);
+            $logoPath = null;
+        }
+
+        if ($request->hasFile('logo')) {
+            if ($logoPath) {
+                Storage::disk('public')->delete($logoPath);
+            }
+            $logoPath = $request->file('logo')->store('university', 'public');
+        }
+
         $university->update([
             'name'           => $request->name,
             'name_ar'        => $request->name_ar,
             'address'        => $request->address,
             'established_at' => $request->established_at,
             'president_id'   => $request->president_id,
+            'logo_path'      => $logoPath,
+            'phone'          => $request->phone,
+            'email'          => $request->email,
+            'website'        => $request->website,
         ]);
 
         return redirect()->route('dashboard.university.show')

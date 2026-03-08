@@ -19,6 +19,11 @@ class UpdateUniversityRequest extends FormRequest
             'address'        => ['required', 'string', 'max:500'],
             'established_at' => ['nullable', 'date'],
             'president_id'   => ['nullable', 'exists:professors,id'],
+            'logo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
+            'remove_logo'    => ['nullable', 'boolean'],
+            'phone'          => ['nullable', 'string', 'max:50'],
+            'email'          => ['nullable', 'email', 'max:255'],
+            'website'        => ['nullable', 'url', 'max:255'],
         ];
     }
 }

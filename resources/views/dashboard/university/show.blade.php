@@ -16,9 +16,22 @@
 <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
 
     <div class="flex items-start justify-between gap-4 mb-6">
-        <div>
-            <h2 class="text-xl font-bold text-gray-900">{{ $university->name }}</h2>
-            <p class="text-sm text-gray-400 mt-0.5" dir="rtl">{{ $university->name_ar }}</p>
+        <div class="flex items-center gap-4">
+            @if($university->logo_path)
+                <img src="{{ Storage::disk('public')->url($university->logo_path) }}"
+                     alt="{{ $university->name }} logo"
+                     class="h-14 w-14 object-contain rounded-xl border border-gray-200 bg-gray-50 p-1 shrink-0">
+            @else
+                <div class="h-14 w-14 rounded-xl border border-gray-200 bg-gray-100 flex items-center justify-center shrink-0">
+                    <svg class="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V10z"/>
+                    </svg>
+                </div>
+            @endif
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">{{ $university->name }}</h2>
+                <p class="text-sm text-gray-400 mt-0.5" dir="rtl">{{ $university->name_ar }}</p>
+            </div>
         </div>
         <a href="{{ route('dashboard.university.edit') }}"
            class="shrink-0 px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
@@ -47,6 +60,30 @@
                 @endif
             </dd>
         </div>
+        @if($university->phone)
+        <div>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Phone</dt>
+            <dd class="text-gray-700">{{ $university->phone }}</dd>
+        </div>
+        @endif
+        @if($university->email)
+        <div>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Email</dt>
+            <dd class="text-gray-700">
+                <a href="mailto:{{ $university->email }}" class="text-blue-600 hover:underline">{{ $university->email }}</a>
+            </dd>
+        </div>
+        @endif
+        @if($university->website)
+        <div>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Website</dt>
+            <dd class="text-gray-700">
+                <a href="{{ $university->website }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+                    {{ $university->website }}
+                </a>
+            </dd>
+        </div>
+        @endif
     </dl>
 
 </div>

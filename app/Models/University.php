@@ -17,6 +17,9 @@ class University extends Model
         'logo_path',
         'established_at',
         'president_id',
+        'phone',
+        'email',
+        'website',
     ];
 
     protected function casts(): array
