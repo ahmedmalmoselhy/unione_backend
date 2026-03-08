@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\AcademicTermController;
+use App\Http\Controllers\Dashboard\AnnouncementController;
 use App\Http\Controllers\Dashboard\AuthController;
 use App\Http\Controllers\Dashboard\CourseController;
 use App\Http\Controllers\Dashboard\DepartmentController;
@@ -62,6 +63,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::resource('enrollments', EnrollmentController::class);
 
             Route::resource('grades', GradeController::class);
+
+            Route::resource('announcements', AnnouncementController::class);
 
             Route::get('/university', [UniversityController::class, 'show'])->name('university.show');
             Route::get('/university/edit', [UniversityController::class, 'edit'])->name('university.edit');
