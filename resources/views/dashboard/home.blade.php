@@ -16,9 +16,9 @@
                 Welcome, {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
             </h2>
             <div class="flex items-center gap-2 mt-1">
-                @foreach(auth()->user()->roles()->whereNull('role_user.revoked_at')->get() as $role)
+                @foreach(auth()->user()->roles()->whereNull('role_user.revoked_at')->get() as $userRole)
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {{ $role->label }}
+                        {{ $userRole->label }}
                     </span>
                 @endforeach
             </div>
