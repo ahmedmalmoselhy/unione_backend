@@ -17,6 +17,21 @@ class HomeController extends Controller
 {
     public function index(): View
     {
+        $user = auth()->user();
+
+        if ($user->isSystemAdmin()) {
+            return $this->systemAdminHome();
+        }
+
+        if ($user->isFacultyAdmin()) {
+            return $this->facultyAdminHome($user);
+        }
+
+        return $this->departmentAdminHome($user);
+    }
+
+    private function systemAdminHome(): View
+    {
         $globalStats = [
             'faculties'   => Faculty::count(),
             'departments' => Department::count(),
@@ -42,6 +57,67 @@ class HomeController extends Controller
             'students as withdrawn_students_count' => fn ($q) => $q->where('enrollment_status', 'withdrawn'),
         ])->orderBy('name')->get();
 
-        return view('dashboard.home', compact('globalStats', 'faculties', 'professorsByFaculty'));
+        return view('dashboard.home', [
+            'role'                => 'system_admin',
+            'globalStats'         => $globalStats,
+            'faculties'           => $faculties,
+            'professorsByFaculty' => $professorsByFaculty,
+        ]);
+    }
+
+    private function facultyAdminHome($user): View
+    {
+        $facultyId = $user->scopedFacultyId();
+        $faculty   = Faculty::findOrFail($facultyId);
+
+        $deptIds = Department::where('faculty_id', $facultyId)->pluck('id');
+
+        $stats = [
+            'departments' => $deptIds->count(),
+            'professors'  => Professor::whereIn('department_id', $deptIds)->count(),
+            'employees'   => Employee::whereIn('department_id', $deptIds)->count(),
+            'students'    => Student::where('faculty_id', $facultyId)->count(),
+            'courses'     => Course::whereHas('departments', fn ($q) => $q->where('departments.faculty_id', $facultyId))->count(),
+        ];
+
+        $departments = Department::where('faculty_id', $facultyId)
+            ->withCount(['professors', 'employees', 'students', 'courses'])
+            ->orderBy('name')
+            ->get();
+
+        return view('dashboard.home', [
+            'role'        => 'faculty_admin',
+            'faculty'     => $faculty,
+            'stats'       => $stats,
+            'departments' => $departments,
+        ]);
+    }
+
+    private function departmentAdminHome($user): View
+    {
+        $departmentId = $user->scopedDepartmentId();
+        $department   = Department::with('faculty')->findOrFail($departmentId);
+
+        $stats = [
+            'professors' => Professor::where('department_id', $departmentId)->count(),
+            'employees'  => Employee::where('department_id', $departmentId)->count(),
+            'students'   => Student::where('department_id', $departmentId)->count(),
+            'courses'    => Course::whereHas('departments', fn ($q) => $q->where('departments.id', $departmentId))->count(),
+            'sections'   => Section::whereHas('course.departments', fn ($q) => $q->where('departments.id', $departmentId))->count(),
+        ];
+
+        $studentBreakdown = [
+            'active'    => Student::where('department_id', $departmentId)->where('enrollment_status', 'active')->count(),
+            'graduated' => Student::where('department_id', $departmentId)->where('enrollment_status', 'graduated')->count(),
+            'suspended' => Student::where('department_id', $departmentId)->where('enrollment_status', 'suspended')->count(),
+            'withdrawn' => Student::where('department_id', $departmentId)->where('enrollment_status', 'withdrawn')->count(),
+        ];
+
+        return view('dashboard.home', [
+            'role'             => 'department_admin',
+            'department'       => $department,
+            'stats'            => $stats,
+            'studentBreakdown' => $studentBreakdown,
+        ]);
     }
 }
