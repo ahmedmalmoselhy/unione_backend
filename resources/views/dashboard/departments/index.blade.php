@@ -123,6 +123,10 @@
                                 </td>
                                 <td class="px-5 py-3.5">
                                     <div class="flex items-center justify-end gap-2">
+                                        <a href="{{ route('dashboard.departments.show', $department) }}"
+                                           class="px-3 py-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors">
+                                            View
+                                        </a>
                                         <a href="{{ route('dashboard.departments.edit', $department) }}"
                                            class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                                             Edit
@@ -198,6 +202,10 @@
                                 </td>
                                 <td class="px-5 py-3.5">
                                     <div class="flex items-center justify-end gap-2">
+                                        <a href="{{ route('dashboard.departments.show', $department) }}"
+                                           class="px-3 py-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors">
+                                            View
+                                        </a>
                                         <a href="{{ route('dashboard.departments.edit', $department) }}"
                                            class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                                             Edit

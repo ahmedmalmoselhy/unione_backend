@@ -8,6 +8,7 @@ use App\Http\Requests\Dashboard\UpdateStudentRequest;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Student;
+use App\Models\StudentDepartmentHistory;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,9 +43,45 @@ class StudentController extends Controller
 
     public function show(Student $student): View
     {
-        $student->load(['user', 'faculty', 'department', 'enrollments.section.course', 'enrollments.section.academicTerm']);
+        $student->load([
+            'user',
+            'faculty',
+            'department',
+            'enrollments.section.course',
+            'enrollments.section.academicTerm',
+            'departmentHistory.fromDepartment',
+            'departmentHistory.toDepartment',
+        ]);
 
-        return view('dashboard.students.show', compact('student'));
+        $departments = Department::where('type', 'academic')
+            ->where('is_active', true)
+            ->where('id', '!=', $student->department_id)
+            ->orderBy('name')
+            ->get();
+
+        return view('dashboard.students.show', compact('student', 'departments'));
+    }
+
+    public function transfer(Request $request, Student $student): RedirectResponse
+    {
+        $request->validate([
+            'to_department_id' => ['required', 'integer', 'exists:departments,id'],
+            'note'             => ['nullable', 'string', 'max:500'],
+        ]);
+
+        StudentDepartmentHistory::create([
+            'student_id'         => $student->id,
+            'from_department_id' => $student->department_id,
+            'to_department_id'   => $request->to_department_id,
+            'switched_at'        => now(),
+            'switched_by'        => auth()->id(),
+            'note'               => $request->note,
+        ]);
+
+        $student->update(['department_id' => $request->to_department_id]);
+
+        return redirect()->route('dashboard.students.show', $student)
+            ->with('success', 'Student transferred to new department successfully.');
     }
 
     public function create(): View

@@ -34,9 +34,22 @@ class DepartmentController extends Controller
         return view('dashboard.departments.index', compact('departments', 'faculties'));
     }
 
+    public function show(Department $department): View
+    {
+        $department->load([
+            'faculty',
+            'head',
+            'professors.user',
+            'employees.user',
+            'students.user',
+            'courses',
+        ]);
+
+        return view('dashboard.departments.show', compact('department'));
+    }
+
     public function createAcademic(): View
     {
-        $faculties  = Faculty::orderBy('name')->get();
         $professors = $this->activeProfessors();
 
         return view('dashboard.departments.create-academic', compact('faculties', 'professors'));

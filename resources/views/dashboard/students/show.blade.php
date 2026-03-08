@@ -95,7 +95,7 @@
 </div>
 
 {{-- Enrollments --}}
-<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
     <div class="px-6 py-4 border-b border-gray-100">
         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Course Enrollments ({{ $student->enrollments->count() }})</h3>
     </div>
@@ -133,4 +133,70 @@
     @endif
 </div>
 
-@endsection
+{{-- Department Transfer --}}
+@if(auth()->user()->hasActiveRole('admin') && $departments->isNotEmpty())
+<div class="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Transfer Department</h3>
+    @if(session('success') && str_contains(session('success'), 'transfer'))
+        <div class="mb-4 px-4 py-3 rounded-lg bg-green-50 text-green-700 text-sm">{{ session('success') }}</div>
+    @endif
+    <form method="POST" action="{{ route('dashboard.students.transfer', $student) }}" class="flex flex-col sm:flex-row gap-3 items-end">
+        @csrf
+        <div class="flex-1">
+            <label for="to_department_id" class="block text-xs font-medium text-gray-600 mb-1.5">New Department</label>
+            <select name="to_department_id" id="to_department_id" required
+                    class="w-full px-3 py-2 text-sm rounded-lg border {{ $errors->has('to_department_id') ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white' }} focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Select department…</option>
+                @foreach($departments as $dept)
+                    <option value="{{ $dept->id }}" {{ old('to_department_id') == $dept->id ? 'selected' : '' }}>
+                        {{ $dept->name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('to_department_id')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+        </div>
+        <div class="flex-1">
+            <label for="note" class="block text-xs font-medium text-gray-600 mb-1.5">Note <span class="text-gray-400">(optional)</span></label>
+            <input type="text" name="note" id="note" value="{{ old('note') }}" maxlength="500"
+                   placeholder="Reason for transfer…"
+                   class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            @error('note')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+        </div>
+        <button type="submit"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shrink-0"
+                onclick="return confirm('Transfer {{ addslashes($student->user->first_name . ' ' . $student->user->last_name) }} to the selected department?')">
+            Transfer
+        </button>
+    </form>
+</div>
+@endif
+
+{{-- Department History --}}
+@if($student->departmentHistory->isNotEmpty())
+<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-gray-100">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Department Transfer History</h3>
+    </div>
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                <th class="px-5 py-3 text-start">Date</th>
+                <th class="px-5 py-3 text-start">From</th>
+                <th class="px-5 py-3 text-start">To</th>
+                <th class="px-5 py-3 text-start">Note</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50">
+            @foreach($student->departmentHistory->sortByDesc('switched_at') as $history)
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-5 py-3 text-xs text-gray-500">{{ $history->switched_at->format('M d, Y H:i') }}</td>
+                    <td class="px-5 py-3 text-gray-600">{{ $history->fromDepartment?->name ?? '<em class="text-gray-400">Initial enrolment</em>' }}</td>
+                    <td class="px-5 py-3 font-medium text-gray-900">{{ $history->toDepartment?->name ?? '—' }}</td>
+                    <td class="px-5 py-3 text-xs text-gray-400">{{ $history->note ?? '—' }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+@endif
+

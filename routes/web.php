@@ -46,7 +46,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
             Route::get('/departments/create/academic',   [DepartmentController::class, 'createAcademic'])->name('departments.create.academic');
             Route::get('/departments/create/managerial', [DepartmentController::class, 'createManagerial'])->name('departments.create.managerial');
-            Route::resource('departments', DepartmentController::class)->except(['show', 'create']);
+            Route::resource('departments', DepartmentController::class)->except(['create']);
 
             Route::resource('professors', ProfessorController::class);
 
@@ -59,6 +59,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::resource('sections', SectionController::class);
 
             Route::resource('students', StudentController::class);
+            Route::post('/students/{student}/transfer', [StudentController::class, 'transfer'])->name('students.transfer');
 
             Route::resource('enrollments', EnrollmentController::class);
 

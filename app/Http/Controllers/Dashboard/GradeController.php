@@ -8,7 +8,9 @@ use App\Http\Requests\Dashboard\UpdateGradeRequest;
 use App\Models\AcademicTerm;
 use App\Models\Enrollment;
 use App\Models\Grade;
+use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GradeController extends Controller
 {
@@ -57,10 +59,12 @@ class GradeController extends Controller
 
     public function store(StoreGradeRequest $request)
     {
-        Grade::create(array_merge($request->validated(), [
+        $grade = Grade::create(array_merge($request->validated(), [
             'graded_by' => auth()->id(),
             'graded_at' => now(),
         ]));
+
+        $this->recalculateGpa($grade->enrollment->student_id);
 
         return redirect()
             ->route('dashboard.grades.index')
@@ -84,6 +88,8 @@ class GradeController extends Controller
             'graded_at' => now(),
         ]));
 
+        $this->recalculateGpa($grade->enrollment->student_id);
+
         return redirect()
             ->route('dashboard.grades.index')
             ->with('success', 'Grade updated successfully.');
@@ -91,11 +97,33 @@ class GradeController extends Controller
 
     public function destroy(Grade $grade)
     {
+        $studentId = $grade->enrollment->student_id;
         $grade->delete();
+
+        $this->recalculateGpa($studentId);
 
         return redirect()
             ->route('dashboard.grades.index')
             ->with('success', 'Grade deleted successfully.');
+    }
+
+    private function recalculateGpa(int $studentId): void
+    {
+        $result = DB::table('grades')
+            ->join('enrollments', 'grades.enrollment_id', '=', 'enrollments.id')
+            ->join('sections', 'enrollments.section_id', '=', 'sections.id')
+            ->join('courses', 'sections.course_id', '=', 'courses.id')
+            ->where('enrollments.student_id', $studentId)
+            ->whereNotNull('grades.grade_points')
+            ->where('courses.credit_hours', '>', 0)
+            ->selectRaw('SUM(grades.grade_points * courses.credit_hours) as weighted_sum, SUM(courses.credit_hours) as total_credits')
+            ->first();
+
+        $gpa = ($result && $result->total_credits > 0)
+            ? round($result->weighted_sum / $result->total_credits, 2)
+            : null;
+
+        Student::where('id', $studentId)->update(['gpa' => $gpa]);
     }
 
     private function formData(): array
