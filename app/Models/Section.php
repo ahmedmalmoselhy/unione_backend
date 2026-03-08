@@ -11,8 +11,7 @@ class Section extends Model
     protected $fillable = [
         'course_id',
         'professor_id',
-        'academic_year',
-        'semester',
+        'academic_term_id',
         'capacity',
         'room',
         'schedule',
@@ -35,6 +34,11 @@ class Section extends Model
     public function professor(): BelongsTo
     {
         return $this->belongsTo(Professor::class);
+    }
+
+    public function academicTerm(): BelongsTo
+    {
+        return $this->belongsTo(AcademicTerm::class);
     }
 
     public function enrollments(): HasMany
