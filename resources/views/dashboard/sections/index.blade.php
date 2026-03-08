@@ -24,6 +24,17 @@
     </div>
 @endif
 
+{{-- Search / Filter --}}
+@include('dashboard.partials._filter-bar', [
+    'action'  => route('dashboard.sections.index'),
+    'search'  => request('search'),
+    'filters' => [
+        ['name' => 'course_id', 'label' => 'Course', 'value' => request('course_id'), 'options' => $courses->toArray()],
+        ['name' => 'term_id', 'label' => 'Term', 'value' => request('term_id'), 'options' => $terms->toArray()],
+        ['name' => 'status', 'label' => 'Status', 'value' => request('status'), 'options' => ['active' => 'Active', 'inactive' => 'Inactive']],
+    ],
+])
+
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">{{ $sections->total() }} {{ Str::plural('section', $sections->total()) }} total</p>

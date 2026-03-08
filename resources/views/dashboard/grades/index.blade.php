@@ -15,6 +15,16 @@
     </div>
 @endif
 
+{{-- Search / Filter --}}
+@include('dashboard.partials._filter-bar', [
+    'action'  => route('dashboard.grades.index'),
+    'search'  => request('search'),
+    'filters' => [
+        ['name' => 'term_id', 'label' => 'Term', 'value' => request('term_id'), 'options' => $terms->toArray()],
+        ['name' => 'letter_grade', 'label' => 'Grade', 'value' => request('letter_grade'), 'options' => ['A+' => 'A+', 'A' => 'A', 'B+' => 'B+', 'B' => 'B', 'C+' => 'C+', 'C' => 'C', 'D+' => 'D+', 'D' => 'D', 'F' => 'F']],
+    ],
+])
+
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">{{ $grades->total() }} {{ Str::plural('grade', $grades->total()) }} total</p>

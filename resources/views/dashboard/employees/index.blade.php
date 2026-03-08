@@ -24,6 +24,17 @@
     </div>
 @endif
 
+{{-- Search / Filter --}}
+@include('dashboard.partials._filter-bar', [
+    'action'  => route('dashboard.employees.index'),
+    'search'  => request('search'),
+    'filters' => [
+        ['name' => 'department_id', 'label' => 'Department', 'value' => request('department_id'), 'options' => $departments->toArray()],
+        ['name' => 'employment_type', 'label' => 'Type', 'value' => request('employment_type'), 'options' => ['full_time' => 'Full Time', 'part_time' => 'Part Time', 'contract' => 'Contract']],
+        ['name' => 'status', 'label' => 'Status', 'value' => request('status'), 'options' => ['active' => 'Active', 'inactive' => 'Inactive']],
+    ],
+])
+
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">{{ $employees->total() }} {{ Str::plural('employee', $employees->total()) }} total</p>

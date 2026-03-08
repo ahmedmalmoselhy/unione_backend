@@ -15,6 +15,17 @@
     </div>
 @endif
 
+{{-- Search / Filter --}}
+@include('dashboard.partials._filter-bar', [
+    'action'  => route('dashboard.announcements.index'),
+    'search'  => request('search'),
+    'filters' => [
+        ['name' => 'type', 'label' => 'Type', 'value' => request('type'), 'options' => ['general' => 'General', 'academic' => 'Academic', 'administrative' => 'Administrative', 'urgent' => 'Urgent']],
+        ['name' => 'visibility', 'label' => 'Visibility', 'value' => request('visibility'), 'options' => ['university' => 'University', 'faculty' => 'Faculty', 'department' => 'Department', 'section' => 'Section']],
+        ['name' => 'pub_status', 'label' => 'Status', 'value' => request('pub_status'), 'options' => ['published' => 'Published', 'draft' => 'Draft', 'expired' => 'Expired']],
+    ],
+])
+
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">{{ $announcements->total() }} {{ Str::plural('announcement', $announcements->total()) }} total</p>

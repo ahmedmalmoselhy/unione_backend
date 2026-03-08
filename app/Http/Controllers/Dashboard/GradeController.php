@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreGradeRequest;
 use App\Http\Requests\Dashboard\UpdateGradeRequest;
+use App\Models\AcademicTerm;
 use App\Models\Enrollment;
 use App\Models\Grade;
+use Illuminate\Http\Request;
 
 class GradeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $grades = Grade::with([
             'enrollment.student.user',
@@ -18,10 +20,21 @@ class GradeController extends Controller
             'enrollment.academicTerm',
             'gradedBy',
         ])
+            ->when($request->filled('search'), fn ($q) => $q->whereHas('enrollment', function ($e) use ($request) {
+                $e->whereHas('student.user', fn ($u) => $u->where('first_name', 'ilike', '%' . $request->search . '%')
+                      ->orWhere('last_name', 'ilike', '%' . $request->search . '%'))
+                  ->orWhereHas('section.course', fn ($c) => $c->where('code', 'ilike', '%' . $request->search . '%')
+                      ->orWhere('name', 'ilike', '%' . $request->search . '%'));
+            }))
+            ->when($request->filled('term_id'), fn ($q) => $q->whereHas('enrollment', fn ($e) => $e->where('academic_term_id', $request->term_id)))
+            ->when($request->filled('letter_grade'), fn ($q) => $q->where('letter_grade', $request->letter_grade))
             ->latest('graded_at')
-            ->paginate(20);
+            ->paginate(20)
+            ->withQueryString();
 
-        return view('dashboard.grades.index', compact('grades'));
+        $terms = AcademicTerm::orderByDesc('academic_year')->pluck('name', 'id');
+
+        return view('dashboard.grades.index', compact('grades', 'terms'));
     }
 
     public function show(Grade $grade)

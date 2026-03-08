@@ -24,6 +24,16 @@
     </div>
 @endif
 
+{{-- Search / Filter --}}
+@include('dashboard.partials._filter-bar', [
+    'action'  => route('dashboard.faculties.index'),
+    'search'  => request('search'),
+    'filters' => [
+        ['name' => 'enrollment_type', 'label' => 'Enrollment Type', 'value' => request('enrollment_type'), 'options' => ['immediate' => 'Immediate', 'deferred' => 'Deferred', 'none' => 'None']],
+        ['name' => 'status', 'label' => 'Status', 'value' => request('status'), 'options' => ['active' => 'Active', 'inactive' => 'Inactive']],
+    ],
+])
+
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">{{ $faculties->total() }} {{ Str::plural('faculty', $faculties->total()) }} total</p>

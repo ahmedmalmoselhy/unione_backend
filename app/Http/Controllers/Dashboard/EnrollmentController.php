@@ -9,20 +9,33 @@ use App\Models\AcademicTerm;
 use App\Models\Enrollment;
 use App\Models\Section;
 use App\Models\Student;
+use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $enrollments = Enrollment::with([
             'student.user',
             'section.course',
             'academicTerm',
         ])
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
+                $q->whereHas('student.user', fn ($u) => $u->where('first_name', 'ilike', '%' . $request->search . '%')
+                      ->orWhere('last_name', 'ilike', '%' . $request->search . '%'))
+                  ->orWhereHas('student', fn ($s) => $s->where('student_number', 'ilike', '%' . $request->search . '%'))
+                  ->orWhereHas('section.course', fn ($c) => $c->where('code', 'ilike', '%' . $request->search . '%')
+                      ->orWhere('name', 'ilike', '%' . $request->search . '%'));
+            }))
+            ->when($request->filled('term_id'), fn ($q) => $q->where('academic_term_id', $request->term_id))
+            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
             ->latest('registered_at')
-            ->paginate(20);
+            ->paginate(20)
+            ->withQueryString();
 
-        return view('dashboard.enrollments.index', compact('enrollments'));
+        $terms = AcademicTerm::orderByDesc('academic_year')->pluck('name', 'id');
+
+        return view('dashboard.enrollments.index', compact('enrollments', 'terms'));
     }
 
     public function show(Enrollment $enrollment)

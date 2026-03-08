@@ -24,6 +24,17 @@
     </div>
 @endif
 
+{{-- Search / Filter --}}
+@include('dashboard.partials._filter-bar', [
+    'action'  => route('dashboard.courses.index'),
+    'search'  => request('search'),
+    'filters' => [
+        ['name' => 'level', 'label' => 'Level', 'value' => request('level'), 'options' => [1 => 'Level 1', 2 => 'Level 2', 3 => 'Level 3', 4 => 'Level 4', 5 => 'Level 5', 6 => 'Level 6']],
+        ['name' => 'is_elective', 'label' => 'Type', 'value' => request('is_elective'), 'options' => ['0' => 'Required', '1' => 'Elective']],
+        ['name' => 'status', 'label' => 'Status', 'value' => request('status'), 'options' => ['active' => 'Active', 'inactive' => 'Inactive']],
+    ],
+])
+
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">{{ $courses->total() }} {{ Str::plural('course', $courses->total()) }} total</p>

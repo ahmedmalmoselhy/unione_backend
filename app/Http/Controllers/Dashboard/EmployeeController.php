@@ -9,21 +9,34 @@ use App\Models\Department;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class EmployeeController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $employees = Employee::with(['user', 'department.faculty'])
             ->join('users', 'employees.user_id', '=', 'users.id')
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
+                $q->where('users.first_name', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('users.last_name', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('users.email', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('employees.staff_number', 'ilike', '%' . $request->search . '%');
+            }))
+            ->when($request->filled('department_id'), fn ($q) => $q->where('employees.department_id', $request->department_id))
+            ->when($request->filled('employment_type'), fn ($q) => $q->where('employees.employment_type', $request->employment_type))
+            ->when($request->filled('status'), fn ($q) => $q->where('users.is_active', $request->status === 'active'))
             ->orderBy('users.first_name')
             ->orderBy('users.last_name')
             ->select('employees.*')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
-        return view('dashboard.employees.index', compact('employees'));
+        $departments = Department::orderBy('name')->pluck('name', 'id');
+
+        return view('dashboard.employees.index', compact('employees', 'departments'));
     }
 
     public function show(Employee $employee): View

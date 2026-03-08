@@ -7,15 +7,25 @@ use App\Http\Requests\Dashboard\StoreAcademicTermRequest;
 use App\Http\Requests\Dashboard\UpdateAcademicTermRequest;
 use App\Models\AcademicTerm;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AcademicTermController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $terms = AcademicTerm::orderByDesc('academic_year')
+        $terms = AcademicTerm::query()
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
+                $q->where('name', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('name_ar', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('academic_year', 'ilike', '%' . $request->search . '%');
+            }))
+            ->when($request->filled('semester'), fn ($q) => $q->where('semester', $request->semester))
+            ->when($request->filled('status'), fn ($q) => $q->where('is_active', $request->status === 'active'))
+            ->orderByDesc('academic_year')
             ->orderByRaw("array_position(ARRAY['summer','second','first'], semester)")
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         return view('dashboard.academic-terms.index', compact('terms'));
     }

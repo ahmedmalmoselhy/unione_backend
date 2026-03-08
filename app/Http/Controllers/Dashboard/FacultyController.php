@@ -8,13 +8,24 @@ use App\Http\Requests\Dashboard\UpdateFacultyRequest;
 use App\Models\Faculty;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class FacultyController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $faculties = Faculty::with('dean')->orderBy('name')->paginate(15);
+        $faculties = Faculty::with('dean')
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
+                $q->where('name', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('name_ar', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('code', 'ilike', '%' . $request->search . '%');
+            }))
+            ->when($request->filled('status'), fn ($q) => $q->where('is_active', $request->status === 'active'))
+            ->when($request->filled('enrollment_type'), fn ($q) => $q->where('enrollment_type', $request->enrollment_type))
+            ->orderBy('name')
+            ->paginate(15)
+            ->withQueryString();
 
         return view('dashboard.faculties.index', compact('faculties'));
     }

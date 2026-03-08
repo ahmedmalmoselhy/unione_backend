@@ -24,6 +24,17 @@
     </div>
 @endif
 
+{{-- Search / Filter --}}
+@include('dashboard.partials._filter-bar', [
+    'action'  => route('dashboard.departments.index'),
+    'search'  => request('search'),
+    'filters' => [
+        ['name' => 'type', 'label' => 'Type', 'value' => request('type'), 'options' => ['academic' => 'Academic', 'managerial' => 'Managerial']],
+        ['name' => 'faculty_id', 'label' => 'Faculty', 'value' => request('faculty_id'), 'options' => $faculties->toArray()],
+        ['name' => 'status', 'label' => 'Status', 'value' => request('status'), 'options' => ['active' => 'Active', 'inactive' => 'Inactive']],
+    ],
+])
+
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">{{ $departments->total() }} {{ Str::plural('department', $departments->total()) }} total</p>

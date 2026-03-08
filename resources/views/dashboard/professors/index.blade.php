@@ -24,6 +24,17 @@
     </div>
 @endif
 
+{{-- Search / Filter --}}
+@include('dashboard.partials._filter-bar', [
+    'action'  => route('dashboard.professors.index'),
+    'search'  => request('search'),
+    'filters' => [
+        ['name' => 'department_id', 'label' => 'Department', 'value' => request('department_id'), 'options' => $departments->toArray()],
+        ['name' => 'rank', 'label' => 'Rank', 'value' => request('rank'), 'options' => ['lecturer' => 'Lecturer', 'assistant_professor' => 'Asst. Professor', 'associate_professor' => 'Assoc. Professor', 'professor' => 'Professor']],
+        ['name' => 'status', 'label' => 'Status', 'value' => request('status'), 'options' => ['active' => 'Active', 'inactive' => 'Inactive']],
+    ],
+])
+
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">{{ $professors->total() }} {{ Str::plural('professor', $professors->total()) }} total</p>

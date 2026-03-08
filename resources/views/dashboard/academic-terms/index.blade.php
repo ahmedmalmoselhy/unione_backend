@@ -24,6 +24,16 @@
     </div>
 @endif
 
+{{-- Search / Filter --}}
+@include('dashboard.partials._filter-bar', [
+    'action'  => route('dashboard.academic-terms.index'),
+    'search'  => request('search'),
+    'filters' => [
+        ['name' => 'semester', 'label' => 'Semester', 'value' => request('semester'), 'options' => ['first' => 'First', 'second' => 'Second', 'summer' => 'Summer']],
+        ['name' => 'status', 'label' => 'Status', 'value' => request('status'), 'options' => ['active' => 'Active', 'inactive' => 'Inactive']],
+    ],
+])
+
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">{{ $terms->total() }} {{ Str::plural('term', $terms->total()) }} total</p>

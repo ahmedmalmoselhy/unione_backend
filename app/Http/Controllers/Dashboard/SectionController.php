@@ -10,17 +10,29 @@ use App\Models\Course;
 use App\Models\Professor;
 use App\Models\Section;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class SectionController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $sections = Section::with(['course', 'professor.user', 'academicTerm'])
+            ->when($request->filled('search'), fn ($q) => $q->whereHas('course', function ($q) use ($request) {
+                $q->where('code', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('name', 'ilike', '%' . $request->search . '%');
+            }))
+            ->when($request->filled('course_id'), fn ($q) => $q->where('course_id', $request->course_id))
+            ->when($request->filled('term_id'), fn ($q) => $q->where('academic_term_id', $request->term_id))
+            ->when($request->filled('status'), fn ($q) => $q->where('is_active', $request->status === 'active'))
             ->orderByDesc('id')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
-        return view('dashboard.sections.index', compact('sections'));
+        $courses = Course::where('is_active', true)->orderBy('code')->get()->pluck(null, 'id')->map(fn ($c) => $c->code . ' — ' . $c->name);
+        $terms = AcademicTerm::orderByDesc('academic_year')->pluck('name', 'id');
+
+        return view('dashboard.sections.index', compact('sections', 'courses', 'terms'));
     }
 
     public function show(Section $section): View

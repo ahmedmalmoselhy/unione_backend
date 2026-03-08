@@ -9,15 +9,32 @@ use App\Models\Announcement;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Section;
+use Illuminate\Http\Request;
 
 class AnnouncementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $announcements = Announcement::with('author')
             ->withCount('reads')
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
+                $q->where('title', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('body', 'ilike', '%' . $request->search . '%');
+            }))
+            ->when($request->filled('type'), fn ($q) => $q->where('type', $request->type))
+            ->when($request->filled('visibility'), fn ($q) => $q->where('visibility', $request->visibility))
+            ->when($request->filled('pub_status'), function ($q) use ($request) {
+                if ($request->pub_status === 'draft') {
+                    $q->whereNull('published_at');
+                } elseif ($request->pub_status === 'published') {
+                    $q->whereNotNull('published_at')->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
+                } elseif ($request->pub_status === 'expired') {
+                    $q->whereNotNull('published_at')->where('expires_at', '<=', now());
+                }
+            })
             ->latest()
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         return view('dashboard.announcements.index', compact('announcements'));
     }

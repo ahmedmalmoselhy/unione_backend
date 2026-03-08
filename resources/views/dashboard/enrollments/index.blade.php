@@ -15,6 +15,16 @@
     </div>
 @endif
 
+{{-- Search / Filter --}}
+@include('dashboard.partials._filter-bar', [
+    'action'  => route('dashboard.enrollments.index'),
+    'search'  => request('search'),
+    'filters' => [
+        ['name' => 'term_id', 'label' => 'Term', 'value' => request('term_id'), 'options' => $terms->toArray()],
+        ['name' => 'status', 'label' => 'Status', 'value' => request('status'), 'options' => ['registered' => 'Registered', 'completed' => 'Completed', 'dropped' => 'Dropped', 'failed' => 'Failed', 'incomplete' => 'Incomplete']],
+    ],
+])
+
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
     <p class="text-sm text-gray-500">{{ $enrollments->total() }} {{ Str::plural('enrollment', $enrollments->total()) }} total</p>

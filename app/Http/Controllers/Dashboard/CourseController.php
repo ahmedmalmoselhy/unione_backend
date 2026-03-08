@@ -8,16 +8,26 @@ use App\Http\Requests\Dashboard\UpdateCourseRequest;
 use App\Models\Course;
 use App\Models\Department;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class CourseController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $courses = Course::with('departments.faculty')
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
+                $q->where('code', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('name', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('name_ar', 'ilike', '%' . $request->search . '%');
+            }))
+            ->when($request->filled('level'), fn ($q) => $q->where('level', $request->level))
+            ->when($request->filled('is_elective'), fn ($q) => $q->where('is_elective', $request->is_elective === '1'))
+            ->when($request->filled('status'), fn ($q) => $q->where('is_active', $request->status === 'active'))
             ->orderBy('code')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         return view('dashboard.courses.index', compact('courses'));
     }

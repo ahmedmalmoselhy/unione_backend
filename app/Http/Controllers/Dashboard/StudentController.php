@@ -10,21 +10,34 @@ use App\Models\Faculty;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class StudentController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $students = Student::with(['user', 'faculty', 'department'])
             ->join('users', 'students.user_id', '=', 'users.id')
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
+                $q->where('users.first_name', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('users.last_name', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('users.email', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('students.student_number', 'ilike', '%' . $request->search . '%');
+            }))
+            ->when($request->filled('faculty_id'), fn ($q) => $q->where('students.faculty_id', $request->faculty_id))
+            ->when($request->filled('enrollment_status'), fn ($q) => $q->where('students.enrollment_status', $request->enrollment_status))
+            ->when($request->filled('status'), fn ($q) => $q->where('users.is_active', $request->status === 'active'))
             ->orderBy('users.first_name')
             ->orderBy('users.last_name')
             ->select('students.*')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
-        return view('dashboard.students.index', compact('students'));
+        $faculties = Faculty::where('is_active', true)->orderBy('name')->pluck('name', 'id');
+
+        return view('dashboard.students.index', compact('students', 'faculties'));
     }
 
     public function show(Student $student): View

@@ -9,15 +9,29 @@ use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DepartmentController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $departments = Department::with(['faculty', 'head'])->orderBy('name')->paginate(15);
+        $departments = Department::with(['faculty', 'head'])
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
+                $q->where('name', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('name_ar', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('code', 'ilike', '%' . $request->search . '%');
+            }))
+            ->when($request->filled('type'), fn ($q) => $q->where('type', $request->type))
+            ->when($request->filled('faculty_id'), fn ($q) => $q->where('faculty_id', $request->faculty_id))
+            ->when($request->filled('status'), fn ($q) => $q->where('is_active', $request->status === 'active'))
+            ->orderBy('name')
+            ->paginate(15)
+            ->withQueryString();
 
-        return view('dashboard.departments.index', compact('departments'));
+        $faculties = Faculty::orderBy('name')->pluck('name', 'id');
+
+        return view('dashboard.departments.index', compact('departments', 'faculties'));
     }
 
     public function createAcademic(): View

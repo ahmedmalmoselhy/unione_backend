@@ -9,21 +9,34 @@ use App\Models\Department;
 use App\Models\Professor;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ProfessorController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $professors = Professor::with(['user', 'department.faculty'])
             ->join('users', 'professors.user_id', '=', 'users.id')
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
+                $q->where('users.first_name', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('users.last_name', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('users.email', 'ilike', '%' . $request->search . '%')
+                  ->orWhere('professors.staff_number', 'ilike', '%' . $request->search . '%');
+            }))
+            ->when($request->filled('department_id'), fn ($q) => $q->where('professors.department_id', $request->department_id))
+            ->when($request->filled('rank'), fn ($q) => $q->where('professors.academic_rank', $request->rank))
+            ->when($request->filled('status'), fn ($q) => $q->where('users.is_active', $request->status === 'active'))
             ->orderBy('users.first_name')
             ->orderBy('users.last_name')
             ->select('professors.*')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
-        return view('dashboard.professors.index', compact('professors'));
+        $departments = Department::where('type', 'academic')->orderBy('name')->pluck('name', 'id');
+
+        return view('dashboard.professors.index', compact('professors', 'departments'));
     }
 
     public function show(Professor $professor): View
