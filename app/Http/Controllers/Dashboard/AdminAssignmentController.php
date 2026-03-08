@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Dashboard\Concerns\DashboardScopeAware;
+use App\Mail\AdminAssigned;
+use App\Mail\AdminRevoked;
 use App\Models\AuditLog;
 use App\Models\Department;
 use App\Models\Employee;
@@ -12,6 +14,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class AdminAssignmentController extends Controller
@@ -77,6 +80,8 @@ class AdminAssignmentController extends Controller
             newValues: ['user_id' => $assignedUser->id, 'faculty_id' => $faculty->id],
         );
 
+        Mail::send(new AdminAssigned($assignedUser, 'Faculty', $faculty->name));
+
         return redirect()->route('dashboard.faculties.assign-admin', $faculty)
             ->with('success', 'Faculty administrator assigned successfully. They will be required to set a new password on next login.');
     }
@@ -107,6 +112,8 @@ class AdminAssignmentController extends Controller
                     description: "Revoked faculty admin role from {$revokedUser->first_name} {$revokedUser->last_name} for {$faculty->name}",
                     oldValues: ['user_id' => $revokedUser->id, 'faculty_id' => $faculty->id],
                 );
+
+                Mail::send(new AdminRevoked($revokedUser, 'Faculty', $faculty->name));
             }
         }
 
@@ -184,6 +191,8 @@ class AdminAssignmentController extends Controller
             newValues: ['user_id' => $assignedUser->id, 'department_id' => $department->id],
         );
 
+        Mail::send(new AdminAssigned($assignedUser, 'Department', $department->name));
+
         return redirect()->route('dashboard.departments.assign-admin', $department)
             ->with('success', 'Department administrator assigned successfully. They will be required to set a new password on next login.');
     }
@@ -218,6 +227,8 @@ class AdminAssignmentController extends Controller
                     description: "Revoked department admin role from {$revokedUser->first_name} {$revokedUser->last_name} for {$department->name}",
                     oldValues: ['user_id' => $revokedUser->id, 'department_id' => $department->id],
                 );
+
+                Mail::send(new AdminRevoked($revokedUser, 'Department', $department->name));
             }
         }
 
