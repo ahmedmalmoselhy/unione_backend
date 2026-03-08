@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\Course;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Faculty;
 use App\Models\Professor;
+use App\Models\Role;
 use App\Models\Section;
 use App\Models\Student;
 use Illuminate\Support\Facades\DB;
@@ -57,11 +59,40 @@ class HomeController extends Controller
             'students as withdrawn_students_count' => fn ($q) => $q->where('enrollment_status', 'withdrawn'),
         ])->orderBy('name')->get();
 
+        // Data health warnings
+        $facultyAdminRoleId = Role::where('name', 'faculty_admin')->value('id');
+        $facultiesWithAdmin = DB::table('role_user')
+            ->whereNull('revoked_at')
+            ->where('role_id', $facultyAdminRoleId)
+            ->whereNotNull('faculty_id')
+            ->pluck('faculty_id')
+            ->unique();
+
+        $dataHealth = [
+            'depts_without_head'      => Department::where('is_active', true)->whereNull('head_id')->count(),
+            'sections_without_prof'   => Section::where('is_active', true)->whereNull('professor_id')->count(),
+            'students_without_dept'   => Student::where('enrollment_status', 'active')->whereNull('department_id')->count(),
+            'faculties_without_admin' => Faculty::where('is_active', true)->whereNotIn('id', $facultiesWithAdmin)->count(),
+        ];
+
+        // Recent audit activity (last 5)
+        $recentAuditLogs = AuditLog::with('user')->latest('created_at')->limit(5)->get();
+
+        // Recent admin assignments/revocations (last 5)
+        $recentAssignments = AuditLog::with('user')
+            ->whereIn('action', ['assigned', 'revoked'])
+            ->latest('created_at')
+            ->limit(5)
+            ->get();
+
         return view('dashboard.home', [
             'role'                => 'system_admin',
             'globalStats'         => $globalStats,
             'faculties'           => $faculties,
             'professorsByFaculty' => $professorsByFaculty,
+            'dataHealth'          => $dataHealth,
+            'recentAuditLogs'     => $recentAuditLogs,
+            'recentAssignments'   => $recentAssignments,
         ]);
     }
 

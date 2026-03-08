@@ -126,6 +126,184 @@
         </div>
     @endif
 
+    {{-- ── DATA HEALTH WARNINGS ─────────────────────────────── --}}
+    @php
+        $warnings = array_filter([
+            $dataHealth['faculties_without_admin'] > 0
+                ? ['icon' => 'M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z',
+                   'label' => 'Faculties without an admin',
+                   'count' => $dataHealth['faculties_without_admin'],
+                   'link'  => route('dashboard.faculties.index')]
+                : null,
+            $dataHealth['depts_without_head'] > 0
+                ? ['icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
+                   'label' => 'Active departments without a department head',
+                   'count' => $dataHealth['depts_without_head'],
+                   'link'  => route('dashboard.departments.index')]
+                : null,
+            $dataHealth['sections_without_prof'] > 0
+                ? ['icon' => 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
+                   'label' => 'Active sections without an assigned professor',
+                   'count' => $dataHealth['sections_without_prof'],
+                   'link'  => route('dashboard.sections.index')]
+                : null,
+            $dataHealth['students_without_dept'] > 0
+                ? ['icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z',
+                   'label' => 'Active students without a department',
+                   'count' => $dataHealth['students_without_dept'],
+                   'link'  => route('dashboard.students.index')]
+                : null,
+        ]);
+    @endphp
+    @if(count($warnings) > 0)
+        <div class="mb-8">
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
+                Data Health Warnings
+            </h3>
+            <div class="space-y-2">
+                @foreach($warnings as $w)
+                    <a href="{{ $w['link'] }}"
+                       class="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 group hover:bg-amber-100 transition-colors">
+                        <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0 group-hover:bg-amber-200 transition-colors">
+                            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $w['icon'] }}"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-amber-800">{{ $w['label'] }}</p>
+                        </div>
+                        <span class="shrink-0 text-lg font-bold text-amber-700">{{ $w['count'] }}</span>
+                        <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    @else
+        <div class="mb-8 flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-5 py-3">
+            <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-sm font-medium text-green-700">All data health checks passed — no issues found.</p>
+        </div>
+    @endif
+
+    {{-- ── QUICK ACTIONS ─────────────────────────────────────── --}}
+    <div class="mb-8">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Quick Actions</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
+            @foreach([
+                ['label' => 'New Faculty',     'route' => 'dashboard.faculties.create',    'icon' => 'M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z', 'color' => 'blue'],
+                ['label' => 'New Department',  'route' => 'dashboard.departments.create.academic', 'icon' => 'M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z', 'color' => 'indigo'],
+                ['label' => 'New Student',     'route' => 'dashboard.students.create',     'icon' => 'M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z', 'color' => 'emerald'],
+                ['label' => 'New Professor',   'route' => 'dashboard.professors.create',   'icon' => 'M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z', 'color' => 'purple'],
+                ['label' => 'New Course',      'route' => 'dashboard.courses.create',      'icon' => 'M12 9v3m0 0v3m0-3h3m-3 0H9M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253', 'color' => 'teal'],
+                ['label' => 'Audit Log',       'route' => 'dashboard.audit-logs.index',    'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', 'color' => 'gray'],
+            ] as $action)
+                @php
+                    $qaColors = [
+                        'blue'   => ['bg' => 'bg-blue-50',   'icon' => 'text-blue-600',   'text' => 'text-blue-700',   'hover' => 'hover:bg-blue-100'],
+                        'indigo' => ['bg' => 'bg-indigo-50', 'icon' => 'text-indigo-600', 'text' => 'text-indigo-700', 'hover' => 'hover:bg-indigo-100'],
+                        'emerald'=> ['bg' => 'bg-emerald-50','icon' => 'text-emerald-600','text' => 'text-emerald-700','hover' => 'hover:bg-emerald-100'],
+                        'purple' => ['bg' => 'bg-purple-50', 'icon' => 'text-purple-600', 'text' => 'text-purple-700', 'hover' => 'hover:bg-purple-100'],
+                        'teal'   => ['bg' => 'bg-teal-50',   'icon' => 'text-teal-600',   'text' => 'text-teal-700',   'hover' => 'hover:bg-teal-100'],
+                        'gray'   => ['bg' => 'bg-gray-50',   'icon' => 'text-gray-600',   'text' => 'text-gray-700',   'hover' => 'hover:bg-gray-100'],
+                    ];
+                    $qc = $qaColors[$action['color']];
+                @endphp
+                <a href="{{ route($action['route']) }}"
+                   class="flex flex-col items-center gap-2 rounded-2xl border border-gray-200 py-4 px-3 {{ $qc['bg'] }} {{ $qc['hover'] }} transition-colors text-center">
+                    <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-sm">
+                        <svg class="w-5 h-5 {{ $qc['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $action['icon'] }}"/>
+                        </svg>
+                    </div>
+                    <span class="text-xs font-semibold {{ $qc['text'] }} leading-tight">{{ $action['label'] }}</span>
+                </a>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- ── RECENT ACTIVITY + RECENT ASSIGNMENTS (2-col) ─────── --}}
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+        {{-- Recent Audit Activity --}}
+        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-gray-700">Recent Audit Activity</h3>
+                <a href="{{ route('dashboard.audit-logs.index') }}"
+                   class="text-xs text-blue-600 hover:text-blue-700 font-medium">View all →</a>
+            </div>
+            @if($recentAuditLogs->isEmpty())
+                <div class="px-5 py-8 text-center text-sm text-gray-400">No audit entries yet.</div>
+            @else
+                <ul class="divide-y divide-gray-50">
+                    @foreach($recentAuditLogs as $log)
+                        @php
+                            $actionColors = [
+                                'created'  => 'bg-green-100 text-green-700',
+                                'updated'  => 'bg-blue-100 text-blue-700',
+                                'deleted'  => 'bg-red-100 text-red-700',
+                                'assigned' => 'bg-indigo-100 text-indigo-700',
+                                'revoked'  => 'bg-amber-100 text-amber-700',
+                            ];
+                            $logBadgeClass = $actionColors[$log->action] ?? 'bg-gray-100 text-gray-600';
+                        @endphp
+                        <li class="px-5 py-3 flex items-start gap-3">
+                            <span class="mt-0.5 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $logBadgeClass }} shrink-0 capitalize">
+                                {{ $log->action }}
+                            </span>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-gray-800 truncate">{{ $log->description }}</p>
+                                <p class="text-xs text-gray-400 mt-0.5">
+                                    {{ $log->user?->first_name }} {{ $log->user?->last_name }}
+                                    · {{ $log->created_at->diffForHumans() }}
+                                </p>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+
+        {{-- Recent Admin Assignments --}}
+        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-gray-700">Recent Admin Assignments</h3>
+                <a href="{{ route('dashboard.audit-logs.index', ['action' => 'assigned']) }}"
+                   class="text-xs text-blue-600 hover:text-blue-700 font-medium">View all →</a>
+            </div>
+            @if($recentAssignments->isEmpty())
+                <div class="px-5 py-8 text-center text-sm text-gray-400">No assignment events yet.</div>
+            @else
+                <ul class="divide-y divide-gray-50">
+                    @foreach($recentAssignments as $log)
+                        @php
+                            $isAssign = $log->action === 'assigned';
+                        @endphp
+                        <li class="px-5 py-3 flex items-start gap-3">
+                            <div class="mt-1 w-6 h-6 rounded-full flex items-center justify-center shrink-0 {{ $isAssign ? 'bg-green-100' : 'bg-red-100' }}">
+                                <svg class="w-3.5 h-3.5 {{ $isAssign ? 'text-green-600' : 'text-red-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                          d="{{ $isAssign ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' }}"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm text-gray-800 truncate">{{ $log->description }}</p>
+                                <p class="text-xs text-gray-400 mt-0.5">
+                                    By {{ $log->user?->first_name }} {{ $log->user?->last_name }}
+                                    · {{ $log->created_at->diffForHumans() }}
+                                </p>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+
+    </div>
+
 {{-- ════════════════════════════════════════
      FACULTY ADMIN VIEW
      ════════════════════════════════════════ --}}
