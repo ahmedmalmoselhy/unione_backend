@@ -5,6 +5,7 @@ use App\Http\Controllers\Dashboard\AuthController;
 use App\Http\Controllers\Dashboard\CourseController;
 use App\Http\Controllers\Dashboard\DepartmentController;
 use App\Http\Controllers\Dashboard\EmployeeController;
+use App\Http\Controllers\Dashboard\EnrollmentController;
 use App\Http\Controllers\Dashboard\FacultyController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\Dashboard\ProfessorController;
@@ -56,6 +57,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::resource('sections', SectionController::class);
 
             Route::resource('students', StudentController::class);
+
+            Route::resource('enrollments', EnrollmentController::class);
 
             Route::get('/university', [UniversityController::class, 'show'])->name('university.show');
             Route::get('/university/edit', [UniversityController::class, 'edit'])->name('university.edit');
