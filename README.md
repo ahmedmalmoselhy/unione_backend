@@ -1,13 +1,10 @@
-<div align="center">
-
 # UniOne
-### The All-in-One University Management Platform
+
+## The All-in-One University Management Platform
 
 **Manage your entire university — students, staff, academics, and administration — from a single, unified system.**
 
 ---
-
-</div>
 
 ## Why UniOne?
 
