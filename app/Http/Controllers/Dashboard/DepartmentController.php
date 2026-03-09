@@ -55,6 +55,7 @@ class DepartmentController extends Controller
 
     public function createAcademic(): View
     {
+        $faculties = Faculty::orderBy('name')->get();
         $professors = $this->activeProfessors();
 
         return view('dashboard.departments.create-academic', compact('faculties', 'professors'));
