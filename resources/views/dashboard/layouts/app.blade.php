@@ -13,9 +13,31 @@
     {{-- Sidebar --}}
     <aside class="w-64 shrink-0 bg-white border-e border-gray-200 flex flex-col">
 
+        @php
+            $__locale     = app()->getLocale();
+            $__university = \App\Models\University::first();
+            $__univName   = $__university
+                ? ($__locale === 'ar' ? $__university->name_ar : $__university->name)
+                : null;
+
+            $__facultyName = null;
+            if (auth()->user()->isFacultyAdmin()) {
+                $__facultyId   = auth()->user()->scopedFacultyId();
+                $__faculty     = $__facultyId ? \App\Models\Faculty::find($__facultyId) : null;
+                $__facultyName = $__faculty
+                    ? ($__locale === 'ar' ? $__faculty->name_ar : $__faculty->name)
+                    : null;
+            }
+        @endphp
+
         {{-- Brand --}}
         <div class="px-6 py-5 border-b border-gray-200">
             <span class="text-xl font-bold text-gray-900 tracking-tight">UniOne</span>
+            @if($__univName && (auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin()))
+                <p class="text-xs text-gray-500 mt-1 truncate">
+                    {{ $__univName }}{{ $__facultyName ? ' — ' . $__facultyName : '' }}
+                </p>
+            @endif
         </div>
 
         {{-- Navigation --}}
