@@ -261,12 +261,16 @@ class StudentController extends Controller
 
         Excel::import($import, $request->file('file'));
 
+        $redirect = $import->importedCount > 0
+            ? redirect()->route('dashboard.students.index')
+                  ->with('success', "{$import->importedCount} students imported successfully.")
+            : back();
+
         if (! empty($import->importErrors)) {
-            return back()->with('import_errors', $import->importErrors);
+            $redirect = $redirect->with('import_errors', $import->importErrors);
         }
 
-        return redirect()->route('dashboard.students.index')
-            ->with('success', "{$import->importedCount} students imported successfully.");
+        return $redirect;
     }
 
     private function formData(): array

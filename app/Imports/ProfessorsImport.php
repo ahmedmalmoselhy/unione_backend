@@ -78,8 +78,9 @@ class ProfessorsImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
             $validRows[] = array_merge($data, ['_department_id' => $departmentId]);
         }
 
-        if (! empty($errors)) {
-            $this->importErrors = $errors;
+        $this->importErrors = $errors;
+
+        if (empty($validRows)) {
             return;
         }
 
@@ -125,7 +126,7 @@ class ProfessorsImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
             'date_of_birth' => ['nullable', 'date'],
             'staff_number'  => ['required', 'string', 'max:50', 'unique:professors,staff_number'],
             'department'    => [$this->scopedDepartmentId ? 'nullable' : 'required', 'string'],
-            'specialization' => ['nullable', 'string', 'max:255'],
+            'specialization' => ['required', 'string', 'max:255'],
             'academic_rank'  => ['nullable', Rule::in(['lecturer', 'assistant_professor', 'associate_professor', 'professor'])],
             'office_location' => ['nullable', 'string', 'max:100'],
             'hired_at'       => ['nullable', 'date'],

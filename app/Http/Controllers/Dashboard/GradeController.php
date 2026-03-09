@@ -194,12 +194,16 @@ class GradeController extends Controller
 
         Excel::import($import, $request->file('file'));
 
+        $redirect = $import->importedCount > 0
+            ? redirect()->route('dashboard.grades.index')
+                  ->with('success', "{$import->importedCount} grades imported/updated successfully.")
+            : back();
+
         if (! empty($import->importErrors)) {
-            return back()->with('import_errors', $import->importErrors);
+            $redirect = $redirect->with('import_errors', $import->importErrors);
         }
 
-        return redirect()->route('dashboard.grades.index')
-            ->with('success', "{$import->importedCount} grades imported/updated successfully.");
+        return $redirect;
     }
 
     private function recalculateGpa(int $studentId): void

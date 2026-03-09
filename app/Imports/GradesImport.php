@@ -79,8 +79,9 @@ class GradesImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
             ];
         }
 
-        if (! empty($errors)) {
-            $this->importErrors = $errors;
+        $this->importErrors = $errors;
+
+        if (empty($validRows)) {
             return;
         }
 

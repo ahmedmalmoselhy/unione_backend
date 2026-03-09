@@ -84,12 +84,13 @@ class StudentsImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
             ]);
         }
 
-        if (! empty($errors)) {
-            $this->importErrors = $errors;
+        $this->importErrors = $errors;
+
+        if (empty($validRows)) {
             return;
         }
 
-        // All rows valid — import in a single transaction
+        // Import valid rows in a single transaction; invalid rows are skipped and reported above.
         DB::transaction(function () use ($validRows) {
             foreach ($validRows as $row) {
                 $user = User::create([
@@ -111,7 +112,7 @@ class StudentsImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
                     'faculty_id'        => $row['_faculty_id'],
                     'department_id'     => $row['_department_id'],
                     'academic_year'     => (int) $row['academic_year'],
-                    'semester'          => (int) $row['semester'],
+                    'semester'          => $row['semester'],
                     'enrollment_status' => $row['enrollment_status'] ?: 'active',
                     'enrolled_at'       => now()->toDateString(),
                 ]);
@@ -135,7 +136,7 @@ class StudentsImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
             'faculty'          => [$this->scopedFacultyId ? 'nullable' : 'required', 'string'],
             'department'       => [$this->scopedDepartmentId ? 'nullable' : 'required', 'string'],
             'academic_year'    => ['required', 'integer', 'between:1,7'],
-            'semester'         => ['required', 'integer', 'between:1,2'],
+            'semester'         => ['required', Rule::in(['first', 'second', 'summer'])],
             'enrollment_status' => ['nullable', Rule::in(['active', 'suspended', 'graduated', 'withdrawn'])],
         ];
     }
