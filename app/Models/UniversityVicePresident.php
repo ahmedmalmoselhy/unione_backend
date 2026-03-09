@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UniversityVicePresident extends Model
 {
     protected $fillable = [
+        'university_id',
         'professor_id',
         'title',
         'title_ar',

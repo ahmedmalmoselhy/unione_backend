@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreVicePresidentRequest;
 use App\Http\Requests\Dashboard\UpdateVicePresidentRequest;
 use App\Models\Professor;
+use App\Models\University;
 use App\Models\UniversityVicePresident;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -22,6 +23,7 @@ class UniversityVicePresidentController extends Controller
     public function store(StoreVicePresidentRequest $request): RedirectResponse
     {
         UniversityVicePresident::create([
+            'university_id' => University::value('id'),
             'professor_id' => $request->professor_id,
             'title'        => $request->title,
             'title_ar'     => $request->title_ar,
