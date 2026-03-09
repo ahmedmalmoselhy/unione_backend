@@ -8,227 +8,118 @@ use Illuminate\Support\Facades\Hash;
 
 class EmployeeSeeder extends Seeder
 {
+    // Map dept_code â†’ ordered list of 5 job titles (index 0 = head)
+    private array $deptJobs = [
+        'HR'       => ['HR Director',            'HR Manager',            'Recruitment Specialist', 'HR Officer',           'Payroll Officer'],
+        'FIN'      => ['Chief Financial Officer', 'Senior Accountant',     'Budget Analyst',         'Finance Officer',      'Payroll Officer'],
+        'IT-MGMT'  => ['IT Director',             'Systems Administrator', 'Network Engineer',       'Technical Support',    'Software Developer'],
+        'SA'       => ['Student Affairs Director','Student Counselor',     'Affairs Officer',        'Student Support Spec.','Welfare Officer'],
+        'ADM'      => ['Registrar',               'Admissions Director',   'Admissions Officer',     'Records Officer',      'Archive Officer'],
+        // Faculty-level managerial departments
+        'CSIT-SC'  => ['Student Care Director',   'Welfare Coordinator',   'Support Officer',        'Wellness Coach',       'Care Officer'],
+        'CSIT-SA'  => ['Student Affairs Director','Affairs Coordinator',   'Events Officer',         'Activities Officer',   'Admin Officer'],
+        'CSIT-LGL' => ['Legal Affairs Director',  'Legal Counsel',         'Compliance Officer',     'Legal Officer',        'Contract Spec.'],
+        'ENG-SC'   => ['Student Care Director',   'Welfare Coordinator',   'Support Officer',        'Wellness Coach',       'Care Officer'],
+        'ENG-SA'   => ['Student Affairs Director','Affairs Coordinator',   'Events Officer',         'Activities Officer',   'Admin Officer'],
+        'ENG-LGL'  => ['Legal Affairs Director',  'Legal Counsel',         'Compliance Officer',     'Legal Officer',        'Contract Spec.'],
+        'MED-SC'   => ['Student Care Director',   'Welfare Coordinator',   'Support Officer',        'Wellness Coach',       'Care Officer'],
+        'MED-SA'   => ['Student Affairs Director','Affairs Coordinator',   'Events Officer',         'Activities Officer',   'Admin Officer'],
+        'MED-LGL'  => ['Legal Affairs Director',  'Legal Counsel',         'Compliance Officer',     'Legal Officer',        'Contract Spec.'],
+        'BUS-SC'   => ['Student Care Director',   'Welfare Coordinator',   'Support Officer',        'Wellness Coach',       'Care Officer'],
+        'BUS-SA'   => ['Student Affairs Director','Affairs Coordinator',   'Events Officer',         'Activities Officer',   'Admin Officer'],
+        'BUS-LGL'  => ['Legal Affairs Director',  'Legal Counsel',         'Compliance Officer',     'Legal Officer',        'Contract Spec.'],
+        'LAW-SC'   => ['Student Care Director',   'Welfare Coordinator',   'Support Officer',        'Wellness Coach',       'Care Officer'],
+        'LAW-SA'   => ['Student Affairs Director','Affairs Coordinator',   'Events Officer',         'Activities Officer',   'Admin Officer'],
+        'LAW-LGL'  => ['Legal Affairs Director',  'Legal Counsel',         'Compliance Officer',     'Legal Officer',        'Contract Spec.'],
+    ];
+
+    private array $maleFirst   = ['Ahmed','Mohamed','Khaled','Omar','Hossam','Tarek','Wael','Amr','Islam','Ziad','Karim','Fady','Amir','Mostafa','Hassan','Ramy','Bassem','Adel','Walid','Youssef'];
+    private array $femaleFirst = ['Rania','Dina','Sara','Iman','Noha','Mona','Hala','Ghada','Yasmine','Ola','Nadia','Rasha','Salma','Enas','Farida','Nour','Mariam','Hana','Reem','Donia'];
+    private array $lastNames   = ['Osman','Hanna','Tawfik','Shawky','Lotfy','Ashraf','Mustafa','Galal','Ramadan','Khaled','Fathy','Soliman','Wahba','ElMasry','Abdallah','Ibrahim','Naguib','Zaki','Yousef','Samir','Fouad','Gaber','Mansour','Kamal','Helmy'];
+
+    private int $nationalIdCounter = 30000000000000;
+    private int $staffCounter      = 0;
+
     public function run(): void
     {
-        $now      = now();
-        $password = Hash::make('241996');
-        $roleId   = DB::table('roles')->where('name', 'employee')->value('id');
-        $depts    = DB::table('departments')->pluck('id', 'code');
+        $now         = now();
+        $password    = Hash::make('241996');
+        $empRoleId   = DB::table('roles')->where('name', 'employee')->value('id');
+        $headRoleId  = DB::table('roles')->where('name', 'department_head')->value('id');
+        $depts       = DB::table('departments')->pluck('id', 'code');
 
-        $employees = [
+        foreach ($this->deptJobs as $deptCode => $jobTitles) {
+            if (! isset($depts[$deptCode])) {
+                continue;
+            }
 
-            // ── Human Resources ─────────────────────────────────────────────────
-            [
-                'national_id'      => '30000000000001',
-                'first_name'       => 'Magda',
-                'last_name'        => 'Osman',
-                'email'            => 'm.osman@unione.com',
-                'gender'           => 'female',
-                'dept_code'        => 'HR',
-                'staff_number'     => 'EMP-0001',
-                'job_title'        => 'HR Manager',
-                'employment_type'  => 'full_time',
-                'salary'           => 12000.00,
-                'hired_at'         => '2015-03-01',
-            ],
-            [
-                'national_id'      => '30000000000002',
-                'first_name'       => 'Fady',
-                'last_name'        => 'Hanna',
-                'email'            => 'f.hanna@unione.com',
-                'gender'           => 'male',
-                'dept_code'        => 'HR',
-                'staff_number'     => 'EMP-0002',
-                'job_title'        => 'Recruitment Specialist',
-                'employment_type'  => 'full_time',
-                'salary'           => 7500.00,
-                'hired_at'         => '2019-06-01',
-            ],
+            $deptId           = $depts[$deptCode];
+            $firstEmpUserId   = null;
 
-            // ── Finance & Accounting ─────────────────────────────────────────────
-            [
-                'national_id'      => '30000000000003',
-                'first_name'       => 'Hisham',
-                'last_name'        => 'Tawfik',
-                'email'            => 'h.tawfik@unione.com',
-                'gender'           => 'male',
-                'dept_code'        => 'FIN',
-                'staff_number'     => 'EMP-0003',
-                'job_title'        => 'Chief Financial Officer',
-                'employment_type'  => 'full_time',
-                'salary'           => 20000.00,
-                'hired_at'         => '2010-01-01',
-            ],
-            [
-                'national_id'      => '30000000000004',
-                'first_name'       => 'Enas',
-                'last_name'        => 'Abdel-Aziz',
-                'email'            => 'e.abdelaziz@unione.com',
-                'gender'           => 'female',
-                'dept_code'        => 'FIN',
-                'staff_number'     => 'EMP-0004',
-                'job_title'        => 'Senior Accountant',
-                'employment_type'  => 'full_time',
-                'salary'           => 9000.00,
-                'hired_at'         => '2017-09-01',
-            ],
-            [
-                'national_id'      => '30000000000005',
-                'first_name'       => 'Ziad',
-                'last_name'        => 'Saeed',
-                'email'            => 'z.saeed@unione.com',
-                'gender'           => 'male',
-                'dept_code'        => 'FIN',
-                'staff_number'     => 'EMP-0005',
-                'job_title'        => 'Payroll Officer',
-                'employment_type'  => 'full_time',
-                'salary'           => 7000.00,
-                'hired_at'         => '2020-01-15',
-            ],
+            foreach ($jobTitles as $idx => $jobTitle) {
+                $this->nationalIdCounter++;
+                $this->staffCounter++;
 
-            // ── Information Technology ───────────────────────────────────────────
-            [
-                'national_id'      => '30000000000006',
-                'first_name'       => 'Wael',
-                'last_name'        => 'Shawky',
-                'email'            => 'w.shawky@unione.com',
-                'gender'           => 'male',
-                'dept_code'        => 'IT-MGMT',
-                'staff_number'     => 'EMP-0006',
-                'job_title'        => 'IT Director',
-                'employment_type'  => 'full_time',
-                'salary'           => 18000.00,
-                'hired_at'         => '2012-05-01',
-            ],
-            [
-                'national_id'      => '30000000000007',
-                'first_name'       => 'Nadia',
-                'last_name'        => 'Lotfy',
-                'email'            => 'n.lotfy@unione.com',
-                'gender'           => 'female',
-                'dept_code'        => 'IT-MGMT',
-                'staff_number'     => 'EMP-0007',
-                'job_title'        => 'Systems Administrator',
-                'employment_type'  => 'full_time',
-                'salary'           => 10000.00,
-                'hired_at'         => '2018-03-01',
-            ],
-            [
-                'national_id'      => '30000000000008',
-                'first_name'       => 'Karim',
-                'last_name'        => 'Ashraf',
-                'email'            => 'k.ashraf@unione.com',
-                'gender'           => 'male',
-                'dept_code'        => 'IT-MGMT',
-                'staff_number'     => 'EMP-0008',
-                'job_title'        => 'Help Desk Technician',
-                'employment_type'  => 'full_time',
-                'salary'           => 6000.00,
-                'hired_at'         => '2021-09-01',
-            ],
+                $isFemale  = ($idx % 3 === 2);
+                $firstName = $this->pick($isFemale ? $this->femaleFirst : $this->maleFirst, $deptCode . $idx . 'f');
+                $lastName  = $this->pick($this->lastNames, $deptCode . $idx . 'l');
+                $email     = strtolower(substr($firstName, 0, 1)) . '.' . strtolower($lastName) . $this->staffCounter . '@unione.com';
+                $staffNum  = 'EMP-' . str_pad($this->staffCounter, 4, '0', STR_PAD_LEFT);
+                $empType   = ($idx === 0) ? 'full_time' : (($idx === 4) ? 'part_time' : 'full_time');
+                $salary    = ($idx === 0) ? rand(14000, 22000) : rand(5000, 12000);
 
-            // ── Student Affairs ──────────────────────────────────────────────────
-            [
-                'national_id'      => '30000000000009',
-                'first_name'       => 'Ola',
-                'last_name'        => 'Mustafa',
-                'email'            => 'o.mustafa@unione.com',
-                'gender'           => 'female',
-                'dept_code'        => 'SA',
-                'staff_number'     => 'EMP-0009',
-                'job_title'        => 'Student Affairs Director',
-                'employment_type'  => 'full_time',
-                'salary'           => 14000.00,
-                'hired_at'         => '2011-09-01',
-            ],
-            [
-                'national_id'      => '30000000000010',
-                'first_name'       => 'Islam',
-                'last_name'        => 'Ramadan',
-                'email'            => 'i.ramadan@unione.com',
-                'gender'           => 'male',
-                'dept_code'        => 'SA',
-                'staff_number'     => 'EMP-0010',
-                'job_title'        => 'Student Counselor',
-                'employment_type'  => 'full_time',
-                'salary'           => 7000.00,
-                'hired_at'         => '2022-01-01',
-            ],
+                $userId = DB::table('users')->insertGetId([
+                    'national_id'       => (string) $this->nationalIdCounter,
+                    'first_name'        => $firstName,
+                    'last_name'         => $lastName,
+                    'email'             => $email,
+                    'password'          => $password,
+                    'gender'            => $isFemale ? 'female' : 'male',
+                    'date_of_birth'     => (1985 - $idx) . '-0' . ($idx + 1) . '-15',
+                    'is_active'         => true,
+                    'email_verified_at' => $now,
+                    'created_at'        => $now,
+                    'updated_at'        => $now,
+                ]);
 
-            // ── Admissions & Registration ────────────────────────────────────────
-            [
-                'national_id'      => '30000000000011',
-                'first_name'       => 'Rasha',
-                'last_name'        => 'Galal',
-                'email'            => 'r.galal@unione.com',
-                'gender'           => 'female',
-                'dept_code'        => 'ADM',
-                'staff_number'     => 'EMP-0011',
-                'job_title'        => 'Registrar',
-                'employment_type'  => 'full_time',
-                'salary'           => 13000.00,
-                'hired_at'         => '2009-09-01',
-            ],
-            [
-                'national_id'      => '30000000000012',
-                'first_name'       => 'Amir',
-                'last_name'        => 'Sobhy',
-                'email'            => 'a.sobhy@unione.com',
-                'gender'           => 'male',
-                'dept_code'        => 'ADM',
-                'staff_number'     => 'EMP-0012',
-                'job_title'        => 'Admissions Officer',
-                'employment_type'  => 'full_time',
-                'salary'           => 7500.00,
-                'hired_at'         => '2020-09-01',
-            ],
-            [
-                'national_id'      => '30000000000013',
-                'first_name'       => 'Salma',
-                'last_name'        => 'Fawzy',
-                'email'            => 's.fawzy@unione.com',
-                'gender'           => 'female',
-                'dept_code'        => 'ADM',
-                'staff_number'     => 'EMP-0013',
-                'job_title'        => 'Admissions Officer',
-                'employment_type'  => 'part_time',
-                'salary'           => 4000.00,
-                'hired_at'         => '2023-02-01',
-            ],
-        ];
+                DB::table('role_user')->insert([
+                    'user_id'    => $userId,
+                    'role_id'    => $empRoleId,
+                    'granted_at' => $now,
+                ]);
 
-        foreach ($employees as $data) {
-            $userId = DB::table('users')->insertGetId([
-                'national_id'       => $data['national_id'],
-                'first_name'        => $data['first_name'],
-                'last_name'         => $data['last_name'],
-                'email'             => $data['email'],
-                'password'          => $password,
-                'gender'            => $data['gender'],
-                'date_of_birth'     => '1985-04-20',
-                'is_active'         => true,
-                'email_verified_at' => $now,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ]);
+                DB::table('employees')->insert([
+                    'user_id'         => $userId,
+                    'staff_number'    => $staffNum,
+                    'department_id'   => $deptId,
+                    'job_title'       => $jobTitle,
+                    'employment_type' => $empType,
+                    'salary'          => $salary,
+                    'hired_at'        => (2010 + $idx) . '-09-01',
+                    'created_at'      => $now,
+                    'updated_at'      => $now,
+                ]);
 
-            DB::table('role_user')->insert([
-                'user_id'    => $userId,
-                'role_id'    => $roleId,
-                'granted_at' => $now,
-            ]);
+                if ($idx === 0) {
+                    $firstEmpUserId = $userId;
+                }
+            }
 
-            DB::table('employees')->insert([
-                'user_id'         => $userId,
-                'staff_number'    => $data['staff_number'],
-                'department_id'   => $depts[$data['dept_code']],
-                'job_title'       => $data['job_title'],
-                'employment_type' => $data['employment_type'],
-                'salary'          => $data['salary'],
-                'hired_at'        => $data['hired_at'],
-                'created_at'      => $now,
-                'updated_at'      => $now,
-            ]);
+            // First employee in each managerial dept becomes the department head
+            if ($firstEmpUserId) {
+                DB::table('role_user')->insert([
+                    'user_id'       => $firstEmpUserId,
+                    'role_id'       => $headRoleId,
+                    'department_id' => $deptId,
+                    'granted_at'    => $now,
+                ]);
+                DB::table('departments')->where('id', $deptId)->update(['head_id' => $firstEmpUserId]);
+            }
         }
+    }
+
+    private function pick(array $pool, string $seed): string
+    {
+        return $pool[abs(crc32($seed)) % count($pool)];
     }
 }

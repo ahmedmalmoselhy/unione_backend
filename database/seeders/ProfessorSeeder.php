@@ -8,343 +8,170 @@ use Illuminate\Support\Facades\Hash;
 
 class ProfessorSeeder extends Seeder
 {
+    // â”€â”€ Name pools (Arabic/Egyptian) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    private array $maleFirst    = ['Ahmed','Mohamed','Khaled','Omar','Hossam','Tarek','Sherif','Walid','Amr','Ramy','Bassem','Adel','Islam','Ziad','Wael','Karim','Fady','Amir','Mostafa','Hassan'];
+    private array $femaleFirst  = ['Rania','Dina','Sara','Iman','Noha','Mona','Hala','Ghada','Yasmine','Ola','Nadia','Rasha','Salma','Enas','Farida','Nour','Mariam','Hana','Reem','Donia'];
+    private array $lastNames    = ['Farouk','ElSherif','Mansour','Kamal','Gaber','Helmy','Rizk','Fathy','Soliman','Wahba','ElMasry','Abdallah','Ibrahim','Naguib','Zaki','Yousef','Samir','Barakat','ElGohary','Fouad','Tawfik','Galal','Osman','Lotfy','Ashraf','Mustafa','Ramadan','Sobhy','Fawzy','Badawi'];
+    private array $ranks        = ['professor','professor','associate_professor','associate_professor','assistant_professor','assistant_professor'];
+
+    // â”€â”€ Dept-specific data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    private array $deptMeta = [
+        'CS'       => ['specializations' => ['Algorithms & Theory','Software Engineering','Computer Networks','Programming Languages','Human-Computer Interaction','Formal Methods'], 'building' => 'CSIT Building'],
+        'IS'       => ['specializations' => ['Database Systems','Enterprise Architecture','Business Intelligence','ERP Systems','Information Security','Cloud Computing'], 'building' => 'CSIT Building'],
+        'CYB'      => ['specializations' => ['Network Security','Cryptography','Penetration Testing','Digital Forensics','Malware Analysis','Security Governance'], 'building' => 'CSIT Building'],
+        'AI'       => ['specializations' => ['Machine Learning','Deep Learning','Natural Language Processing','Computer Vision','Robotics','Reinforcement Learning'], 'building' => 'CSIT Building'],
+        'CIVIL'    => ['specializations' => ['Structural Engineering','Geotechnical Engineering','Environmental Engineering','Transportation Engineering','Construction Management','Water Resources'], 'building' => 'Engineering Block A'],
+        'ELEC'     => ['specializations' => ['Power Systems','Electronics & Circuits','Control Systems','Telecommunications','Signal Processing','Embedded Systems'], 'building' => 'Engineering Block B'],
+        'MECH'     => ['specializations' => ['Thermodynamics','Fluid Mechanics','Manufacturing','Robotics & Automation','Materials Science','CAD/CAM'], 'building' => 'Engineering Block C'],
+        'ARCH'     => ['specializations' => ['Urban Design','Architectural History','Sustainable Architecture','Interior Architecture','BIM & Digital Design','Landscape Architecture'], 'building' => 'Architecture Studio'],
+        'MED-INT'  => ['specializations' => ['Cardiology','Endocrinology','Gastroenterology','Rheumatology','Pulmonology','Nephrology'], 'building' => 'Medical Complex'],
+        'MED-SURG' => ['specializations' => ['General Surgery','Orthopedic Surgery','Neurosurgery','Cardiothoracic Surgery','Plastic Surgery','Vascular Surgery'], 'building' => 'Medical Complex'],
+        'MED-PHAR' => ['specializations' => ['Clinical Pharmacology','Pharmacokinetics','Drug Discovery','Toxicology','Pharmacogenomics','Neuropharmacology'], 'building' => 'Medical Complex'],
+        'MED-PATH' => ['specializations' => ['Histopathology','Clinical Pathology','Forensic Pathology','Molecular Pathology','Cytopathology','Immunopathology'], 'building' => 'Medical Complex'],
+        'MKT'      => ['specializations' => ['Digital Marketing','Consumer Behavior','Brand Management','Market Research','International Marketing','Advertising'], 'building' => 'Business Tower'],
+        'BUS-FIN'  => ['specializations' => ['Investment & Portfolio','Corporate Finance','Financial Derivatives','Banking','Risk Management','Islamic Finance'], 'building' => 'Business Tower'],
+        'BUS-HR'   => ['specializations' => ['Organizational Behavior','Talent Management','Labor Relations','Training & Development','Performance Management','Compensation & Benefits'], 'building' => 'Business Tower'],
+        'ACCT'     => ['specializations' => ['Financial Accounting','Managerial Accounting','Auditing','Tax Accounting','Cost Accounting','Forensic Accounting'], 'building' => 'Business Tower'],
+        'LAW-PUB'  => ['specializations' => ['Constitutional Law','Administrative Law','International Public Law','Human Rights Law','Environmental Law','Tax Law'], 'building' => 'Law Building'],
+        'LAW-PRI'  => ['specializations' => ['Commercial Law','Contract Law','Property Law','Family Law','Intellectual Property','Civil Procedure'], 'building' => 'Law Building'],
+        'LAW-CRI'  => ['specializations' => ['Criminal Law','Criminal Procedure','Criminology','Juvenile Justice','Cyber Crime Law','International Criminal Law'], 'building' => 'Law Building'],
+        'ENG-GEN'  => ['specializations' => ['Foundation Mathematics','Applied Physics','Engineering Drawing','Technical Communication','Introduction to Engineering','Computer-Aided Design'], 'building' => 'Engineering Block A'],
+        'BUS-GEN'  => ['specializations' => ['Introduction to Business','Business Mathematics','Microeconomics','Business Communication','Office Administration','Organizational Management'], 'building' => 'Business Tower'],
+        'MED-GEN'  => ['specializations' => ['Anatomy','Physiology','Biochemistry','Medical Ethics','Histology','Embryology'], 'building' => 'Medical Complex'],
+        'LAW-GEN'  => ['specializations' => ['Introduction to Law','Legal Reasoning','Legal Research & Writing','Constitutional Foundations','History of Law','Comparative Law'], 'building' => 'Law Building'],
+    ];
+
+    // All departments should have professors (including general/holding departments)
+    private array $noProfessorCodes = [];
+
+    private int $nationalIdCounter = 20000000000000;
+    private int $staffCounter      = 0;
+    private int $userCounter       = 0;
+
+    // Track by gender to alternate somewhat
+    private array $maleIdx   = [];
+    private array $femaleIdx = [];
+
     public function run(): void
     {
         $now      = now();
         $password = Hash::make('241996');
         $roleId   = DB::table('roles')->where('name', 'professor')->value('id');
-        $depts    = DB::table('departments')->pluck('id', 'code');
+        $deanRole = DB::table('roles')->where('name', 'dean')->value('id');
+        $headRole = DB::table('roles')->where('name', 'department_head')->value('id');
 
-        $professors = [
+        $departments = DB::table('departments')
+            ->where('type', 'academic')
+            ->whereNotNull('faculty_id')
+            ->whereNotIn('code', $this->noProfessorCodes)
+            ->orderBy('faculty_id')
+            ->orderBy('id')
+            ->get();
 
-            // ── CSIT / Computer Science ─────────────────────────────────────────
-            [
-                'national_id'   => '20000000000001',
-                'first_name'    => 'Ahmed',
-                'last_name'     => 'Farouk',
-                'email'         => 'a.farouk@unione.com',
-                'gender'        => 'male',
-                'dept_code'     => 'CS',
-                'staff_number'  => 'PROF-0001',
-                'specialization'=> 'Algorithms & Data Structures',
-                'rank'          => 'professor',
-                'office'        => 'CSIT Building, Office 101',
-                'hired_at'      => '2010-09-01',
-            ],
-            [
-                'national_id'   => '20000000000002',
-                'first_name'    => 'Rania',
-                'last_name'     => 'El-Sherif',
-                'email'         => 'r.elsherif@unione.com',
-                'gender'        => 'female',
-                'dept_code'     => 'CS',
-                'staff_number'  => 'PROF-0002',
-                'specialization'=> 'Software Engineering',
-                'rank'          => 'associate_professor',
-                'office'        => 'CSIT Building, Office 102',
-                'hired_at'      => '2014-09-01',
-            ],
+        $faculties = DB::table('faculties')->get()->keyBy('id');
 
-            // ── CSIT / Information Systems ───────────────────────────────────────
-            [
-                'national_id'   => '20000000000003',
-                'first_name'    => 'Tarek',
-                'last_name'     => 'Mansour',
-                'email'         => 't.mansour@unione.com',
-                'gender'        => 'male',
-                'dept_code'     => 'IS',
-                'staff_number'  => 'PROF-0003',
-                'specialization'=> 'Database Systems',
-                'rank'          => 'associate_professor',
-                'office'        => 'CSIT Building, Office 201',
-                'hired_at'      => '2012-09-01',
-            ],
-            [
-                'national_id'   => '20000000000004',
-                'first_name'    => 'Dina',
-                'last_name'     => 'Kamal',
-                'email'         => 'd.kamal@unione.com',
-                'gender'        => 'female',
-                'dept_code'     => 'IS',
-                'staff_number'  => 'PROF-0004',
-                'specialization'=> 'Enterprise Resource Planning',
-                'rank'          => 'assistant_professor',
-                'office'        => 'CSIT Building, Office 202',
-                'hired_at'      => '2018-09-01',
-            ],
+        // Group depts by faculty (to track dean assignment)
+        $deanAssigned = [];
 
-            // ── CSIT / Cybersecurity ─────────────────────────────────────────────
-            [
-                'national_id'   => '20000000000005',
-                'first_name'    => 'Mostafa',
-                'last_name'     => 'Gaber',
-                'email'         => 'm.gaber@unione.com',
-                'gender'        => 'male',
-                'dept_code'     => 'CYB',
-                'staff_number'  => 'PROF-0005',
-                'specialization'=> 'Network Security',
-                'rank'          => 'professor',
-                'office'        => 'CSIT Building, Office 301',
-                'hired_at'      => '2008-09-01',
-            ],
+        foreach ($departments as $dept) {
+            $meta          = $this->deptMeta[$dept->code] ?? ['specializations' => ['General Studies'], 'building' => 'Main Building'];
+            $specializations = $meta['specializations'];
+            $building        = $meta['building'];
+            $profCount       = count($specializations); // 6 per dept
 
-            // ── CSIT / Artificial Intelligence ───────────────────────────────────
-            [
-                'national_id'   => '20000000000006',
-                'first_name'    => 'Sara',
-                'last_name'     => 'Helmy',
-                'email'         => 's.helmy@unione.com',
-                'gender'        => 'female',
-                'dept_code'     => 'AI',
-                'staff_number'  => 'PROF-0006',
-                'specialization'=> 'Machine Learning & Deep Learning',
-                'rank'          => 'professor',
-                'office'        => 'CSIT Building, Office 401',
-                'hired_at'      => '2011-09-01',
-            ],
+            $firstProfUserId = null;
 
-            // ── Engineering / Civil ──────────────────────────────────────────────
-            [
-                'national_id'   => '20000000000007',
-                'first_name'    => 'Hossam',
-                'last_name'     => 'Rizk',
-                'email'         => 'h.rizk@unione.com',
-                'gender'        => 'male',
-                'dept_code'     => 'CIVIL',
-                'staff_number'  => 'PROF-0007',
-                'specialization'=> 'Structural Engineering',
-                'rank'          => 'professor',
-                'office'        => 'Engineering Building A, Office 101',
-                'hired_at'      => '2005-09-01',
-            ],
-            [
-                'national_id'   => '20000000000008',
-                'first_name'    => 'Iman',
-                'last_name'     => 'Fathy',
-                'email'         => 'i.fathy@unione.com',
-                'gender'        => 'female',
-                'dept_code'     => 'CIVIL',
-                'staff_number'  => 'PROF-0008',
-                'specialization'=> 'Geotechnical Engineering',
-                'rank'          => 'assistant_professor',
-                'office'        => 'Engineering Building A, Office 102',
-                'hired_at'      => '2019-09-01',
-            ],
+            for ($i = 0; $i < $profCount; $i++) {
+                $isFemale  = ($i % 3 === 2); // roughly 1 in 3 is female
+                $firstName = $this->pickName($isFemale ? 'female' : 'male', $dept->code . $i);
+                $lastName  = $this->pickLastName($dept->code . $i . 'l');
+                $this->nationalIdCounter++;
+                $this->staffCounter++;
 
-            // ── Engineering / Electrical ─────────────────────────────────────────
-            [
-                'national_id'   => '20000000000009',
-                'first_name'    => 'Khaled',
-                'last_name'     => 'Soliman',
-                'email'         => 'k.soliman@unione.com',
-                'gender'        => 'male',
-                'dept_code'     => 'ELEC',
-                'staff_number'  => 'PROF-0009',
-                'specialization'=> 'Power Systems',
-                'rank'          => 'associate_professor',
-                'office'        => 'Engineering Building B, Office 101',
-                'hired_at'      => '2013-09-01',
-            ],
+                $email      = strtolower(substr($firstName, 0, 1) . '.' . $lastName) . $this->staffCounter . '@unione.com';
+                $staffNum   = 'PROF-' . str_pad($this->staffCounter, 4, '0', STR_PAD_LEFT);
+                $rank       = $this->ranks[$i % count($this->ranks)];
+                $hiredYear  = rand(2000, 2022);
+                $dob        = ($hiredYear - rand(27, 40)) . '-' . str_pad(rand(1, 12), 2, '0', STR_PAD_LEFT) . '-01';
 
-            // ── Engineering / Mechanical ─────────────────────────────────────────
-            [
-                'national_id'   => '20000000000010',
-                'first_name'    => 'Amr',
-                'last_name'     => 'Wahba',
-                'email'         => 'a.wahba@unione.com',
-                'gender'        => 'male',
-                'dept_code'     => 'MECH',
-                'staff_number'  => 'PROF-0010',
-                'specialization'=> 'Thermodynamics & Heat Transfer',
-                'rank'          => 'professor',
-                'office'        => 'Engineering Building B, Office 201',
-                'hired_at'      => '2007-09-01',
-            ],
+                $userId = DB::table('users')->insertGetId([
+                    'national_id'       => (string) $this->nationalIdCounter,
+                    'first_name'        => $firstName,
+                    'last_name'         => $lastName,
+                    'email'             => $email,
+                    'password'          => $password,
+                    'gender'            => $isFemale ? 'female' : 'male',
+                    'date_of_birth'     => $dob,
+                    'is_active'         => true,
+                    'email_verified_at' => $now,
+                    'created_at'        => $now,
+                    'updated_at'        => $now,
+                ]);
 
-            // ── Engineering / Architecture ───────────────────────────────────────
-            [
-                'national_id'   => '20000000000011',
-                'first_name'    => 'Noha',
-                'last_name'     => 'El-Masry',
-                'email'         => 'n.elmasry@unione.com',
-                'gender'        => 'female',
-                'dept_code'     => 'ARCH',
-                'staff_number'  => 'PROF-0011',
-                'specialization'=> 'Urban Design',
-                'rank'          => 'associate_professor',
-                'office'        => 'Architecture Studio, Office 101',
-                'hired_at'      => '2015-09-01',
-            ],
+                DB::table('role_user')->insert([
+                    'user_id'    => $userId,
+                    'role_id'    => $roleId,
+                    'granted_at' => $now,
+                ]);
 
-            // ── Medicine / Internal Medicine ─────────────────────────────────────
-            [
-                'national_id'   => '20000000000012',
-                'first_name'    => 'Sherif',
-                'last_name'     => 'Abdallah',
-                'email'         => 's.abdallah@unione.com',
-                'gender'        => 'male',
-                'dept_code'     => 'MED-INT',
-                'staff_number'  => 'PROF-0012',
-                'specialization'=> 'Cardiology',
-                'rank'          => 'professor',
-                'office'        => 'Medical Building, Office 101',
-                'hired_at'      => '2003-09-01',
-            ],
-            [
-                'national_id'   => '20000000000013',
-                'first_name'    => 'Mona',
-                'last_name'     => 'Ibrahim',
-                'email'         => 'm.ibrahim@unione.com',
-                'gender'        => 'female',
-                'dept_code'     => 'MED-INT',
-                'staff_number'  => 'PROF-0013',
-                'specialization'=> 'Endocrinology',
-                'rank'          => 'associate_professor',
-                'office'        => 'Medical Building, Office 102',
-                'hired_at'      => '2012-09-01',
-            ],
+                DB::table('professors')->insert([
+                    'user_id'         => $userId,
+                    'staff_number'    => $staffNum,
+                    'department_id'   => $dept->id,
+                    'specialization'  => $specializations[$i],
+                    'academic_rank'   => $rank,
+                    'office_location' => $building . ', Office ' . ($i + 1) . '0' . $dept->id,
+                    'hired_at'        => $hiredYear . '-09-01',
+                    'created_at'      => $now,
+                    'updated_at'      => $now,
+                ]);
 
-            // ── Medicine / Surgery ───────────────────────────────────────────────
-            [
-                'national_id'   => '20000000000014',
-                'first_name'    => 'Walid',
-                'last_name'     => 'Naguib',
-                'email'         => 'w.naguib@unione.com',
-                'gender'        => 'male',
-                'dept_code'     => 'MED-SURG',
-                'staff_number'  => 'PROF-0014',
-                'specialization'=> 'General Surgery',
-                'rank'          => 'professor',
-                'office'        => 'Medical Building, Office 201',
-                'hired_at'      => '2000-09-01',
-            ],
+                $professorId = DB::table('professors')->where('user_id', $userId)->value('id');
 
-            // ── Medicine / Pharmacology ──────────────────────────────────────────
-            [
-                'national_id'   => '20000000000015',
-                'first_name'    => 'Hala',
-                'last_name'     => 'Zaki',
-                'email'         => 'h.zaki@unione.com',
-                'gender'        => 'female',
-                'dept_code'     => 'MED-PHAR',
-                'staff_number'  => 'PROF-0015',
-                'specialization'=> 'Clinical Pharmacology',
-                'rank'          => 'associate_professor',
-                'office'        => 'Medical Building, Office 301',
-                'hired_at'      => '2014-09-01',
-            ],
+                if ($i === 0) {
+                    $firstProfUserId  = $userId;
+                    $firstProfId      = $professorId;
+                }
 
-            // ── Business / Marketing ─────────────────────────────────────────────
-            [
-                'national_id'   => '20000000000016',
-                'first_name'    => 'Bassem',
-                'last_name'     => 'Yousef',
-                'email'         => 'b.yousef@unione.com',
-                'gender'        => 'male',
-                'dept_code'     => 'MKT',
-                'staff_number'  => 'PROF-0016',
-                'specialization'=> 'Digital Marketing',
-                'rank'          => 'assistant_professor',
-                'office'        => 'Business Building, Office 101',
-                'hired_at'      => '2020-09-01',
-            ],
+                // First professor per dept becomes department head
+                if ($i === 0) {
+                    DB::table('role_user')->insert([
+                        'user_id'       => $userId,
+                        'role_id'       => $headRole,
+                        'department_id' => $dept->id,
+                        'granted_at'    => $now,
+                    ]);
+                    DB::table('departments')->where('id', $dept->id)->update(['head_id' => $userId]);
+                }
+            }
 
-            // ── Business / Finance & Banking ─────────────────────────────────────
-            [
-                'national_id'   => '20000000000017',
-                'first_name'    => 'Ghada',
-                'last_name'     => 'Samir',
-                'email'         => 'g.samir@unione.com',
-                'gender'        => 'female',
-                'dept_code'     => 'BUS-FIN',
-                'staff_number'  => 'PROF-0017',
-                'specialization'=> 'Investment & Portfolio Management',
-                'rank'          => 'professor',
-                'office'        => 'Business Building, Office 201',
-                'hired_at'      => '2006-09-01',
-            ],
-
-            // ── Business / HRM ───────────────────────────────────────────────────
-            [
-                'national_id'   => '20000000000018',
-                'first_name'    => 'Adel',
-                'last_name'     => 'Barakat',
-                'email'         => 'a.barakat@unione.com',
-                'gender'        => 'male',
-                'dept_code'     => 'BUS-HR',
-                'staff_number'  => 'PROF-0018',
-                'specialization'=> 'Organizational Behavior',
-                'rank'          => 'associate_professor',
-                'office'        => 'Business Building, Office 301',
-                'hired_at'      => '2016-09-01',
-            ],
-
-            // ── Law / Public Law ─────────────────────────────────────────────────
-            [
-                'national_id'   => '20000000000019',
-                'first_name'    => 'Ramy',
-                'last_name'     => 'El-Gohary',
-                'email'         => 'r.elgohary@unione.com',
-                'gender'        => 'male',
-                'dept_code'     => 'LAW-PUB',
-                'staff_number'  => 'PROF-0019',
-                'specialization'=> 'Constitutional Law',
-                'rank'          => 'professor',
-                'office'        => 'Law Building, Office 101',
-                'hired_at'      => '2004-09-01',
-            ],
-
-            // ── Law / Private Law ────────────────────────────────────────────────
-            [
-                'national_id'   => '20000000000020',
-                'first_name'    => 'Yasmine',
-                'last_name'     => 'Fouad',
-                'email'         => 'y.fouad@unione.com',
-                'gender'        => 'female',
-                'dept_code'     => 'LAW-PRI',
-                'staff_number'  => 'PROF-0020',
-                'specialization'=> 'Commercial & Contract Law',
-                'rank'          => 'associate_professor',
-                'office'        => 'Law Building, Office 201',
-                'hired_at'      => '2017-09-01',
-            ],
-        ];
-
-        foreach ($professors as $data) {
-            // Create user
-            $userId = DB::table('users')->insertGetId([
-                'national_id'       => $data['national_id'],
-                'first_name'        => $data['first_name'],
-                'last_name'         => $data['last_name'],
-                'email'             => $data['email'],
-                'password'          => $password,
-                'gender'            => $data['gender'],
-                'date_of_birth'     => '1975-06-15',
-                'is_active'         => true,
-                'email_verified_at' => $now,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ]);
-
-            // Assign professor role
-            DB::table('role_user')->insert([
-                'user_id'    => $userId,
-                'role_id'    => $roleId,
-                'granted_at' => $now,
-            ]);
-
-            // Create professor profile
-            DB::table('professors')->insert([
-                'user_id'        => $userId,
-                'staff_number'   => $data['staff_number'],
-                'department_id'  => $depts[$data['dept_code']],
-                'specialization' => $data['specialization'],
-                'academic_rank'  => $data['rank'],
-                'office_location'=> $data['office'],
-                'hired_at'       => $data['hired_at'],
-                'created_at'     => $now,
-                'updated_at'     => $now,
-            ]);
+            // First professor in each faculty becomes the dean
+            $fid = $dept->faculty_id;
+            if ($firstProfUserId && ! isset($deanAssigned[$fid])) {
+                $deanAssigned[$fid] = $firstProfUserId;
+                DB::table('role_user')->insert([
+                    'user_id'    => $firstProfUserId,
+                    'role_id'    => $deanRole,
+                    'faculty_id' => $fid,
+                    'granted_at' => $now,
+                ]);
+                DB::table('faculties')->where('id', $fid)->update(['dean_id' => $firstProfUserId]);
+            }
         }
+    }
+
+    private function pickName(string $gender, string $seed): string
+    {
+        $pool = $gender === 'female' ? $this->femaleFirst : $this->maleFirst;
+        $idx  = abs(crc32($seed)) % count($pool);
+
+        return $pool[$idx];
+    }
+
+    private function pickLastName(string $seed): string
+    {
+        $idx = abs(crc32($seed)) % count($this->lastNames);
+
+        return $this->lastNames[$idx];
     }
 }

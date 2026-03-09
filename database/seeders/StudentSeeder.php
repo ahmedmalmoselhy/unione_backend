@@ -6,8 +6,26 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * Seeds students programmatically:
+ *
+ * CSIT (immediate, 4 depts Ã— 4 years Ã— 100 active + 40 grads per dept)
+ * ENG  (deferred,  ENG-GEN yr1 Ã— 100 + 4 depts Ã— 3 yrs Ã— 100 active + 40 grads per dept)
+ * BUS  (deferred,  BUS-GEN yr1 Ã— 100 + 4 depts Ã— 3 yrs Ã— 100 active + 40 grads per dept)
+ * MED  (none,      5 yrs Ã— 50 active + 50 grads)
+ * LAW  (none,      4 yrs Ã— 50 active + 40 grads)
+ *
+ * Total active â‰ˆ 3 350  |  Total grads â‰ˆ 570  |  Grand total â‰ˆ 3 920
+ */
 class StudentSeeder extends Seeder
 {
+    private array $maleFirst   = ['Ali','Omar','Youssef','Hassan','Karim','Tarek','Islam','Ahmad','Mostafa','Mohamed','Wael','Amr','Ramy','Adel','Ziad','Amir','Sherif','Khaled','Fady','Bassem','Mahmoud','Nader','Hossam','Sami','Raed'];
+    private array $femaleFirst = ['Mariam','Nour','Lina','Sara','Rania','Dina','Hana','Noha','Ola','Yasmine','Reem','Salma','Farida','Hala','Enas','Ghada','Donia','Mona','Nadia','Rasha','Iman','Maram','Laila','Dalia','Heba'];
+    private array $lastNames   = ['Mohsen','Adel','Tarek','Samy','Nabil','Magdy','ElBadry','Samir','Fouad','Kamal','Fathy','Wahba','Ramadan','Soliman','Zaki','Mansour','Abdallah','Ibrahim','Naguib','Yousef','Gaber','Helmy','Rizk','Barakat','Osman','ElMasry','Galal','Tawfik','Khaled','Ashraf'];
+
+    private int $nationalIdCounter = 40000000000000;
+    private int $studentCounter    = 0;
+
     public function run(): void
     {
         $now      = now();
@@ -16,280 +34,167 @@ class StudentSeeder extends Seeder
         $faculties = DB::table('faculties')->pluck('id', 'code');
         $depts     = DB::table('departments')->pluck('id', 'code');
 
-        $students = [
-
-            // =====================================================================
-            // CSIT — immediate enrollment (students have a department from day 1)
-            // =====================================================================
-            [
-                'national_id'    => '40000000000001',
-                'first_name'     => 'Ali',
-                'last_name'      => 'Mohsen',
-                'email'          => 'ali.mohsen@student.unione.com',
-                'gender'         => 'male',
-                'student_number' => 'STU-2021-0001',
-                'faculty_code'   => 'CSIT',
-                'dept_code'      => 'CS',
-                'academic_year'  => 4,
-                'enrolled_at'    => '2021-09-15',
-            ],
-            [
-                'national_id'    => '40000000000002',
-                'first_name'     => 'Mariam',
-                'last_name'      => 'Adel',
-                'email'          => 'mariam.adel@student.unione.com',
-                'gender'         => 'female',
-                'student_number' => 'STU-2021-0002',
-                'faculty_code'   => 'CSIT',
-                'dept_code'      => 'CS',
-                'academic_year'  => 4,
-                'enrolled_at'    => '2021-09-15',
-            ],
-            [
-                'national_id'    => '40000000000003',
-                'first_name'     => 'Omar',
-                'last_name'      => 'Tarek',
-                'email'          => 'omar.tarek@student.unione.com',
-                'gender'         => 'male',
-                'student_number' => 'STU-2022-0001',
-                'faculty_code'   => 'CSIT',
-                'dept_code'      => 'AI',
-                'academic_year'  => 3,
-                'enrolled_at'    => '2022-09-15',
-            ],
-            [
-                'national_id'    => '40000000000004',
-                'first_name'     => 'Nour',
-                'last_name'      => 'Samy',
-                'email'          => 'nour.samy@student.unione.com',
-                'gender'         => 'female',
-                'student_number' => 'STU-2022-0002',
-                'faculty_code'   => 'CSIT',
-                'dept_code'      => 'CYB',
-                'academic_year'  => 3,
-                'enrolled_at'    => '2022-09-15',
-            ],
-            [
-                'national_id'    => '40000000000005',
-                'first_name'     => 'Youssef',
-                'last_name'      => 'Nabil',
-                'email'          => 'youssef.nabil@student.unione.com',
-                'gender'         => 'male',
-                'student_number' => 'STU-2023-0001',
-                'faculty_code'   => 'CSIT',
-                'dept_code'      => 'IS',
-                'academic_year'  => 2,
-                'enrolled_at'    => '2023-09-15',
-            ],
-            [
-                'national_id'    => '40000000000006',
-                'first_name'     => 'Lina',
-                'last_name'      => 'Magdy',
-                'email'          => 'lina.magdy@student.unione.com',
-                'gender'         => 'female',
-                'student_number' => 'STU-2024-0001',
-                'faculty_code'   => 'CSIT',
-                'dept_code'      => 'CS',
-                'academic_year'  => 1,
-                'enrolled_at'    => '2024-09-15',
-            ],
-
-            // =====================================================================
-            // ENGINEERING — deferred enrollment
-            // Year 1 students → preparatory dept (ENG-PREP)
-            // Year 2+ students → specific dept
-            // =====================================================================
-            [
-                'national_id'    => '40000000000007',
-                'first_name'     => 'Hassan',
-                'last_name'      => 'El-Badry',
-                'email'          => 'hassan.elbadry@student.unione.com',
-                'gender'         => 'male',
-                'student_number' => 'STU-2021-0003',
-                'faculty_code'   => 'ENG',
-                'dept_code'      => 'CIVIL',
-                'academic_year'  => 4,
-                'enrolled_at'    => '2021-09-15',
-            ],
-            [
-                'national_id'    => '40000000000008',
-                'first_name'     => 'Donia',
-                'last_name'      => 'Samir',
-                'email'          => 'donia.samir@student.unione.com',
-                'gender'         => 'female',
-                'student_number' => 'STU-2022-0003',
-                'faculty_code'   => 'ENG',
-                'dept_code'      => 'ELEC',
-                'academic_year'  => 3,
-                'enrolled_at'    => '2022-09-15',
-            ],
-            [
-                'national_id'    => '40000000000009',
-                'first_name'     => 'Mahmoud',
-                'last_name'      => 'Fares',
-                'email'          => 'mahmoud.fares@student.unione.com',
-                'gender'         => 'male',
-                'student_number' => 'STU-2023-0002',
-                'faculty_code'   => 'ENG',
-                'dept_code'      => 'MECH',   // Picked dept in year 2
-                'academic_year'  => 2,
-                'enrolled_at'    => '2023-09-15',
-            ],
-            [
-                'national_id'    => '40000000000010',
-                'first_name'     => 'Aya',
-                'last_name'      => 'Khalid',
-                'email'          => 'aya.khalid@student.unione.com',
-                'gender'         => 'female',
-                'student_number' => 'STU-2024-0002',
-                'faculty_code'   => 'ENG',
-                'dept_code'      => 'ENG-PREP',  // Year 1 → preparatory
-                'academic_year'  => 1,
-                'enrolled_at'    => '2024-09-15',
-            ],
-
-            // =====================================================================
-            // MEDICINE — none enrollment (dept_code = null)
-            // =====================================================================
-            [
-                'national_id'    => '40000000000011',
-                'first_name'     => 'Kareem',
-                'last_name'      => 'Waheed',
-                'email'          => 'kareem.waheed@student.unione.com',
-                'gender'         => 'male',
-                'student_number' => 'STU-2020-0001',
-                'faculty_code'   => 'MED',
-                'dept_code'      => null,
-                'academic_year'  => 5,
-                'enrolled_at'    => '2020-09-15',
-            ],
-            [
-                'national_id'    => '40000000000012',
-                'first_name'     => 'Salma',
-                'last_name'      => 'Nasser',
-                'email'          => 'salma.nasser@student.unione.com',
-                'gender'         => 'female',
-                'student_number' => 'STU-2021-0004',
-                'faculty_code'   => 'MED',
-                'dept_code'      => null,
-                'academic_year'  => 4,
-                'enrolled_at'    => '2021-09-15',
-            ],
-            [
-                'national_id'    => '40000000000013',
-                'first_name'     => 'Tamer',
-                'last_name'      => 'Rizk',
-                'email'          => 'tamer.rizk@student.unione.com',
-                'gender'         => 'male',
-                'student_number' => 'STU-2024-0003',
-                'faculty_code'   => 'MED',
-                'dept_code'      => null,
-                'academic_year'  => 1,
-                'enrolled_at'    => '2024-09-15',
-            ],
-
-            // =====================================================================
-            // BUSINESS — deferred enrollment
-            // =====================================================================
-            [
-                'national_id'    => '40000000000014',
-                'first_name'     => 'Farida',
-                'last_name'      => 'Hamdy',
-                'email'          => 'farida.hamdy@student.unione.com',
-                'gender'         => 'female',
-                'student_number' => 'STU-2022-0004',
-                'faculty_code'   => 'BUS',
-                'dept_code'      => 'MKT',
-                'academic_year'  => 3,
-                'enrolled_at'    => '2022-09-15',
-            ],
-            [
-                'national_id'    => '40000000000015',
-                'first_name'     => 'Sami',
-                'last_name'      => 'El-Erian',
-                'email'          => 'sami.elerian@student.unione.com',
-                'gender'         => 'male',
-                'student_number' => 'STU-2023-0003',
-                'faculty_code'   => 'BUS',
-                'dept_code'      => 'BUS-FIN',  // Picked in year 2
-                'academic_year'  => 2,
-                'enrolled_at'    => '2023-09-15',
-            ],
-            [
-                'national_id'    => '40000000000016',
-                'first_name'     => 'Hana',
-                'last_name'      => 'Essam',
-                'email'          => 'hana.essam@student.unione.com',
-                'gender'         => 'female',
-                'student_number' => 'STU-2024-0004',
-                'faculty_code'   => 'BUS',
-                'dept_code'      => 'BUS-PREP',  // Year 1 → preparatory
-                'academic_year'  => 1,
-                'enrolled_at'    => '2024-09-15',
-            ],
-
-            // =====================================================================
-            // LAW — none enrollment (dept_code = null)
-            // =====================================================================
-            [
-                'national_id'    => '40000000000017',
-                'first_name'     => 'Adam',
-                'last_name'      => 'Fouad',
-                'email'          => 'adam.fouad@student.unione.com',
-                'gender'         => 'male',
-                'student_number' => 'STU-2022-0005',
-                'faculty_code'   => 'LAW',
-                'dept_code'      => null,
-                'academic_year'  => 3,
-                'enrolled_at'    => '2022-09-15',
-            ],
-            [
-                'national_id'    => '40000000000018',
-                'first_name'     => 'Reem',
-                'last_name'      => 'Ashour',
-                'email'          => 'reem.ashour@student.unione.com',
-                'gender'         => 'female',
-                'student_number' => 'STU-2024-0005',
-                'faculty_code'   => 'LAW',
-                'dept_code'      => null,
-                'academic_year'  => 1,
-                'enrolled_at'    => '2024-09-15',
-            ],
-        ];
-
-        foreach ($students as $data) {
-            $userId = DB::table('users')->insertGetId([
-                'national_id'       => $data['national_id'],
-                'first_name'        => $data['first_name'],
-                'last_name'         => $data['last_name'],
-                'email'             => $data['email'],
-                'password'          => $password,
-                'gender'            => $data['gender'],
-                'date_of_birth'     => '2002-08-10',
-                'is_active'         => true,
-                'email_verified_at' => $now,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ]);
-
-            DB::table('role_user')->insert([
-                'user_id'    => $userId,
-                'role_id'    => $roleId,
-                'granted_at' => $now,
-            ]);
-
-            DB::table('students')->insert([
-                'user_id'           => $userId,
-                'student_number'    => $data['student_number'],
-                'faculty_id'        => $faculties[$data['faculty_code']],
-                'department_id'     => $data['dept_code'] ? $depts[$data['dept_code']] : null,
-                'academic_year'     => $data['academic_year'],
-                'semester'          => 'first',
-                'enrollment_status' => 'active',
-                'enrolled_at'       => $data['enrolled_at'],
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ]);
+        // â”€â”€ CSIT (immediate) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // 4 depts Ã— 4 years Ã— 100 = 1 600 active; 4 depts Ã— 40 grads = 160
+        $csitDepts = ['CS', 'IS', 'CYB', 'AI'];
+        foreach ($csitDepts as $deptCode) {
+            for ($year = 1; $year <= 4; $year++) {
+                $enrollYear = 2025 - $year;
+                for ($n = 1; $n <= 100; $n++) {
+                    $this->seedStudent($now, $password, $roleId,
+                        $faculties['CSIT'], $depts[$deptCode],
+                        $year, 'active', $enrollYear . '-09-15', null);
+                }
+            }
+            // Graduated students
+            for ($n = 1; $n <= 40; $n++) {
+                $this->seedStudent($now, $password, $roleId,
+                    $faculties['CSIT'], $depts[$deptCode],
+                    4, 'graduated', '2019-09-15', '2023-06-30');
+            }
         }
+
+        // â”€â”€ ENG (deferred) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // Year 1 â†’ ENG-GEN; years 2-4 â†’ specific dept
+        // ENG-GEN: 1 Ã— 100 = 100; 4 depts Ã— 3 years Ã— 100 = 1 200; grads 4 Ã— 40 = 160
+        for ($n = 1; $n <= 100; $n++) {
+            $this->seedStudent($now, $password, $roleId,
+                $faculties['ENG'], $depts['ENG-GEN'],
+                1, 'active', '2024-09-15', null);
+        }
+        $engDepts = ['CIVIL', 'ELEC', 'MECH', 'ARCH'];
+        foreach ($engDepts as $deptCode) {
+            for ($year = 2; $year <= 4; $year++) {
+                $enrollYear = 2025 - $year;
+                for ($n = 1; $n <= 100; $n++) {
+                    $this->seedStudent($now, $password, $roleId,
+                        $faculties['ENG'], $depts[$deptCode],
+                        $year, 'active', $enrollYear . '-09-15', null);
+                }
+            }
+            for ($n = 1; $n <= 40; $n++) {
+                $this->seedStudent($now, $password, $roleId,
+                    $faculties['ENG'], $depts[$deptCode],
+                    4, 'graduated', '2019-09-15', '2023-06-30');
+            }
+        }
+
+        // â”€â”€ BUS (deferred) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // Year 1 â†’ BUS-GEN; years 2-4 â†’ specific dept
+        for ($n = 1; $n <= 100; $n++) {
+            $this->seedStudent($now, $password, $roleId,
+                $faculties['BUS'], $depts['BUS-GEN'],
+                1, 'active', '2024-09-15', null);
+        }
+        $busDepts = ['MKT', 'BUS-FIN', 'BUS-HR', 'ACCT'];
+        foreach ($busDepts as $deptCode) {
+            for ($year = 2; $year <= 4; $year++) {
+                $enrollYear = 2025 - $year;
+                for ($n = 1; $n <= 100; $n++) {
+                    $this->seedStudent($now, $password, $roleId,
+                        $faculties['BUS'], $depts[$deptCode],
+                        $year, 'active', $enrollYear . '-09-15', null);
+                }
+            }
+            for ($n = 1; $n <= 40; $n++) {
+                $this->seedStudent($now, $password, $roleId,
+                    $faculties['BUS'], $depts[$deptCode],
+                    4, 'graduated', '2019-09-15', '2023-06-30');
+            }
+        }
+
+        // â”€â”€ MED (none â€” students have no dept) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // 5 years Ã— 50 = 250 active; 50 grads
+        for ($year = 1; $year <= 5; $year++) {
+            for ($n = 1; $n <= 50; $n++) {
+                $enrollYear = 2025 - $year;
+                $this->seedStudent($now, $password, $roleId,
+                    $faculties['MED'], $depts['MED-GEN'],
+                    $year, 'active', $enrollYear . '-09-15', null);
+            }
+        }
+        for ($n = 1; $n <= 50; $n++) {
+            $this->seedStudent($now, $password, $roleId,
+                $faculties['MED'], $depts['MED-GEN'],
+                5, 'graduated', '2016-09-15', '2021-06-30');
+        }
+
+        // â”€â”€ LAW (none â€” students have no dept) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // 4 years Ã— 50 = 200 active; 40 grads
+        for ($year = 1; $year <= 4; $year++) {
+            for ($n = 1; $n <= 50; $n++) {
+                $enrollYear = 2025 - $year;
+                $this->seedStudent($now, $password, $roleId,
+                    $faculties['LAW'], $depts['LAW-GEN'],
+                    $year, 'active', $enrollYear . '-09-15', null);
+            }
+        }
+        for ($n = 1; $n <= 40; $n++) {
+            $this->seedStudent($now, $password, $roleId,
+                $faculties['LAW'], $depts['LAW-GEN'],
+                4, 'graduated', '2019-09-15', '2023-06-30');
+        }
+    }
+
+    private function seedStudent(
+        mixed  $now,
+        string $password,
+        int    $roleId,
+        int    $facultyId,
+        ?int   $departmentId,
+        int    $academicYear,
+        string $status,
+        string $enrolledAt,
+        ?string $graduatedAt,
+    ): void {
+        $this->nationalIdCounter++;
+        $this->studentCounter++;
+
+        $isFemale   = ($this->studentCounter % 3 === 0);
+        $firstName  = $this->pick($isFemale ? $this->femaleFirst : $this->maleFirst, 'fn' . $this->studentCounter);
+        $lastName   = $this->pick($this->lastNames, 'ln' . $this->studentCounter);
+        $email      = strtolower($firstName) . '.' . strtolower($lastName) . $this->studentCounter . '@student.unione.com';
+        $studentNum = 'STU-' . str_pad($this->studentCounter, 7, '0', STR_PAD_LEFT);
+        $dob        = (1995 + $academicYear) . '-' . str_pad(($this->studentCounter % 12) + 1, 2, '0', STR_PAD_LEFT) . '-10';
+
+        $userId = DB::table('users')->insertGetId([
+            'national_id'       => (string) $this->nationalIdCounter,
+            'first_name'        => $firstName,
+            'last_name'         => $lastName,
+            'email'             => $email,
+            'password'          => $password,
+            'gender'            => $isFemale ? 'female' : 'male',
+            'date_of_birth'     => $dob,
+            'is_active'         => $status === 'active',
+            'email_verified_at' => $now,
+            'created_at'        => $now,
+            'updated_at'        => $now,
+        ]);
+
+        DB::table('role_user')->insert([
+            'user_id'    => $userId,
+            'role_id'    => $roleId,
+            'granted_at' => $now,
+        ]);
+
+        DB::table('students')->insert([
+            'user_id'           => $userId,
+            'student_number'    => $studentNum,
+            'faculty_id'        => $facultyId,
+            'department_id'     => $departmentId,
+            'academic_year'     => $academicYear,
+            'semester'          => 'first',
+            'enrollment_status' => $status,
+            'gpa'               => $status === 'graduated' ? round(rand(250, 400) / 100, 2) : null,
+            'enrolled_at'       => $enrolledAt,
+            'graduated_at'      => $graduatedAt,
+            'created_at'        => $now,
+            'updated_at'        => $now,
+        ]);
+    }
+
+    private function pick(array $pool, string $seed): string
+    {
+        return $pool[abs(crc32($seed)) % count($pool)];
     }
 }

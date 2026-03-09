@@ -341,7 +341,7 @@ class CourseSeeder extends Seeder
                 'shared_with'   => [],
             ],
 
-            // ── ENGINEERING PREPARATORY (ENG-PREP) ───────────────────────────────
+            // ── ENGINEERING GENERAL (ENG-GEN) — year-1 preparatory ────────────────
             [
                 'code'          => 'ENG001',
                 'name'          => 'Engineering Mathematics I',
@@ -351,7 +351,7 @@ class CourseSeeder extends Seeder
                 'lab_hours'     => 0,
                 'level'         => 1,
                 'is_elective'   => false,
-                'owner'         => 'ENG-PREP',
+                'owner'         => 'ENG-GEN',
                 'shared_with'   => ['CIVIL', 'ELEC', 'MECH', 'ARCH'],
             ],
             [
@@ -363,7 +363,7 @@ class CourseSeeder extends Seeder
                 'lab_hours'     => 0,
                 'level'         => 1,
                 'is_elective'   => false,
-                'owner'         => 'ENG-PREP',
+                'owner'         => 'ENG-GEN',
                 'shared_with'   => ['CIVIL', 'ELEC', 'MECH', 'ARCH'],
             ],
             [
@@ -375,7 +375,7 @@ class CourseSeeder extends Seeder
                 'lab_hours'     => 2,
                 'level'         => 1,
                 'is_elective'   => false,
-                'owner'         => 'ENG-PREP',
+                'owner'         => 'ENG-GEN',
                 'shared_with'   => ['CIVIL', 'MECH', 'ARCH'],
             ],
             [
@@ -387,7 +387,7 @@ class CourseSeeder extends Seeder
                 'lab_hours'     => 2,
                 'level'         => 1,
                 'is_elective'   => false,
-                'owner'         => 'ENG-PREP',
+                'owner'         => 'ENG-GEN',
                 'shared_with'   => ['CIVIL', 'ELEC', 'MECH'],
             ],
 
@@ -626,7 +626,7 @@ class CourseSeeder extends Seeder
                 'level'         => 1,
                 'is_elective'   => false,
                 'owner'         => 'MED-INT',
-                'shared_with'   => ['MED-SURG', 'MED-PHAR'],
+                'shared_with'   => ['MED-SURG', 'MED-PHAR', 'MED-PATH'],
             ],
             [
                 'code'          => 'MED102',
@@ -638,7 +638,7 @@ class CourseSeeder extends Seeder
                 'level'         => 1,
                 'is_elective'   => false,
                 'owner'         => 'MED-INT',
-                'shared_with'   => ['MED-SURG', 'MED-PHAR'],
+                'shared_with'   => ['MED-SURG', 'MED-PHAR', 'MED-PATH'],
             ],
             [
                 'code'          => 'MED103',
@@ -650,7 +650,7 @@ class CourseSeeder extends Seeder
                 'level'         => 1,
                 'is_elective'   => false,
                 'owner'         => 'MED-PHAR',
-                'shared_with'   => ['MED-INT', 'MED-SURG'],
+                'shared_with'   => ['MED-INT', 'MED-SURG', 'MED-PATH'],
             ],
 
             // ── INTERNAL MEDICINE (MED-INT) ───────────────────────────────────────
@@ -743,7 +743,7 @@ class CourseSeeder extends Seeder
                 'shared_with'   => [],
             ],
 
-            // ── BUSINESS PREPARATORY (BUS-PREP) ───────────────────────────────────
+            // ── BUSINESS GENERAL (BUS-GEN) — year-1 preparatory ────────────────────
             [
                 'code'          => 'BUS001',
                 'name'          => 'Principles of Economics',
@@ -753,8 +753,8 @@ class CourseSeeder extends Seeder
                 'lab_hours'     => 0,
                 'level'         => 1,
                 'is_elective'   => false,
-                'owner'         => 'BUS-PREP',
-                'shared_with'   => ['MKT', 'BUS-FIN', 'BUS-HR'],
+                'owner'         => 'BUS-GEN',
+                'shared_with'   => ['MKT', 'BUS-FIN', 'BUS-HR', 'ACCT'],
             ],
             [
                 'code'          => 'BUS002',
@@ -765,8 +765,8 @@ class CourseSeeder extends Seeder
                 'lab_hours'     => 0,
                 'level'         => 1,
                 'is_elective'   => false,
-                'owner'         => 'BUS-PREP',
-                'shared_with'   => ['MKT', 'BUS-FIN', 'BUS-HR'],
+                'owner'         => 'BUS-GEN',
+                'shared_with'   => ['MKT', 'BUS-FIN', 'BUS-HR', 'ACCT'],
             ],
             [
                 'code'          => 'BUS003',
@@ -777,8 +777,8 @@ class CourseSeeder extends Seeder
                 'lab_hours'     => 0,
                 'level'         => 1,
                 'is_elective'   => false,
-                'owner'         => 'BUS-PREP',
-                'shared_with'   => ['MKT', 'BUS-FIN', 'BUS-HR'],
+                'owner'         => 'BUS-GEN',
+                'shared_with'   => ['MKT', 'BUS-FIN', 'BUS-HR', 'ACCT'],
             ],
 
             // ── MARKETING (MKT) ───────────────────────────────────────────────────
@@ -930,7 +930,7 @@ class CourseSeeder extends Seeder
                 'level'         => 1,
                 'is_elective'   => false,
                 'owner'         => 'LAW-PUB',
-                'shared_with'   => ['LAW-PRI'],
+                'shared_with'   => ['LAW-PRI', 'LAW-CRI'],
             ],
             [
                 'code'          => 'LAW102',
@@ -942,7 +942,83 @@ class CourseSeeder extends Seeder
                 'level'         => 1,
                 'is_elective'   => false,
                 'owner'         => 'LAW-PUB',
-                'shared_with'   => ['LAW-PRI'],
+                'shared_with'   => ['LAW-PRI', 'LAW-CRI'],
+            ],
+
+            // ── ACCOUNTING (ACCT) ─────────────────────────────────────────────────
+            [
+                'code'          => 'ACCT201',
+                'name'          => 'Intermediate Accounting',
+                'name_ar'       => 'المحاسبة المتوسطة',
+                'credit_hours'  => 3,
+                'lecture_hours' => 3,
+                'lab_hours'     => 0,
+                'level'         => 2,
+                'is_elective'   => false,
+                'owner'         => 'ACCT',
+                'shared_with'   => ['BUS-FIN'],
+            ],
+            [
+                'code'          => 'ACCT301',
+                'name'          => 'Cost Accounting',
+                'name_ar'       => 'محاسبة التكاليف',
+                'credit_hours'  => 3,
+                'lecture_hours' => 3,
+                'lab_hours'     => 0,
+                'level'         => 3,
+                'is_elective'   => false,
+                'owner'         => 'ACCT',
+                'shared_with'   => [],
+            ],
+            [
+                'code'          => 'ACCT302',
+                'name'          => 'Auditing & Assurance',
+                'name_ar'       => 'المراجعة والتحقق',
+                'credit_hours'  => 3,
+                'lecture_hours' => 3,
+                'lab_hours'     => 0,
+                'level'         => 3,
+                'is_elective'   => false,
+                'owner'         => 'ACCT',
+                'shared_with'   => [],
+            ],
+            [
+                'code'          => 'ACCT401',
+                'name'          => 'Advanced Financial Reporting',
+                'name_ar'       => 'التقرير المالي المتقدم',
+                'credit_hours'  => 3,
+                'lecture_hours' => 3,
+                'lab_hours'     => 0,
+                'level'         => 4,
+                'is_elective'   => false,
+                'owner'         => 'ACCT',
+                'shared_with'   => [],
+            ],
+
+            // ── PATHOLOGY (MED-PATH) ──────────────────────────────────────────────
+            [
+                'code'          => 'MED-PATH301',
+                'name'          => 'Systemic Pathology',
+                'name_ar'       => 'علم الأمراض التجهيزي',
+                'credit_hours'  => 3,
+                'lecture_hours' => 2,
+                'lab_hours'     => 2,
+                'level'         => 3,
+                'is_elective'   => false,
+                'owner'         => 'MED-PATH',
+                'shared_with'   => ['MED-INT'],
+            ],
+            [
+                'code'          => 'MED-PATH401',
+                'name'          => 'Molecular Pathology',
+                'name_ar'       => 'علم الأمراض الجزيئي',
+                'credit_hours'  => 3,
+                'lecture_hours' => 2,
+                'lab_hours'     => 2,
+                'level'         => 4,
+                'is_elective'   => false,
+                'owner'         => 'MED-PATH',
+                'shared_with'   => [],
             ],
 
             // ── PUBLIC LAW (LAW-PUB) ──────────────────────────────────────────────
@@ -980,6 +1056,44 @@ class CourseSeeder extends Seeder
                 'level'         => 4,
                 'is_elective'   => false,
                 'owner'         => 'LAW-PUB',
+                'shared_with'   => [],
+            ],
+
+            // ── CRIMINAL LAW (LAW-CRI) ────────────────────────────────────────────
+            [
+                'code'          => 'LAW-CRI201',
+                'name'          => 'Criminal Law',
+                'name_ar'       => 'قانون العقوبات',
+                'credit_hours'  => 3,
+                'lecture_hours' => 3,
+                'lab_hours'     => 0,
+                'level'         => 2,
+                'is_elective'   => false,
+                'owner'         => 'LAW-CRI',
+                'shared_with'   => ['LAW-PUB'],
+            ],
+            [
+                'code'          => 'LAW-CRI301',
+                'name'          => 'Criminal Procedure',
+                'name_ar'       => 'الإجراءات الجنائية',
+                'credit_hours'  => 3,
+                'lecture_hours' => 3,
+                'lab_hours'     => 0,
+                'level'         => 3,
+                'is_elective'   => false,
+                'owner'         => 'LAW-CRI',
+                'shared_with'   => [],
+            ],
+            [
+                'code'          => 'LAW-CRI401',
+                'name'          => 'Criminology & Penology',
+                'name_ar'       => 'علم الجريمة والعقوبات',
+                'credit_hours'  => 3,
+                'lecture_hours' => 3,
+                'lab_hours'     => 0,
+                'level'         => 4,
+                'is_elective'   => false,
+                'owner'         => 'LAW-CRI',
                 'shared_with'   => [],
             ],
 
@@ -1140,6 +1254,17 @@ class CourseSeeder extends Seeder
             'LAW-PRI201'   => ['LAW101'],
             'LAW-PRI301'   => ['LAW-PRI201'],
             'LAW-PRI401'   => ['LAW-PRI301'],
+            'LAW-CRI201'   => ['LAW101'],
+            'LAW-CRI301'   => ['LAW-CRI201'],
+            'LAW-CRI401'   => ['LAW-CRI301'],
+            // Accounting
+            'ACCT201'      => ['BUS001', 'BUS002'],
+            'ACCT301'      => ['ACCT201'],
+            'ACCT302'      => ['ACCT201'],
+            'ACCT401'      => ['ACCT301'],
+            // Pathology
+            'MED-PATH301'  => ['MED101', 'MED102'],
+            'MED-PATH401'  => ['MED-PATH301'],
         ];
 
         foreach ($prerequisites as $courseCode => $prereqCodes) {

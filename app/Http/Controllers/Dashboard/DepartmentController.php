@@ -31,6 +31,7 @@ class DepartmentController extends Controller
             ->when($request->filled('type'), fn ($q) => $q->where('type', $request->type))
             ->when($request->filled('faculty_id'), fn ($q) => $q->where('faculty_id', $request->faculty_id))
             ->when($request->filled('status'), fn ($q) => $q->where('is_active', $request->status === 'active'))
+            ->when($request->boolean('no_head'), fn ($q) => $q->whereNull('head_id'))
             ->orderBy('name')
             ->paginate(15)
             ->withQueryString();

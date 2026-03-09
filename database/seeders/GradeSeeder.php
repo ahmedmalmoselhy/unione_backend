@@ -2,20 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\Enrollment;
-use App\Models\Grade;
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class GradeSeeder extends Seeder
 {
     public function run(): void
     {
-        // Grade only completed/failed enrollments
-        $enrollments = Enrollment::whereIn('status', ['completed', 'failed'])->get();
-
-        // Pick an admin user as the grader
-        $grader = User::whereHas('roles', fn ($q) => $q->where('name', 'admin'))->first();
+        $now   = now();
+        $grader = DB::table('users')
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', 'roles.id', '=', 'role_user.role_id')
+            ->where('roles.name', 'admin')
+            ->value('users.id');
 
         $gradeScale = [
             ['min' => 90, 'letter' => 'A+', 'points' => 4.00],
@@ -29,32 +28,53 @@ class GradeSeeder extends Seeder
             ['min' => 0,  'letter' => 'F',  'points' => 0.00],
         ];
 
-        foreach ($enrollments as $enrollment) {
-            if ($enrollment->status === 'failed') {
-                $midterm    = rand(5, 20);
-                $coursework = rand(5, 15);
-                $final      = rand(5, 15);
-            } else {
-                $midterm    = rand(15, 40);
-                $coursework = rand(10, 30);
-                $final      = rand(20, 40);
-            }
+        // Grade completed/failed enrollments in chunks to avoid memory issues
+        DB::table('enrollments')
+            ->whereIn('status', ['completed', 'failed'])
+            ->orderBy('id')
+            ->chunk(500, function ($enrollments) use ($now, $grader, $gradeScale) {
+                $rows = [];
+                foreach ($enrollments as $enrollment) {
+                    if ($enrollment->status === 'failed') {
+                        $midterm    = rand(5, 20);
+                        $coursework = rand(5, 15);
+                        $final      = rand(5, 15);
+                    } else {
+                        $midterm    = rand(15, 40);
+                        $coursework = rand(10, 30);
+                        $final      = rand(20, 40);
+                    }
 
-            $total = min($midterm + $coursework + $final, 100);
+                    $total = min($midterm + $coursework + $final, 100);
 
-            $grade = collect($gradeScale)->first(fn ($g) => $total >= $g['min']);
+                    $grade = null;
+                    foreach ($gradeScale as $g) {
+                        if ($total >= $g['min']) {
+                            $grade = $g;
+                            break;
+                        }
+                    }
 
-            Grade::create([
-                'enrollment_id' => $enrollment->id,
-                'midterm'       => $midterm,
-                'final'         => $final,
-                'coursework'    => $coursework,
-                'total'         => $total,
-                'letter_grade'  => $grade['letter'],
-                'grade_points'  => $grade['points'],
-                'graded_by'     => $grader?->id,
-                'graded_at'     => $enrollment->registered_at?->copy()->addMonths(4),
-            ]);
-        }
+                    $rows[] = [
+                        'enrollment_id' => $enrollment->id,
+                        'midterm'       => $midterm,
+                        'final'         => $final,
+                        'coursework'    => $coursework,
+                        'total'         => $total,
+                        'letter_grade'  => $grade['letter'],
+                        'grade_points'  => $grade['points'],
+                        'graded_by'     => $grader,
+                        'graded_at'     => $enrollment->registered_at
+                            ? date('Y-m-d', strtotime($enrollment->registered_at . ' +4 months'))
+                            : $now->toDateString(),
+                        'created_at'    => $now,
+                        'updated_at'    => $now,
+                    ];
+                }
+
+                if (! empty($rows)) {
+                    DB::table('grades')->insert($rows);
+                }
+            });
     }
 }

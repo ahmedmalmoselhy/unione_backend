@@ -39,6 +39,7 @@ class StudentController extends Controller
             ->when($request->filled('faculty_id'), fn ($q) => $q->where('students.faculty_id', $request->faculty_id))
             ->when($request->filled('enrollment_status'), fn ($q) => $q->where('students.enrollment_status', $request->enrollment_status))
             ->when($request->filled('status'), fn ($q) => $q->where('users.is_active', $request->status === 'active'))
+            ->when($request->boolean('no_dept'), fn ($q) => $q->whereNull('students.department_id'))
             ->orderBy('users.first_name')
             ->orderBy('users.last_name')
             ->select('students.*')

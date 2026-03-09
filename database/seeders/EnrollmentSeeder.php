@@ -2,87 +2,159 @@
 
 namespace Database\Seeders;
 
-use App\Models\AcademicTerm;
-use App\Models\Enrollment;
-use App\Models\Section;
-use App\Models\Student;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
+/**
+ * Enrolls each active student in sections that match their department's courses
+ * at their current academic year level (in the active term).
+ *
+ * For each past term, a subset of students also receives retrospective
+ * completed/failed enrollments so GradeSeeder has data to grade.
+ */
 class EnrollmentSeeder extends Seeder
 {
     public function run(): void
     {
-        $activeTerm = AcademicTerm::where('is_active', true)->first();
-        $pastTerms  = AcademicTerm::where('is_active', false)->orderByDesc('starts_at')->get();
+        $now = now();
 
-        $activeSections = Section::where('is_active', true)
-            ->where('academic_term_id', $activeTerm?->id)
-            ->get();
-
-        $pastSections = Section::where('is_active', false)->get();
-
-        $students = Student::where('enrollment_status', 'active')->get();
-
-        if ($students->isEmpty() || $activeSections->isEmpty()) {
+        $activeTerm = DB::table('academic_terms')->where('is_active', true)->first();
+        if (! $activeTerm) {
             return;
         }
 
-        $rows = [];
+        // Past terms ordered old â†’ new (exclude active)
+        $pastTerms = DB::table('academic_terms')
+            ->where('is_active', false)
+            ->orderBy('starts_at')
+            ->get();
 
-        // Each active student gets 3-5 current-term enrollments (registered)
+        // Active students with a department
+        $students = DB::table('students')
+            ->where('enrollment_status', 'active')
+            ->whereNotNull('department_id')
+            ->get();
+
+        if ($students->isEmpty()) {
+            return;
+        }
+
+        // Build: dept_id + level â†’ [section_id, ...] for active term
+        $activeSectionsByDeptLevel = $this->buildSectionMap($activeTerm->id);
+
+        // â”€â”€ Enroll in active term â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        $rows          = [];
+        $seen          = [];   // "student_id-section_id" â†’ true (dedup guard)
+
         foreach ($students as $student) {
-            $picked = $activeSections->random(min($activeSections->count(), rand(3, 5)));
-
-            foreach ($picked as $section) {
+            $sectionIds = $activeSectionsByDeptLevel[$student->department_id][$student->academic_year] ?? [];
+            foreach ($sectionIds as $sectionId) {
+                $key = $student->id . '-' . $sectionId;
+                if (isset($seen[$key])) {
+                    continue;
+                }
+                $seen[$key] = true;
                 $rows[] = [
                     'student_id'       => $student->id,
-                    'section_id'       => $section->id,
+                    'section_id'       => $sectionId,
                     'academic_term_id' => $activeTerm->id,
                     'status'           => 'registered',
-                    'registered_at'    => $activeTerm->starts_at->copy()->addDays(rand(0, 7)),
+                    'registered_at'    => $activeTerm->starts_at,
                     'dropped_at'       => null,
+                    'created_at'       => $now,
+                    'updated_at'       => $now,
                 ];
             }
         }
 
-        // Some students also have past-term enrollments (completed / failed / dropped)
-        if ($pastSections->isNotEmpty() && $pastTerms->isNotEmpty()) {
-            $subset = $students->random(min($students->count(), 10));
+        // â”€â”€ Retrospective enrollments for past terms â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // For years 2, 3, 4 students enrol them in (academic_year - pastOffset) courses
+        // pastOffset = 1 for most-recent past term, 2 for next, etc.
+        foreach ($pastTerms->reverse()->values()->take(3) as $termOffset => $pastTerm) {
+            $pastSections = $this->buildSectionMap($pastTerm->id);
+            $statusPool   = ['completed','completed','completed','completed','failed','dropped'];
 
-            foreach ($subset as $student) {
-                $picked = $pastSections->random(min($pastSections->count(), rand(3, 5)));
+            foreach ($students as $student) {
+                $pastYear = $student->academic_year - ($termOffset + 1);
+                if ($pastYear < 1) {
+                    continue;
+                }
 
-                foreach ($picked as $section) {
-                    $term = $pastTerms->firstWhere('id', $section->academic_term_id) ?? $pastTerms->first();
-                    $status = collect(['completed', 'completed', 'completed', 'completed', 'failed', 'dropped'])->random();
-
-                    $registeredAt = $term->starts_at->copy()->addDays(rand(0, 5));
-
-                    $rows[] = [
+                $sectionIds = $pastSections[$student->department_id][$pastYear] ?? [];
+                foreach ($sectionIds as $sectionId) {
+                    $key = $student->id . '-' . $sectionId;
+                    if (isset($seen[$key])) {
+                        continue;
+                    }
+                    $seen[$key] = true;
+                    $status     = $statusPool[array_rand($statusPool)];
+                    $rows[]     = [
                         'student_id'       => $student->id,
-                        'section_id'       => $section->id,
-                        'academic_term_id' => $term->id,
+                        'section_id'       => $sectionId,
+                        'academic_term_id' => $pastTerm->id,
                         'status'           => $status,
-                        'registered_at'    => $registeredAt,
-                        'dropped_at'       => $status === 'dropped' ? $registeredAt->copy()->addDays(rand(7, 30)) : null,
+                        'registered_at'    => $pastTerm->starts_at,
+                        'dropped_at'       => $status === 'dropped'
+                            ? date('Y-m-d', strtotime($pastTerm->starts_at . ' +20 days'))
+                            : null,
+                        'created_at'       => $now,
+                        'updated_at'       => $now,
                     ];
                 }
             }
         }
 
-        // Filter out duplicates (student_id + section_id must be unique)
-        $unique = collect($rows)->unique(fn ($r) => $r['student_id'] . '-' . $r['section_id']);
-
-        foreach ($unique as $row) {
-            Enrollment::create([
-                'student_id'       => $row['student_id'],
-                'section_id'       => $row['section_id'],
-                'academic_term_id' => $row['academic_term_id'],
-                'status'           => $row['status'],
-                'registered_at'    => $row['registered_at'],
-                'dropped_at'       => $row['dropped_at'],
-            ]);
+        // Bulk insert in chunks
+        foreach (array_chunk($rows, 500) as $chunk) {
+            DB::table('enrollments')->insert($chunk);
         }
+    }
+
+    /**
+     * Build map: dept_id â†’ level â†’ [section_id, ...] for a given term.
+     * Returns ONE section per course (to avoid enrolling a student in 2 sections
+     * of the same course).
+     */
+    private function buildSectionMap(int $termId): array
+    {
+        // All sections in this term with their course level
+        $sections = DB::table('sections')
+            ->join('courses', 'courses.id', '=', 'sections.course_id')
+            ->where('sections.academic_term_id', $termId)
+            ->select(
+                'sections.id as section_id',
+                'sections.course_id',
+                'courses.level'
+            )
+            ->get();
+
+        // For each section, find ALL depts (owner + shared) linked to the course
+        $deptLinks = DB::table('department_course')
+            ->join('courses', 'courses.id', '=', 'department_course.course_id')
+            ->select('department_course.department_id', 'department_course.course_id', 'courses.level')
+            ->get()
+            ->groupBy('course_id');   // course_id â†’ [dept rows]
+
+        // Build: dept_id â†’ level â†’ course_id â†’ first section_id
+        // (one section per course per dept)
+        $map = [];
+        foreach ($sections as $sec) {
+            $depts = $deptLinks[$sec->course_id] ?? collect();
+            foreach ($depts as $dl) {
+                if (! isset($map[$dl->department_id][$sec->level][$sec->course_id])) {
+                    $map[$dl->department_id][$sec->level][$sec->course_id] = $sec->section_id;
+                }
+            }
+        }
+
+        // Flatten: dept_id â†’ level â†’ [section_id, ...]
+        $flat = [];
+        foreach ($map as $deptId => $levels) {
+            foreach ($levels as $level => $courseSections) {
+                $flat[$deptId][$level] = array_values($courseSections);
+            }
+        }
+
+        return $flat;
     }
 }

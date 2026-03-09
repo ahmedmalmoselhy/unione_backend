@@ -10,7 +10,7 @@ class UniversityVicePresidentSeeder extends Seeder
     public function run(): void
     {
         $now        = now();
-        $universityId = DB::table('universities')->value('id');
+        $universityId = DB::table('university')->value('id');
 
         // Pick 4 professors by staff number to be vice presidents
         $staffNumbers = ['PROF-0001', 'PROF-0003', 'PROF-0005', 'PROF-0007'];
