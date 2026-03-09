@@ -19,11 +19,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SetLocale::class,
         ]);
         $middleware->alias([
-            'dashboard'       => \App\Http\Middleware\DashboardMiddleware::class,
-            'admin'           => \App\Http\Middleware\AdminMiddleware::class,
-            'scoped.admin'    => \App\Http\Middleware\ScopedAdminMiddleware::class,
-            'force.password'  => \App\Http\Middleware\ForcePasswordChange::class,
-            'api.role'        => \App\Http\Middleware\EnsureApiRole::class,
+            'dashboard'        => \App\Http\Middleware\DashboardMiddleware::class,
+            'admin'            => \App\Http\Middleware\AdminMiddleware::class,
+            'university.admin' => \App\Http\Middleware\UniversityAdminMiddleware::class,
+            'scoped.admin'     => \App\Http\Middleware\ScopedAdminMiddleware::class,
+            'force.password'   => \App\Http\Middleware\ForcePasswordChange::class,
+            'api.role'         => \App\Http\Middleware\EnsureApiRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

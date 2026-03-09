@@ -66,6 +66,11 @@ class User extends Authenticatable
         return $this->hasActiveRole('admin');
     }
 
+    public function isUniversityAdmin(): bool
+    {
+        return $this->hasActiveRole('university_admin');
+    }
+
     public function isFacultyAdmin(): bool
     {
         return $this->hasActiveRole('faculty_admin');

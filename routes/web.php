@@ -54,14 +54,6 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
             Route::resource('academic-terms', AcademicTermController::class);
 
-            Route::get('/university', [UniversityController::class, 'show'])->name('university.show');
-            Route::get('/university/edit', [UniversityController::class, 'edit'])->name('university.edit');
-            Route::put('/university', [UniversityController::class, 'update'])->name('university.update');
-
-            Route::resource('university/vice-presidents', UniversityVicePresidentController::class)
-                ->only(['create', 'store', 'edit', 'update', 'destroy'])
-                ->names('university.vice-presidents');
-
             // Assign faculty admin (system admin only)
             Route::get('/faculties/{faculty}/assign-admin', [AdminAssignmentController::class, 'editFacultyAdmin'])->name('faculties.assign-admin');
             Route::post('/faculties/{faculty}/assign-admin', [AdminAssignmentController::class, 'assignFacultyAdmin'])->name('faculties.assign-admin.store');
@@ -69,6 +61,17 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
             // Audit log (system admin only)
             Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+        });
+
+        // University settings (system admin + university admin)
+        Route::middleware('university.admin')->group(function () {
+            Route::get('/university', [UniversityController::class, 'show'])->name('university.show');
+            Route::get('/university/edit', [UniversityController::class, 'edit'])->name('university.edit');
+            Route::put('/university', [UniversityController::class, 'update'])->name('university.update');
+
+            Route::resource('university/vice-presidents', UniversityVicePresidentController::class)
+                ->only(['create', 'store', 'edit', 'update', 'destroy'])
+                ->names('university.vice-presidents');
         });
 
         // Scoped admin (system admin + faculty admin + department admin)

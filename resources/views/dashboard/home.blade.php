@@ -351,6 +351,164 @@
     </div>
 
 {{-- ════════════════════════════════════════
+     UNIVERSITY ADMIN VIEW
+     ════════════════════════════════════════ --}}
+@elseif($role === 'university_admin')
+
+    {{-- University settings banner --}}
+    <div class="bg-indigo-50 border border-indigo-100 rounded-2xl px-5 py-4 mb-8 flex items-center gap-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 10l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V10z"/>
+            </svg>
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-indigo-800">{{ $university->name }}</p>
+            <p class="text-xs text-indigo-500 mt-0.5">
+                University Administrator
+                @if($university->established_at) · Est. {{ $university->established_at->format('Y') }}@endif
+            </p>
+        </div>
+        <a href="{{ route('dashboard.university.show') }}"
+           class="shrink-0 text-xs font-semibold text-indigo-700 bg-white border border-indigo-200 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors">
+            Manage University →
+        </a>
+    </div>
+
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">University Overview</h3>
+
+    @php
+    $uaStatCards = [
+        ['key' => 'students',    'label' => 'Students',    'color' => 'blue',   'icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z'],
+        ['key' => 'professors',  'label' => 'Professors',  'color' => 'indigo', 'icon' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
+        ['key' => 'employees',   'label' => 'Employees',   'color' => 'purple', 'icon' => 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'],
+        ['key' => 'courses',     'label' => 'Courses',     'color' => 'emerald','icon' => 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'],
+        ['key' => 'sections',    'label' => 'Sections',    'color' => 'teal',   'icon' => 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'],
+        ['key' => 'faculties',   'label' => 'Faculties',   'color' => 'amber',  'icon' => 'M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z'],
+        ['key' => 'departments', 'label' => 'Departments', 'color' => 'orange', 'icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'],
+    ];
+    $uaColorMap = [
+        'blue'   => ['bg' => 'bg-blue-50',   'icon' => 'text-blue-600'],
+        'indigo' => ['bg' => 'bg-indigo-50', 'icon' => 'text-indigo-600'],
+        'purple' => ['bg' => 'bg-purple-50', 'icon' => 'text-purple-600'],
+        'emerald'=> ['bg' => 'bg-emerald-50','icon' => 'text-emerald-600'],
+        'teal'   => ['bg' => 'bg-teal-50',   'icon' => 'text-teal-600'],
+        'amber'  => ['bg' => 'bg-amber-50',  'icon' => 'text-amber-600'],
+        'orange' => ['bg' => 'bg-orange-50', 'icon' => 'text-orange-600'],
+    ];
+    @endphp
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 mb-10">
+        @foreach($uaStatCards as $card)
+            @php $c = $uaColorMap[$card['color']]; @endphp
+            <div class="bg-white rounded-2xl border border-gray-200 p-5 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl {{ $c['bg'] }} flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5 {{ $c['icon'] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $card['icon'] }}"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">{{ $card['label'] }}</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ number_format($globalStats[$card['key']]) }}</p>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    {{-- ── CHARTS ─────────────────────────────────────────────── --}}
+    <div class="grid grid-cols-1 xl:grid-cols-5 gap-5 mb-5">
+        <div class="xl:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 flex flex-col">
+            <p class="text-sm font-semibold text-gray-700">Student Enrollment Status</p>
+            <p class="text-xs text-gray-400 mt-0.5 mb-4">University-wide breakdown</p>
+            <div class="flex-1 relative" style="min-height:190px">
+                <canvas id="studentStatusChartUA"></canvas>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
+                @foreach([
+                    ['label' => 'Active',    'color' => 'bg-emerald-500', 'val' => $faculties->sum('active_students_count')],
+                    ['label' => 'Graduated', 'color' => 'bg-blue-500',    'val' => $faculties->sum('graduated_students_count')],
+                    ['label' => 'Suspended', 'color' => 'bg-amber-500',   'val' => $faculties->sum('suspended_students_count')],
+                    ['label' => 'Withdrawn', 'color' => 'bg-red-500',     'val' => $faculties->sum('withdrawn_students_count')],
+                ] as $item)
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full {{ $item['color'] }} shrink-0"></span>
+                        <span class="text-xs text-gray-500 truncate">{{ $item['label'] }}</span>
+                        <span class="text-xs font-semibold text-gray-700 ml-auto">{{ number_format($item['val']) }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+        <div class="xl:col-span-3 bg-white rounded-2xl border border-gray-200 p-6 flex flex-col">
+            <p class="text-sm font-semibold text-gray-700">Students by Faculty</p>
+            <p class="text-xs text-gray-400 mt-0.5 mb-4">By enrollment status</p>
+            <div class="flex-1 relative" style="min-height:190px">
+                <canvas id="studentsByFacultyChartUA"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-10">
+        <p class="text-sm font-semibold text-gray-700">Staff by Faculty</p>
+        <p class="text-xs text-gray-400 mt-0.5 mb-4">Professors &amp; Employees</p>
+        <div class="relative" style="height:180px">
+            <canvas id="staffByFacultyChartUA"></canvas>
+        </div>
+    </div>
+
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">By Faculty</h3>
+
+    @if($faculties->isEmpty())
+        <div class="bg-white rounded-2xl border border-gray-200 p-8 text-center text-sm text-gray-400">
+            No faculties found.
+        </div>
+    @else
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            @foreach($faculties as $faculty)
+                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-semibold text-gray-900 truncate">{{ $faculty->name }}</p>
+                            @if($faculty->code)
+                                <p class="text-xs text-gray-400 mt-0.5">{{ $faculty->code }}</p>
+                            @endif
+                        </div>
+                        <span class="shrink-0 text-xs font-medium px-2.5 py-1 rounded-full {{ $faculty->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
+                            {{ $faculty->is_active ? 'Active' : 'Inactive' }}
+                        </span>
+                    </div>
+                    <div class="divide-y divide-gray-50">
+                        <div class="px-5 py-3 flex items-center justify-between text-sm">
+                            <span class="text-gray-500">Departments</span>
+                            <span class="font-semibold text-gray-900">{{ number_format($faculty->departments_count) }}</span>
+                        </div>
+                        <div class="px-5 py-3 flex items-center justify-between text-sm">
+                            <span class="text-gray-500">Professors</span>
+                            <span class="font-semibold text-gray-900">{{ number_format($professorsByFaculty[$faculty->id] ?? 0) }}</span>
+                        </div>
+                        <div class="px-5 py-3 flex items-center justify-between text-sm">
+                            <span class="text-gray-500">Students</span>
+                            <span class="font-semibold text-gray-900">{{ number_format($faculty->students_count) }}</span>
+                        </div>
+                        <div class="px-5 py-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                            @foreach([
+                                ['key' => 'active_students_count',    'label' => 'Active',    'color' => 'text-green-600'],
+                                ['key' => 'graduated_students_count', 'label' => 'Graduated', 'color' => 'text-blue-600'],
+                                ['key' => 'suspended_students_count', 'label' => 'Suspended', 'color' => 'text-amber-600'],
+                                ['key' => 'withdrawn_students_count', 'label' => 'Withdrawn', 'color' => 'text-red-500'],
+                            ] as $row)
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-400">{{ $row['label'] }}</span>
+                                    <span class="font-medium {{ $row['color'] }}">{{ number_format($faculty->{$row['key']}) }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
+{{-- ════════════════════════════════════════
      FACULTY ADMIN VIEW
      ════════════════════════════════════════ --}}
 @elseif($role === 'faculty_admin')
@@ -535,10 +693,15 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-@if($role === 'system_admin')
+@if(in_array($role ?? '', ['system_admin', 'university_admin']))
 <script>
     Chart.defaults.font.family = 'ui-sans-serif, system-ui, sans-serif';
     Chart.defaults.color       = '#6b7280';
+
+    const __role = @json($role);
+    const __sfx  = __role === 'university_admin' ? 'UA' : '';
+
+    function chartId(base) { return base + __sfx; }
 
     // ── Student Status Donut ──────────────────────────────────
     (function () {
@@ -548,7 +711,7 @@
         const withdrawn = {{ $faculties->sum('withdrawn_students_count') }};
         const total     = active + graduated + suspended + withdrawn;
 
-        new Chart(document.getElementById('studentStatusChart'), {
+        new Chart(document.getElementById(chartId('studentStatusChart')), {
             type: 'doughnut',
             data: {
                 labels: ['Active', 'Graduated', 'Suspended', 'Withdrawn'],
@@ -596,7 +759,7 @@
     // ── Students by Faculty (Stacked Bar) ────────────────────
     (function () {
         const labels = @json($faculties->pluck('name'));
-        new Chart(document.getElementById('studentsByFacultyChart'), {
+        new Chart(document.getElementById(chartId('studentsByFacultyChart')), {
             type: 'bar',
             data: {
                 labels,
@@ -626,7 +789,7 @@
         const labels   = @json($faculties->pluck('name'));
         const profData = @json($faculties->map(fn ($f) => $professorsByFaculty[$f->id] ?? 0)->values());
         const empData  = @json($faculties->map(fn ($f) => $employeesByFaculty[$f->id] ?? 0)->values());
-        new Chart(document.getElementById('staffByFacultyChart'), {
+        new Chart(document.getElementById(chartId('staffByFacultyChart')), {
             type: 'bar',
             data: {
                 labels,
