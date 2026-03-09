@@ -73,6 +73,52 @@
         @endforeach
     </div>
 
+    {{-- ── CHARTS ─────────────────────────────────────────────── --}}
+    <div class="grid grid-cols-1 xl:grid-cols-5 gap-5 mb-5">
+
+        {{-- Donut: Student Enrollment Status --}}
+        <div class="xl:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 flex flex-col">
+            <p class="text-sm font-semibold text-gray-700">Student Enrollment Status</p>
+            <p class="text-xs text-gray-400 mt-0.5 mb-4">University-wide breakdown</p>
+            <div class="flex-1 relative" style="min-height:190px">
+                <canvas id="studentStatusChart"></canvas>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
+                @foreach([
+                    ['label' => 'Active',    'color' => 'bg-emerald-500', 'val' => $faculties->sum('active_students_count')],
+                    ['label' => 'Graduated', 'color' => 'bg-blue-500',    'val' => $faculties->sum('graduated_students_count')],
+                    ['label' => 'Suspended', 'color' => 'bg-amber-500',   'val' => $faculties->sum('suspended_students_count')],
+                    ['label' => 'Withdrawn', 'color' => 'bg-red-500',     'val' => $faculties->sum('withdrawn_students_count')],
+                ] as $item)
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full {{ $item['color'] }} shrink-0"></span>
+                        <span class="text-xs text-gray-500 truncate">{{ $item['label'] }}</span>
+                        <span class="text-xs font-semibold text-gray-700 ml-auto">{{ number_format($item['val']) }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Stacked Bar: Students by Faculty --}}
+        <div class="xl:col-span-3 bg-white rounded-2xl border border-gray-200 p-6 flex flex-col">
+            <p class="text-sm font-semibold text-gray-700">Students by Faculty</p>
+            <p class="text-xs text-gray-400 mt-0.5 mb-4">By enrollment status</p>
+            <div class="flex-1 relative" style="min-height:190px">
+                <canvas id="studentsByFacultyChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    {{-- Grouped Bar: Staff by Faculty --}}
+    <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-10">
+        <p class="text-sm font-semibold text-gray-700">Staff by Faculty</p>
+        <p class="text-xs text-gray-400 mt-0.5 mb-4">Professors &amp; Employees</p>
+        <div class="relative" style="height:180px">
+            <canvas id="staffByFacultyChart"></canvas>
+        </div>
+    </div>
+
     <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">By Faculty</h3>
 
     @if($faculties->isEmpty())
@@ -156,7 +202,7 @@
         ]);
     @endphp
     @if(count($warnings) > 0)
-        <div class="mb-8">
+        <div class="mt-10 mb-8">
             <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
                 Data Health Warnings
             </h3>
@@ -181,7 +227,7 @@
             </div>
         </div>
     @else
-        <div class="mb-8 flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-5 py-3">
+        <div class="mt-10 mb-8 flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-5 py-3">
             <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
@@ -486,6 +532,125 @@
     </div>
 
 @endif
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+@if($role === 'system_admin')
+<script>
+    Chart.defaults.font.family = 'ui-sans-serif, system-ui, sans-serif';
+    Chart.defaults.color       = '#6b7280';
+
+    // ── Student Status Donut ──────────────────────────────────
+    (function () {
+        const active    = {{ $faculties->sum('active_students_count') }};
+        const graduated = {{ $faculties->sum('graduated_students_count') }};
+        const suspended = {{ $faculties->sum('suspended_students_count') }};
+        const withdrawn = {{ $faculties->sum('withdrawn_students_count') }};
+        const total     = active + graduated + suspended + withdrawn;
+
+        new Chart(document.getElementById('studentStatusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Active', 'Graduated', 'Suspended', 'Withdrawn'],
+                datasets: [{
+                    data: [active, graduated, suspended, withdrawn],
+                    backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+                    borderColor: '#ffffff',
+                    borderWidth: 3,
+                    hoverOffset: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` ${ctx.label}: ${ctx.parsed.toLocaleString()}  (${total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0}%)`
+                        }
+                    }
+                }
+            },
+            plugins: [{
+                id: 'centerLabel',
+                afterDraw(chart) {
+                    const { width, height, ctx } = chart;
+                    ctx.save();
+                    ctx.textAlign    = 'center';
+                    ctx.textBaseline = 'middle';
+                    const cx = width / 2, cy = height / 2;
+                    ctx.font      = 'bold 24px ui-sans-serif,system-ui,sans-serif';
+                    ctx.fillStyle = '#111827';
+                    ctx.fillText(total.toLocaleString(), cx, cy - 9);
+                    ctx.font      = '11px ui-sans-serif,system-ui,sans-serif';
+                    ctx.fillStyle = '#9ca3af';
+                    ctx.fillText('Students', cx, cy + 12);
+                    ctx.restore();
+                }
+            }]
+        });
+    })();
+
+    // ── Students by Faculty (Stacked Bar) ────────────────────
+    (function () {
+        const labels = @json($faculties->pluck('name'));
+        new Chart(document.getElementById('studentsByFacultyChart'), {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    { label: 'Active',    data: @json($faculties->pluck('active_students_count')->values()),    backgroundColor: '#10b981', stack: 's', borderRadius: 2 },
+                    { label: 'Graduated', data: @json($faculties->pluck('graduated_students_count')->values()), backgroundColor: '#3b82f6', stack: 's', borderRadius: 2 },
+                    { label: 'Suspended', data: @json($faculties->pluck('suspended_students_count')->values()), backgroundColor: '#f59e0b', stack: 's', borderRadius: 2 },
+                    { label: 'Withdrawn', data: @json($faculties->pluck('withdrawn_students_count')->values()), backgroundColor: '#ef4444', stack: 's', borderRadius: 2 },
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { boxWidth: 10, padding: 14, usePointStyle: true, pointStyle: 'circle' } },
+                },
+                scales: {
+                    x: { stacked: true, grid: { display: false } },
+                    y: { stacked: true, grid: { color: '#f3f4f6' }, beginAtZero: true, ticks: { precision: 0 } },
+                }
+            }
+        });
+    })();
+
+    // ── Staff by Faculty (Grouped Bar) ───────────────────────
+    (function () {
+        const labels   = @json($faculties->pluck('name'));
+        const profData = @json($faculties->map(fn ($f) => $professorsByFaculty[$f->id] ?? 0)->values());
+        const empData  = @json($faculties->map(fn ($f) => $employeesByFaculty[$f->id] ?? 0)->values());
+        new Chart(document.getElementById('staffByFacultyChart'), {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    { label: 'Professors', data: profData, backgroundColor: '#6366f1', borderRadius: 4, barPercentage: 0.65 },
+                    { label: 'Employees',  data: empData,  backgroundColor: '#a5b4fc', borderRadius: 4, barPercentage: 0.65 },
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { boxWidth: 10, padding: 14, usePointStyle: true, pointStyle: 'circle' } },
+                },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { grid: { color: '#f3f4f6' }, beginAtZero: true, ticks: { precision: 0 } },
+                }
+            }
+        });
+    })();
+</script>
+@endif
+@endpush
 
 @endsection
 

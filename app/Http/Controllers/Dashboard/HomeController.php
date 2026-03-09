@@ -50,6 +50,13 @@ class HomeController extends Controller
             ->groupBy('departments.faculty_id')
             ->pluck('count', 'faculty_id');
 
+        $employeesByFaculty = DB::table('employees')
+            ->join('departments', 'employees.department_id', '=', 'departments.id')
+            ->whereNotNull('departments.faculty_id')
+            ->selectRaw('departments.faculty_id, COUNT(*) as count')
+            ->groupBy('departments.faculty_id')
+            ->pluck('count', 'faculty_id');
+
         $faculties = Faculty::withCount([
             'departments',
             'students',
@@ -90,6 +97,7 @@ class HomeController extends Controller
             'globalStats'         => $globalStats,
             'faculties'           => $faculties,
             'professorsByFaculty' => $professorsByFaculty,
+            'employeesByFaculty'  => $employeesByFaculty,
             'dataHealth'          => $dataHealth,
             'recentAuditLogs'     => $recentAuditLogs,
             'recentAssignments'   => $recentAssignments,
