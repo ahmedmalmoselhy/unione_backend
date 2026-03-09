@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreDepartmentRequest;
 use App\Http\Requests\Dashboard\UpdateDepartmentRequest;
+use App\Models\AuditLog;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\User;
@@ -71,7 +72,7 @@ class DepartmentController extends Controller
 
     public function store(StoreDepartmentRequest $request): RedirectResponse
     {
-        Department::create([
+        $dept = Department::create([
             'faculty_id'     => $request->faculty_id,
             'name'           => $request->name,
             'name_ar'        => $request->name_ar,
@@ -84,6 +85,14 @@ class DepartmentController extends Controller
             'head_id'        => $request->head_id,
             'is_active'      => $request->boolean('is_active'),
         ]);
+
+        AuditLog::record(
+            action: 'created',
+            auditableType: 'Department',
+            auditableId: $dept->id,
+            description: "Created department {$dept->name}",
+            newValues: $dept->only(['name', 'code', 'type', 'faculty_id', 'is_active']),
+        );
 
         return redirect()->route('dashboard.departments.index')
             ->with('success', 'Department created successfully.');
@@ -106,6 +115,8 @@ class DepartmentController extends Controller
 
     public function update(UpdateDepartmentRequest $request, Department $department): RedirectResponse
     {
+        $oldValues = $department->only(['name', 'code', 'faculty_id', 'is_active']);
+
         $logoPath = $department->logo_path;
 
         if ($request->boolean('remove_logo') && $logoPath) {
@@ -131,6 +142,15 @@ class DepartmentController extends Controller
             'is_active'      => $request->boolean('is_active'),
         ]);
 
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'Department',
+            auditableId: $department->id,
+            description: "Updated department {$department->name}",
+            oldValues: $oldValues,
+            newValues: $department->only(['name', 'code', 'faculty_id', 'is_active']),
+        );
+
         return redirect()->route('dashboard.departments.index')
             ->with('success', 'Department updated successfully.');
     }
@@ -141,11 +161,21 @@ class DepartmentController extends Controller
             return back()->withErrors(['delete' => 'This department is mandatory and cannot be deleted.']);
         }
 
+        $name = $department->name;
+        $id   = $department->id;
+
         try {
             $department->delete();
         } catch (\Illuminate\Database\QueryException) {
             return back()->withErrors(['delete' => 'This department cannot be deleted because it has associated records (professors, employees, students, or courses).']);
         }
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'Department',
+            auditableId: $id,
+            description: "Deleted department {$name}",
+        );
 
         return redirect()->route('dashboard.departments.index')
             ->with('success', 'Department deleted successfully.');

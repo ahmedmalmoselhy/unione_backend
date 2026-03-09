@@ -8,6 +8,7 @@ use App\Http\Requests\Dashboard\StoreEnrollmentRequest;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Dashboard\UpdateEnrollmentRequest;
 use App\Models\AcademicTerm;
+use App\Models\AuditLog;
 use App\Models\Enrollment;
 use App\Models\Section;
 use App\Models\Student;
@@ -64,7 +65,15 @@ class EnrollmentController extends Controller
 
     public function store(StoreEnrollmentRequest $request)
     {
-        Enrollment::create($request->validated());
+        $enrollment = Enrollment::create($request->validated());
+
+        AuditLog::record(
+            action: 'created',
+            auditableType: 'Enrollment',
+            auditableId: $enrollment->id,
+            description: "Created enrollment for student #{$enrollment->student_id} in section #{$enrollment->section_id}",
+            newValues: ['student_id' => $enrollment->student_id, 'section_id' => $enrollment->section_id, 'academic_term_id' => $enrollment->academic_term_id, 'status' => $enrollment->status],
+        );
 
         return redirect()
             ->route('dashboard.enrollments.index')
@@ -83,7 +92,18 @@ class EnrollmentController extends Controller
 
     public function update(UpdateEnrollmentRequest $request, Enrollment $enrollment)
     {
+        $oldValues = ['status' => $enrollment->status, 'section_id' => $enrollment->section_id, 'academic_term_id' => $enrollment->academic_term_id];
+
         $enrollment->update($request->validated());
+
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'Enrollment',
+            auditableId: $enrollment->id,
+            description: "Updated enrollment #{$enrollment->id}",
+            oldValues: $oldValues,
+            newValues: ['status' => $enrollment->status, 'section_id' => $enrollment->section_id, 'academic_term_id' => $enrollment->academic_term_id],
+        );
 
         return redirect()
             ->route('dashboard.enrollments.index')
@@ -92,7 +112,17 @@ class EnrollmentController extends Controller
 
     public function destroy(Enrollment $enrollment)
     {
+        $id        = $enrollment->id;
+        $studentId = $enrollment->student_id;
+
         $enrollment->delete();
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'Enrollment',
+            auditableId: $id,
+            description: "Deleted enrollment #{$id} for student #{$studentId}",
+        );
 
         return redirect()
             ->route('dashboard.enrollments.index')

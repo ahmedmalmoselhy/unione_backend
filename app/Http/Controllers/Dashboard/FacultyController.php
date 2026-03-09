@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreFacultyRequest;
 use App\Http\Requests\Dashboard\UpdateFacultyRequest;
+use App\Models\AuditLog;
 use App\Models\Faculty;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -47,7 +48,7 @@ class FacultyController extends Controller
 
     public function store(StoreFacultyRequest $request): RedirectResponse
     {
-        Faculty::create([
+        $faculty = Faculty::create([
             'name'            => $request->name,
             'name_ar'         => $request->name_ar,
             'code'            => strtoupper($request->code),
@@ -58,6 +59,14 @@ class FacultyController extends Controller
             'dean_id'         => $request->dean_id,
             'is_active'       => $request->boolean('is_active'),
         ]);
+
+        AuditLog::record(
+            action: 'created',
+            auditableType: 'Faculty',
+            auditableId: $faculty->id,
+            description: "Created faculty {$faculty->name}",
+            newValues: ['name' => $faculty->name, 'code' => $faculty->code, 'enrollment_type' => $faculty->enrollment_type],
+        );
 
         return redirect()->route('dashboard.faculties.index')
             ->with('success', 'Faculty created successfully.');
@@ -72,6 +81,14 @@ class FacultyController extends Controller
 
     public function update(UpdateFacultyRequest $request, Faculty $faculty): RedirectResponse
     {
+        $oldValues = [
+            'name'            => $faculty->name,
+            'name_ar'         => $faculty->name_ar,
+            'code'            => $faculty->code,
+            'enrollment_type' => $faculty->enrollment_type,
+            'is_active'       => $faculty->is_active,
+        ];
+
         $logoPath = $faculty->logo_path;
 
         if ($request->boolean('remove_logo') && $logoPath) {
@@ -96,17 +113,36 @@ class FacultyController extends Controller
             'is_active'       => $request->boolean('is_active'),
         ]);
 
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'Faculty',
+            auditableId: $faculty->id,
+            description: "Updated faculty {$faculty->name}",
+            oldValues: $oldValues,
+            newValues: ['name' => $request->name, 'code' => strtoupper($request->code), 'enrollment_type' => $request->enrollment_type, 'is_active' => $request->boolean('is_active')],
+        );
+
         return redirect()->route('dashboard.faculties.index')
             ->with('success', 'Faculty updated successfully.');
     }
 
     public function destroy(Faculty $faculty): RedirectResponse
     {
+        $name = $faculty->name;
+        $id   = $faculty->id;
+
         try {
             $faculty->delete();
         } catch (\Illuminate\Database\QueryException) {
             return back()->withErrors(['delete' => 'This faculty cannot be deleted because it has associated records (departments or students).']);
         }
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'Faculty',
+            auditableId: $id,
+            description: "Deleted faculty {$name}",
+        );
 
         return redirect()->route('dashboard.faculties.index')
             ->with('success', 'Faculty deleted successfully.');

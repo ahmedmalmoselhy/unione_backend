@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreSectionRequest;
 use App\Http\Requests\Dashboard\UpdateSectionRequest;
 use App\Models\AcademicTerm;
+use App\Models\AuditLog;
 use App\Models\Course;
 use App\Models\Professor;
 use App\Models\Section;
@@ -53,7 +54,7 @@ class SectionController extends Controller
 
     public function store(StoreSectionRequest $request): RedirectResponse
     {
-        Section::create([
+        $section = Section::create([
             'course_id'        => $request->course_id,
             'professor_id'     => $request->professor_id,
             'academic_term_id' => $request->academic_term_id,
@@ -61,6 +62,14 @@ class SectionController extends Controller
             'room'             => $request->room,
             'schedule'         => $request->schedule,
         ]);
+
+        AuditLog::record(
+            action: 'created',
+            auditableType: 'Section',
+            auditableId: $section->id,
+            description: "Created section #{$section->id} for course #{$section->course_id}",
+            newValues: ['course_id' => $section->course_id, 'professor_id' => $section->professor_id, 'academic_term_id' => $section->academic_term_id, 'capacity' => $section->capacity],
+        );
 
         return redirect()->route('dashboard.sections.index')
             ->with('success', 'Section created successfully.');
@@ -76,6 +85,15 @@ class SectionController extends Controller
 
     public function update(UpdateSectionRequest $request, Section $section): RedirectResponse
     {
+        $oldValues = [
+            'course_id'        => $section->course_id,
+            'professor_id'     => $section->professor_id,
+            'academic_term_id' => $section->academic_term_id,
+            'capacity'         => $section->capacity,
+            'room'             => $section->room,
+            'is_active'        => $section->is_active,
+        ];
+
         $section->update([
             'course_id'        => $request->course_id,
             'professor_id'     => $request->professor_id,
@@ -85,6 +103,15 @@ class SectionController extends Controller
             'schedule'         => $request->schedule,
             'is_active'        => $request->boolean('is_active'),
         ]);
+
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'Section',
+            auditableId: $section->id,
+            description: "Updated section #{$section->id}",
+            oldValues: $oldValues,
+            newValues: ['course_id' => $request->course_id, 'professor_id' => $request->professor_id, 'academic_term_id' => $request->academic_term_id, 'capacity' => $request->capacity, 'room' => $request->room, 'is_active' => $request->boolean('is_active')],
+        );
 
         return redirect()->route('dashboard.sections.index')
             ->with('success', 'Section updated successfully.');
@@ -96,7 +123,17 @@ class SectionController extends Controller
             return back()->withErrors(['delete' => 'This section cannot be deleted because it has associated enrollments.']);
         }
 
+        $id       = $section->id;
+        $courseId = $section->course_id;
+
         $section->delete();
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'Section',
+            auditableId: $id,
+            description: "Deleted section #{$id} for course #{$courseId}",
+        );
 
         return redirect()->route('dashboard.sections.index')
             ->with('success', 'Section deleted successfully.');

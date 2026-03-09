@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\AuditLog;
 use App\Models\Department;
 use App\Models\Faculty;
 
@@ -30,16 +31,21 @@ class FacultyObserver
                 'code'    => $code . '-LGL',
                 'type'    => 'managerial',
             ],
-            [
+        ];
+
+        // Only create a general academic department for deferred-enrollment faculties,
+        // where students need a holding department before being assigned to a specific one.
+        if ($faculty->enrollment_type === 'deferred') {
+            $mandatory[] = [
                 'name'    => 'General',
                 'name_ar' => 'القسم العام',
                 'code'    => $code . '-GEN',
                 'type'    => 'academic',
-            ],
-        ];
+            ];
+        }
 
         foreach ($mandatory as $dept) {
-            Department::create([
+            $department = Department::create([
                 'faculty_id'     => $faculty->id,
                 'name'           => $dept['name'],
                 'name_ar'        => $dept['name_ar'],
@@ -50,6 +56,14 @@ class FacultyObserver
                 'is_active'      => true,
                 'is_mandatory'   => true,
             ]);
+
+            AuditLog::record(
+                action: 'created',
+                auditableType: 'Department',
+                auditableId: $department->id,
+                description: "Auto-created mandatory department {$department->name} for faculty {$faculty->name}",
+                newValues: ['name' => $department->name, 'code' => $department->code, 'type' => $department->type, 'faculty_id' => $faculty->id],
+            );
         }
     }
 }

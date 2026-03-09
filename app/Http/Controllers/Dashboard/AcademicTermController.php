@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreAcademicTermRequest;
 use App\Http\Requests\Dashboard\UpdateAcademicTermRequest;
 use App\Models\AcademicTerm;
+use App\Models\AuditLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -44,7 +45,7 @@ class AcademicTermController extends Controller
 
     public function store(StoreAcademicTermRequest $request): RedirectResponse
     {
-        AcademicTerm::create([
+        $term = AcademicTerm::create([
             'name'                     => $request->name,
             'name_ar'                  => $request->name_ar,
             'academic_year'            => $request->academic_year,
@@ -58,6 +59,14 @@ class AcademicTermController extends Controller
             'exam_ends_at'            => $request->exam_ends_at,
             'grade_submission_deadline' => $request->grade_submission_deadline,
         ]);
+
+        AuditLog::record(
+            action: 'created',
+            auditableType: 'AcademicTerm',
+            auditableId: $term->id,
+            description: "Created academic term {$term->name}",
+            newValues: $term->only(['name', 'academic_year', 'semester', 'is_active']),
+        );
 
         return redirect()->route('dashboard.academic-terms.index')
             ->with('success', 'Academic term created successfully.');
@@ -77,6 +86,8 @@ class AcademicTermController extends Controller
                 ->update(['is_active' => false]);
         }
 
+        $oldValues = $academicTerm->only(['name', 'academic_year', 'semester', 'is_active']);
+
         $academicTerm->update([
             'name'                     => $request->name,
             'name_ar'                  => $request->name_ar,
@@ -93,17 +104,36 @@ class AcademicTermController extends Controller
             'is_active'               => $request->boolean('is_active'),
         ]);
 
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'AcademicTerm',
+            auditableId: $academicTerm->id,
+            description: "Updated academic term {$academicTerm->name}",
+            oldValues: $oldValues,
+            newValues: $academicTerm->only(['name', 'academic_year', 'semester', 'is_active']),
+        );
+
         return redirect()->route('dashboard.academic-terms.index')
             ->with('success', 'Academic term updated successfully.');
     }
 
     public function destroy(AcademicTerm $academicTerm): RedirectResponse
     {
+        $name = $academicTerm->name;
+        $id   = $academicTerm->id;
+
         try {
             $academicTerm->delete();
         } catch (\Illuminate\Database\QueryException) {
             return back()->withErrors(['delete' => 'This academic term cannot be deleted because it has associated sections or enrollments.']);
         }
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'AcademicTerm',
+            auditableId: $id,
+            description: "Deleted academic term {$name}",
+        );
 
         return redirect()->route('dashboard.academic-terms.index')
             ->with('success', 'Academic term deleted successfully.');

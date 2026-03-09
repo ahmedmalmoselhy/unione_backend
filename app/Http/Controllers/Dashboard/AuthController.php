@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,11 +45,25 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        AuditLog::record(
+            action: 'login',
+            auditableType: 'Login',
+            auditableId: Auth::id(),
+            description: 'User logged into the dashboard',
+        );
+
         return redirect()->intended(route('dashboard.home'));
     }
 
     public function logout(Request $request): RedirectResponse
     {
+        AuditLog::record(
+            action: 'logout',
+            auditableType: 'Login',
+            auditableId: Auth::id(),
+            description: 'User logged out of the dashboard',
+        );
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

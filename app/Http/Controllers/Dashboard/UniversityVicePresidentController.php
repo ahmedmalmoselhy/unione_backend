@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreVicePresidentRequest;
 use App\Http\Requests\Dashboard\UpdateVicePresidentRequest;
+use App\Models\AuditLog;
 use App\Models\Professor;
 use App\Models\University;
 use App\Models\UniversityVicePresident;
@@ -22,7 +23,7 @@ class UniversityVicePresidentController extends Controller
 
     public function store(StoreVicePresidentRequest $request): RedirectResponse
     {
-        UniversityVicePresident::create([
+        $vp = UniversityVicePresident::create([
             'university_id' => University::value('id'),
             'professor_id' => $request->professor_id,
             'title'        => $request->title,
@@ -32,6 +33,14 @@ class UniversityVicePresidentController extends Controller
             'appointed_at' => $request->appointed_at,
             'ended_at'     => $request->ended_at,
         ]);
+
+        AuditLog::record(
+            action: 'created',
+            auditableType: 'UniversityVicePresident',
+            auditableId: $vp->id,
+            description: "Added vice president: {$vp->title}",
+            newValues: ['professor_id' => $vp->professor_id, 'title' => $vp->title, 'is_active' => $vp->is_active],
+        );
 
         return redirect()->route('dashboard.university.show')
             ->with('success', 'Vice president added successfully.');
@@ -46,6 +55,12 @@ class UniversityVicePresidentController extends Controller
 
     public function update(UpdateVicePresidentRequest $request, UniversityVicePresident $vice_president): RedirectResponse
     {
+        $oldValues = [
+            'professor_id' => $vice_president->professor_id,
+            'title'        => $vice_president->title,
+            'is_active'    => $vice_president->is_active,
+        ];
+
         $vice_president->update([
             'professor_id' => $request->professor_id,
             'title'        => $request->title,
@@ -56,13 +71,32 @@ class UniversityVicePresidentController extends Controller
             'ended_at'     => $request->ended_at,
         ]);
 
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'UniversityVicePresident',
+            auditableId: $vice_president->id,
+            description: "Updated vice president: {$vice_president->title}",
+            oldValues: $oldValues,
+            newValues: ['professor_id' => $request->professor_id, 'title' => $request->title, 'is_active' => $request->boolean('is_active')],
+        );
+
         return redirect()->route('dashboard.university.show')
             ->with('success', 'Vice president updated successfully.');
     }
 
     public function destroy(UniversityVicePresident $vice_president): RedirectResponse
     {
+        $title = $vice_president->title;
+        $id    = $vice_president->id;
+
         $vice_president->delete();
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'UniversityVicePresident',
+            auditableId: $id,
+            description: "Removed vice president: {$title}",
+        );
 
         return redirect()->route('dashboard.university.show')
             ->with('success', 'Vice president removed successfully.');

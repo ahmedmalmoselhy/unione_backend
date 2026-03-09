@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreCourseRequest;
 use App\Http\Requests\Dashboard\UpdateCourseRequest;
+use App\Models\AuditLog;
 use App\Models\Course;
 use App\Models\Department;
 use Illuminate\Http\RedirectResponse;
@@ -71,6 +72,14 @@ class CourseController extends Controller
             if ($request->prerequisites) {
                 $course->prerequisites()->sync($request->prerequisites);
             }
+
+            AuditLog::record(
+                action: 'created',
+                auditableType: 'Course',
+                auditableId: $course->id,
+                description: "Created course {$course->code} — {$course->name}",
+                newValues: $course->only(['code', 'name', 'credit_hours', 'level', 'is_elective']),
+            );
         });
 
         return redirect()->route('dashboard.courses.index')
@@ -89,6 +98,8 @@ class CourseController extends Controller
     public function update(UpdateCourseRequest $request, Course $course): RedirectResponse
     {
         DB::transaction(function () use ($request, $course) {
+            $oldValues = $course->only(['code', 'name', 'credit_hours', 'level', 'is_elective', 'is_active']);
+
             $course->update([
                 'code'          => $request->code,
                 'name'          => $request->name,
@@ -108,6 +119,15 @@ class CourseController extends Controller
                 ? array_filter($request->prerequisites, fn ($id) => $id != $course->id)
                 : [];
             $course->prerequisites()->sync($prerequisites);
+
+            AuditLog::record(
+                action: 'updated',
+                auditableType: 'Course',
+                auditableId: $course->id,
+                description: "Updated course {$course->code} — {$course->name}",
+                oldValues: $oldValues,
+                newValues: $course->only(['code', 'name', 'credit_hours', 'level', 'is_elective', 'is_active']),
+            );
         });
 
         return redirect()->route('dashboard.courses.index')
@@ -116,11 +136,22 @@ class CourseController extends Controller
 
     public function destroy(Course $course): RedirectResponse
     {
+        $code = $course->code;
+        $name = $course->name;
+        $id   = $course->id;
+
         try {
             $course->delete();
         } catch (\Illuminate\Database\QueryException) {
             return back()->withErrors(['delete' => 'This course cannot be deleted because it has associated sections or is a prerequisite for other courses.']);
         }
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'Course',
+            auditableId: $id,
+            description: "Deleted course {$code} — {$name}",
+        );
 
         return redirect()->route('dashboard.courses.index')
             ->with('success', 'Course deleted successfully.');

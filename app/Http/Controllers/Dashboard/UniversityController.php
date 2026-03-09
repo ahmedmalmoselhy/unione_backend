@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\UpdateUniversityRequest;
+use App\Models\AuditLog;
 use App\Models\Professor;
 use App\Models\University;
 use Illuminate\Http\RedirectResponse;
@@ -34,6 +35,13 @@ class UniversityController extends Controller
     {
         $university = University::firstOrFail();
 
+        $oldValues = [
+            'name'         => $university->name,
+            'name_ar'      => $university->name_ar,
+            'address'      => $university->address,
+            'president_id' => $university->president_id,
+        ];
+
         $logoPath = $university->logo_path;
 
         if ($request->boolean('remove_logo') && $logoPath) {
@@ -59,6 +67,15 @@ class UniversityController extends Controller
             'email'          => $request->email,
             'website'        => $request->website,
         ]);
+
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'University',
+            auditableId: $university->id,
+            description: "Updated university information",
+            oldValues: $oldValues,
+            newValues: ['name' => $request->name, 'name_ar' => $request->name_ar, 'address' => $request->address, 'president_id' => $request->president_id],
+        );
 
         return redirect()->route('dashboard.university.show')
             ->with('success', 'University information updated successfully.');

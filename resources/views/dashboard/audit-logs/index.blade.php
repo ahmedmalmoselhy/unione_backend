@@ -30,7 +30,7 @@
         <label class="block text-xs font-medium text-gray-500 mb-1">Type</label>
         <select name="type" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">All types</option>
-            @foreach(['Grade','FacultyAdmin','DepartmentAdmin'] as $t)
+            @foreach(['AcademicTerm','Announcement','Course','Department','Employee','Enrollment','Faculty','Grade','FacultyAdmin','DepartmentAdmin','DepartmentHead','Login','Professor','Section','Student','University','UniversityVicePresident'] as $t)
                 <option value="{{ $t }}" @selected(request('type') === $t)>{{ $t }}</option>
             @endforeach
         </select>

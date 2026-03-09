@@ -8,6 +8,7 @@ use App\Http\Requests\Dashboard\StoreEmployeeRequest;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Dashboard\UpdateEmployeeRequest;
 use App\Models\Department;
+use App\Models\AuditLog;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -78,7 +79,7 @@ class EmployeeController extends Controller
                     : null,
             ]);
 
-            Employee::create([
+            $employee = Employee::create([
                 'user_id'         => $user->id,
                 'staff_number'    => $request->staff_number,
                 'department_id'   => $request->department_id,
@@ -95,6 +96,14 @@ class EmployeeController extends Controller
                 'role_id'    => $roleId,
                 'granted_at' => now(),
             ]);
+
+            AuditLog::record(
+                action: 'created',
+                auditableType: 'Employee',
+                auditableId: $employee->id,
+                description: "Created employee {$user->first_name} {$user->last_name}",
+                newValues: ['staff_number' => $employee->staff_number, 'department_id' => $employee->department_id, 'job_title' => $employee->job_title],
+            );
         });
 
         return redirect()->route('dashboard.employees.index')
@@ -111,6 +120,16 @@ class EmployeeController extends Controller
 
     public function update(UpdateEmployeeRequest $request, Employee $employee): RedirectResponse
     {
+        $employee->load('user');
+        $oldValues = [
+            'name'            => $employee->user->first_name . ' ' . $employee->user->last_name,
+            'email'           => $employee->user->email,
+            'staff_number'    => $employee->staff_number,
+            'department_id'   => $employee->department_id,
+            'job_title'       => $employee->job_title,
+            'employment_type' => $employee->employment_type,
+        ];
+
         DB::transaction(function () use ($request, $employee) {
             $avatarPath = $employee->user->avatar_path;
 
@@ -155,18 +174,37 @@ class EmployeeController extends Controller
             ]);
         });
 
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'Employee',
+            auditableId: $employee->id,
+            description: "Updated employee {$request->first_name} {$request->last_name}",
+            oldValues: $oldValues,
+            newValues: ['name' => $request->first_name . ' ' . $request->last_name, 'email' => $request->email, 'staff_number' => $request->staff_number, 'department_id' => $request->department_id, 'job_title' => $request->job_title, 'employment_type' => $request->employment_type],
+        );
+
         return redirect()->route('dashboard.employees.index')
             ->with('success', 'Employee updated successfully.');
     }
 
     public function destroy(Employee $employee): RedirectResponse
     {
+        $name = $employee->user->first_name . ' ' . $employee->user->last_name;
+        $id   = $employee->id;
+
         try {
             $employee->delete();
             $employee->user->delete();
         } catch (\Illuminate\Database\QueryException) {
             return back()->withErrors(['delete' => 'This employee cannot be deleted because they have associated records (department head assignment).']);
         }
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'Employee',
+            auditableId: $id,
+            description: "Deleted employee {$name}",
+        );
 
         return redirect()->route('dashboard.employees.index')
             ->with('success', 'Employee deleted successfully.');

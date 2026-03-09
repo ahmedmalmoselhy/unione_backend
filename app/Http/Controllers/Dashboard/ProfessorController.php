@@ -8,6 +8,7 @@ use App\Http\Requests\Dashboard\StoreProfessorRequest;
 use App\Imports\ProfessorsImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Dashboard\UpdateProfessorRequest;
+use App\Models\AuditLog;
 use App\Models\Department;
 use App\Models\Professor;
 use App\Models\User;
@@ -79,7 +80,7 @@ class ProfessorController extends Controller
                     : null,
             ]);
 
-            Professor::create([
+            $professor = Professor::create([
                 'user_id'         => $user->id,
                 'staff_number'    => $request->staff_number,
                 'department_id'   => $request->department_id,
@@ -96,6 +97,14 @@ class ProfessorController extends Controller
                 'role_id'    => $roleId,
                 'granted_at' => now(),
             ]);
+
+            AuditLog::record(
+                action: 'created',
+                auditableType: 'Professor',
+                auditableId: $professor->id,
+                description: "Created professor {$user->first_name} {$user->last_name}",
+                newValues: ['staff_number' => $professor->staff_number, 'department_id' => $professor->department_id, 'academic_rank' => $professor->academic_rank],
+            );
         });
 
         return redirect()->route('dashboard.professors.index')
@@ -112,6 +121,15 @@ class ProfessorController extends Controller
 
     public function update(UpdateProfessorRequest $request, Professor $professor): RedirectResponse
     {
+        $professor->load('user');
+        $oldValues = [
+            'name'          => $professor->user->first_name . ' ' . $professor->user->last_name,
+            'email'         => $professor->user->email,
+            'staff_number'  => $professor->staff_number,
+            'department_id' => $professor->department_id,
+            'academic_rank' => $professor->academic_rank,
+        ];
+
         DB::transaction(function () use ($request, $professor) {
             $avatarPath = $professor->user->avatar_path;
 
@@ -155,17 +173,36 @@ class ProfessorController extends Controller
             ]);
         });
 
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'Professor',
+            auditableId: $professor->id,
+            description: "Updated professor {$request->first_name} {$request->last_name}",
+            oldValues: $oldValues,
+            newValues: ['name' => $request->first_name . ' ' . $request->last_name, 'email' => $request->email, 'staff_number' => $request->staff_number, 'department_id' => $request->department_id, 'academic_rank' => $request->academic_rank],
+        );
+
         return redirect()->route('dashboard.professors.index')
             ->with('success', 'Professor updated successfully.');
     }
 
     public function destroy(Professor $professor): RedirectResponse
     {
+        $name = $professor->user->first_name . ' ' . $professor->user->last_name;
+        $id   = $professor->id;
+
         try {
             $professor->user->delete();
         } catch (\Illuminate\Database\QueryException) {
             return back()->withErrors(['delete' => 'This professor cannot be deleted because they have associated records (sections, dean assignment, or department head).']);
         }
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'Professor',
+            auditableId: $id,
+            description: "Deleted professor {$name}",
+        );
 
         return redirect()->route('dashboard.professors.index')
             ->with('success', 'Professor deleted successfully.');

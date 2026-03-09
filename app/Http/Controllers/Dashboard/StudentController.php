@@ -8,6 +8,7 @@ use App\Http\Requests\Dashboard\StoreStudentRequest;
 use App\Imports\StudentsImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Dashboard\UpdateStudentRequest;
+use App\Models\AuditLog;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Student;
@@ -77,6 +78,8 @@ class StudentController extends Controller
             'note'             => ['nullable', 'string', 'max:500'],
         ]);
 
+        $fromDepartmentId = $student->department_id;
+
         StudentDepartmentHistory::create([
             'student_id'         => $student->id,
             'from_department_id' => $student->department_id,
@@ -87,6 +90,15 @@ class StudentController extends Controller
         ]);
 
         $student->update(['department_id' => $request->to_department_id]);
+
+        AuditLog::record(
+            action: 'transferred',
+            auditableType: 'Student',
+            auditableId: $student->id,
+            description: "Transferred student #{$student->id} between departments",
+            oldValues: ['department_id' => $fromDepartmentId],
+            newValues: ['department_id' => $request->to_department_id, 'note' => $request->note],
+        );
 
         return redirect()->route('dashboard.students.show', $student)
             ->with('success', 'Student transferred to new department successfully.');
@@ -115,7 +127,7 @@ class StudentController extends Controller
                     : null,
             ]);
 
-            Student::create([
+            $student = Student::create([
                 'user_id'           => $user->id,
                 'student_number'    => $request->student_number,
                 'faculty_id'        => $request->faculty_id,
@@ -135,6 +147,14 @@ class StudentController extends Controller
                 'role_id'    => $roleId,
                 'granted_at' => now(),
             ]);
+
+            AuditLog::record(
+                action: 'created',
+                auditableType: 'Student',
+                auditableId: $student->id,
+                description: "Created student {$user->first_name} {$user->last_name}",
+                newValues: ['student_number' => $student->student_number, 'faculty_id' => $student->faculty_id, 'department_id' => $student->department_id, 'enrollment_status' => $student->enrollment_status],
+            );
         });
 
         return redirect()->route('dashboard.students.index')
@@ -153,6 +173,16 @@ class StudentController extends Controller
 
     public function update(UpdateStudentRequest $request, Student $student): RedirectResponse
     {
+        $student->load('user');
+        $oldValues = [
+            'name'              => $student->user->first_name . ' ' . $student->user->last_name,
+            'email'             => $student->user->email,
+            'student_number'    => $student->student_number,
+            'faculty_id'        => $student->faculty_id,
+            'department_id'     => $student->department_id,
+            'enrollment_status' => $student->enrollment_status,
+        ];
+
         DB::transaction(function () use ($request, $student) {
             $avatarPath = $student->user->avatar_path;
 
@@ -199,17 +229,36 @@ class StudentController extends Controller
             ]);
         });
 
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'Student',
+            auditableId: $student->id,
+            description: "Updated student {$request->first_name} {$request->last_name}",
+            oldValues: $oldValues,
+            newValues: ['name' => $request->first_name . ' ' . $request->last_name, 'email' => $request->email, 'student_number' => $request->student_number, 'faculty_id' => $request->faculty_id, 'department_id' => $request->department_id, 'enrollment_status' => $request->enrollment_status],
+        );
+
         return redirect()->route('dashboard.students.index')
             ->with('success', 'Student updated successfully.');
     }
 
     public function destroy(Student $student): RedirectResponse
     {
+        $name = $student->user->first_name . ' ' . $student->user->last_name;
+        $id   = $student->id;
+
         try {
             $student->user->delete();
         } catch (\Illuminate\Database\QueryException) {
             return back()->withErrors(['delete' => 'This student cannot be deleted because they have associated records (enrollments, grades, etc.).']);
         }
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'Student',
+            auditableId: $id,
+            description: "Deleted student {$name}",
+        );
 
         return redirect()->route('dashboard.students.index')
             ->with('success', 'Student deleted successfully.');

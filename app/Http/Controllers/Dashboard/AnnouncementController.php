@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreAnnouncementRequest;
 use App\Http\Requests\Dashboard\UpdateAnnouncementRequest;
 use App\Models\Announcement;
+use App\Models\AuditLog;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\Section;
@@ -100,7 +101,15 @@ class AnnouncementController extends Controller
 
         $this->enforceTargetScope($data);
 
-        Announcement::create($data);
+        $announcement = Announcement::create($data);
+
+        AuditLog::record(
+            action: 'created',
+            auditableType: 'Announcement',
+            auditableId: $announcement->id,
+            description: "Created announcement '{$announcement->title}'",
+            newValues: $announcement->only(['title', 'type', 'visibility', 'target_id', 'published_at']),
+        );
 
         return redirect()
             ->route('dashboard.announcements.index')
@@ -124,7 +133,17 @@ class AnnouncementController extends Controller
         $data = $request->validated();
         $this->enforceTargetScope($data);
 
+        $oldValues = $announcement->only(['title', 'type', 'visibility', 'target_id', 'published_at']);
         $announcement->update($data);
+
+        AuditLog::record(
+            action: 'updated',
+            auditableType: 'Announcement',
+            auditableId: $announcement->id,
+            description: "Updated announcement '{$announcement->title}'",
+            oldValues: $oldValues,
+            newValues: $announcement->only(['title', 'type', 'visibility', 'target_id', 'published_at']),
+        );
 
         return redirect()
             ->route('dashboard.announcements.index')
@@ -135,7 +154,16 @@ class AnnouncementController extends Controller
     {
         abort_unless($this->canManageAnnouncement($announcement), 403);
 
+        $title = $announcement->title;
+        $id    = $announcement->id;
         $announcement->delete();
+
+        AuditLog::record(
+            action: 'deleted',
+            auditableType: 'Announcement',
+            auditableId: $id,
+            description: "Deleted announcement '{$title}'",
+        );
 
         return redirect()
             ->route('dashboard.announcements.index')
