@@ -269,6 +269,23 @@
                 </div>
             </div>
 
+            {{-- Locale switcher --}}
+            <div class="flex gap-1 mb-2">
+                @foreach(['en' => 'EN', 'ar' => 'AR'] as $__code => $__label)
+                    <form method="POST" action="{{ route('dashboard.locale.store') }}" class="flex-1">
+                        @csrf
+                        <input type="hidden" name="locale" value="{{ $__code }}">
+                        <button type="submit"
+                                class="w-full py-1 rounded-md text-xs font-semibold transition-colors
+                                       {{ app()->getLocale() === $__code
+                                            ? 'bg-blue-600 text-white'
+                                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
+                            {{ $__label }}
+                        </button>
+                    </form>
+                @endforeach
+            </div>
+
             <form method="POST" action="{{ route('dashboard.logout') }}">
                 @csrf
                 <button type="submit"

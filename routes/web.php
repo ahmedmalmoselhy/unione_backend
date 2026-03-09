@@ -14,6 +14,7 @@ use App\Http\Controllers\Dashboard\EnrollmentController;
 use App\Http\Controllers\Dashboard\FacultyController;
 use App\Http\Controllers\Dashboard\GradeController;
 use App\Http\Controllers\Dashboard\HomeController;
+use App\Http\Controllers\Dashboard\LocaleController;
 use App\Http\Controllers\Dashboard\NotificationController;
 use App\Http\Controllers\Dashboard\ProfessorController;
 use App\Http\Controllers\Dashboard\SectionController;
@@ -40,6 +41,9 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Locale switcher — available to any visitor (guest or authenticated)
+    Route::post('/locale', [LocaleController::class, 'store'])->name('locale.store');
 
     // Protected by session auth + role check
     Route::middleware(['dashboard', 'force.password'])->group(function () {
