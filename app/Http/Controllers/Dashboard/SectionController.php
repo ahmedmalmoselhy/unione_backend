@@ -92,11 +92,11 @@ class SectionController extends Controller
 
     public function destroy(Section $section): RedirectResponse
     {
-        try {
-            $section->delete();
-        } catch (\Illuminate\Database\QueryException) {
+        if ($section->enrollments()->exists()) {
             return back()->withErrors(['delete' => 'This section cannot be deleted because it has associated enrollments.']);
         }
+
+        $section->delete();
 
         return redirect()->route('dashboard.sections.index')
             ->with('success', 'Section deleted successfully.');

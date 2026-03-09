@@ -162,6 +162,7 @@ class EmployeeController extends Controller
     public function destroy(Employee $employee): RedirectResponse
     {
         try {
+            $employee->delete();
             $employee->user->delete();
         } catch (\Illuminate\Database\QueryException) {
             return back()->withErrors(['delete' => 'This employee cannot be deleted because they have associated records (department head assignment).']);

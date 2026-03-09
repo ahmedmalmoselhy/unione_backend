@@ -23,7 +23,7 @@ class AcademicTermController extends Controller
             ->when($request->filled('semester'), fn ($q) => $q->where('semester', $request->semester))
             ->when($request->filled('status'), fn ($q) => $q->where('is_active', $request->status === 'active'))
             ->orderByDesc('academic_year')
-            ->orderByRaw("array_position(ARRAY['summer','second','first'], semester)")
+            ->orderByRaw("CASE semester WHEN 'summer' THEN 1 WHEN 'second' THEN 2 WHEN 'first' THEN 3 ELSE 4 END")
             ->paginate(15)
             ->withQueryString();
 
