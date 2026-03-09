@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Enrollment;
 use App\Models\Section;
+use App\Notifications\EnrollmentConfirmed;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -64,7 +65,11 @@ class StudentEnrollmentController extends Controller
             'registered_at'    => now(),
         ]);
 
-        return response()->json(['enrollment' => $enrollment->load('section.course')], 201);
+        $enrollment->load('section.course', 'academicTerm');
+
+        $request->user()->notify(new EnrollmentConfirmed($enrollment));
+
+        return response()->json(['enrollment' => $enrollment], 201);
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Enrollment;
 use App\Models\Grade;
 use App\Models\Section;
+use App\Notifications\GradePosted;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -52,6 +53,17 @@ class ProfessorGradeController extends Controller
                 'graded_at' => now(),
             ])
         );
+
+        // Notify the student their grade has been posted/updated
+        $enrollment->load('section.course');
+        $studentUser = $enrollment->student?->user;
+        if ($studentUser) {
+            $studentUser->notify(new GradePosted(
+                enrollment:  $enrollment,
+                letterGrade: $grade->letter_grade,
+                total:       $grade->total,
+            ));
+        }
 
         return response()->json(['grade' => $grade], $isNew ? 201 : 200);
     }

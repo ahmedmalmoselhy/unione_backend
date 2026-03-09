@@ -14,6 +14,7 @@ use App\Http\Controllers\Dashboard\EnrollmentController;
 use App\Http\Controllers\Dashboard\FacultyController;
 use App\Http\Controllers\Dashboard\GradeController;
 use App\Http\Controllers\Dashboard\HomeController;
+use App\Http\Controllers\Dashboard\NotificationController;
 use App\Http\Controllers\Dashboard\ProfessorController;
 use App\Http\Controllers\Dashboard\SectionController;
 use App\Http\Controllers\Dashboard\StudentController;
@@ -122,6 +123,12 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
         // Faculty show — accessible to all dashboard users (admin + employee)
         Route::get('/faculties/{faculty}', [FacultyController::class, 'show'])->name('faculties.show');
+
+        // Notifications — accessible to all authenticated dashboard users
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+        Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
     });
 
 });

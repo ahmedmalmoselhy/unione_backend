@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AnnouncementController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfessorController;
 use App\Http\Controllers\Api\ProfessorGradeController;
 use App\Http\Controllers\Api\StudentController;
@@ -52,4 +53,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     // ── Announcements (any authenticated user) ───────────────────────────
     Route::get('/announcements', [AnnouncementController::class, 'index']);
     Route::post('/announcements/{id}/read', [AnnouncementController::class, 'markRead']);
+
+    // ── Notifications (any authenticated user) ───────────────────────────
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
 });
