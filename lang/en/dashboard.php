@@ -18,6 +18,7 @@ return [
     'nav_employees'          => 'Employees',
     'nav_courses'            => 'Courses',
     'nav_sections'           => 'Sections',
+    'nav_schedule'           => 'Schedule',
     'nav_students'           => 'Students',
     'nav_enrollments'        => 'Enrollments',
     'nav_grades'             => 'Grades',

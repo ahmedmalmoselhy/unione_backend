@@ -18,6 +18,7 @@ return [
     'nav_employees'          => 'الموظفون',
     'nav_courses'            => 'المقررات',
     'nav_sections'           => 'الشُّعَب',
+    'nav_schedule'           => 'الجدول الدراسي',
     'nav_students'           => 'الطلاب',
     'nav_enrollments'        => 'التسجيلات',
     'nav_grades'             => 'الدرجات',

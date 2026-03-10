@@ -18,6 +18,7 @@ use App\Http\Controllers\Dashboard\LocaleController;
 use App\Http\Controllers\Dashboard\NotificationController;
 use App\Http\Controllers\Dashboard\ProfessorController;
 use App\Http\Controllers\Dashboard\SectionController;
+use App\Http\Controllers\Dashboard\ScheduleController;
 use App\Http\Controllers\Dashboard\StudentController;
 use App\Http\Controllers\Dashboard\UniversityController;
 use App\Http\Controllers\Dashboard\UniversityVicePresidentController;
@@ -97,6 +98,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::resource('courses', CourseController::class);
 
             Route::resource('sections', SectionController::class);
+
+            Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
 
             // Students (export + import before resource)
             Route::get('/students/export', [StudentController::class, 'export'])->name('students.export');
