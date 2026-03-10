@@ -264,78 +264,75 @@
 
         </nav>
 
-        {{-- User info + Logout --}}
-        <div class="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
-            <div class="flex items-center gap-3 mb-3">
-                <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-700 dark:text-blue-400 font-semibold text-sm shrink-0">
-                    {{ strtoupper(substr(auth()->user()->first_name, 0, 1)) }}
-                </div>
-                <div class="min-w-0">
-                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
-                    </p>
-                    <p class="text-xs text-gray-400 dark:text-gray-500 truncate">{{ auth()->user()->email }}</p>
-                </div>
-            </div>
-
-            {{-- Dark mode toggle --}}
-            <button @click="dark = !dark; document.documentElement.classList.toggle('dark', dark); localStorage.setItem('theme', dark ? 'dark' : 'light')"
-                    class="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors mb-2">
-                <svg x-show="!dark" x-cloak class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-                </svg>
-                <svg x-show="dark" x-cloak class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-                </svg>
-                <span x-show="!dark" x-cloak>{{ __('dashboard.dark_mode') }}</span>
-                <span x-show="dark" x-cloak>{{ __('dashboard.light_mode') }}</span>
-            </button>
-
-            {{-- Locale switcher --}}
-            <div class="flex gap-1 mb-2">
-                @foreach(['en' => 'EN', 'ar' => 'AR'] as $__code => $__label)
-                    <form method="POST" action="{{ route('dashboard.locale.store') }}" class="flex-1">
-                        @csrf
-                        <input type="hidden" name="locale" value="{{ $__code }}">
-                        <button type="submit"
-                                class="w-full py-1 rounded-md text-xs font-semibold transition-colors
-                                       {{ app()->getLocale() === $__code
-                                            ? 'bg-blue-600 text-white'
-                                            : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600' }}">
-                            {{ $__label }}
-                        </button>
-                    </form>
-                @endforeach
-            </div>
-
-            <form method="POST" action="{{ route('dashboard.logout') }}">
-                @csrf
-                <button type="submit"
-                        class="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
-                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                    </svg>
-                    {{ __('dashboard.logout') }}
-                </button>
-            </form>
-        </div>
-
     </aside>
 
     {{-- Main area --}}
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {{-- Top bar --}}
-        <header class="shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-8 py-4 flex items-center justify-between">
+        <header class="shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-3 flex items-center justify-between">
             <h1 class="text-lg font-semibold text-gray-900 dark:text-white">@yield('heading')</h1>
 
-            {{-- Notification bell --}}
-            @php
-                $__unreadCount = auth()->user()->unreadNotifications()->count();
-                $__recentNotifs = auth()->user()->unreadNotifications()->latest()->limit(5)->get();
-            @endphp
-            <div x-data="{ open: false }" class="relative">
+            <div class="flex items-center gap-2">
+
+                {{-- Dark mode toggle --}}
+                <button @click="dark = !dark; document.documentElement.classList.toggle('dark', dark); localStorage.setItem('theme', dark ? 'dark' : 'light')"
+                        title="{{ __('dashboard.dark_mode') }}"
+                        class="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <svg x-show="!dark" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                    <svg x-show="dark" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </button>
+
+                {{-- Locale dropdown --}}
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open" @click.outside="open = false"
+                            class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                        </svg>
+                        {{ strtoupper(app()->getLocale()) }}
+                        <svg class="w-3 h-3 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div x-show="open" x-cloak x-transition
+                         class="absolute end-0 mt-1 w-32 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 py-1">
+                        @foreach(['en' => 'English', 'ar' => 'العربية'] as $__code => $__label)
+                            <form method="POST" action="{{ route('dashboard.locale.store') }}">
+                                @csrf
+                                <input type="hidden" name="locale" value="{{ $__code }}">
+                                <button type="submit" @click="open = false"
+                                        class="w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors
+                                               {{ app()->getLocale() === $__code
+                                                    ? 'text-blue-600 dark:text-blue-400 font-semibold bg-blue-50 dark:bg-blue-900/20'
+                                                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700' }}">
+                                    @if(app()->getLocale() === $__code)
+                                        <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                                        </svg>
+                                    @else
+                                        <span class="w-3.5 shrink-0"></span>
+                                    @endif
+                                    {{ $__label }}
+                                </button>
+                            </form>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Divider --}}
+                <div class="w-px h-5 bg-gray-200 dark:bg-gray-700 mx-1"></div>
+
+                {{-- Notification bell --}}
+                @php
+                    $__unreadCount = auth()->user()->unreadNotifications()->count();
+                    $__recentNotifs = auth()->user()->unreadNotifications()->latest()->limit(5)->get();
+                @endphp
+                <div x-data="{ open: false }" class="relative">
                 <button @click="open = !open" @click.outside="open = false"
                         class="relative p-2 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -386,6 +383,54 @@
                         </a>
                     </div>
                 </div>
+                </div>{{-- end notification x-data --}}
+
+                {{-- Divider --}}
+                <div class="w-px h-5 bg-gray-200 dark:bg-gray-700 mx-1"></div>
+
+                {{-- User dropdown --}}
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open" @click.outside="open = false"
+                            class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-700 dark:text-blue-400 font-semibold text-sm shrink-0">
+                            {{ strtoupper(substr(auth()->user()->first_name, 0, 1)) }}
+                        </div>
+                        <span class="text-sm font-medium text-gray-900 dark:text-white hidden lg:block">
+                            {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
+                        </span>
+                        <svg class="w-3 h-3 shrink-0 text-gray-400 hidden lg:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+
+                    <div x-show="open" x-cloak x-transition
+                         class="absolute end-0 mt-1 w-52 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 py-1">
+
+                        {{-- User info header --}}
+                        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
+                            </p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 truncate mt-0.5">{{ auth()->user()->email }}</p>
+                        </div>
+
+                        {{-- Logout --}}
+                        <div class="py-1">
+                            <form method="POST" action="{{ route('dashboard.logout') }}">
+                                @csrf
+                                <button type="submit" @click="open = false"
+                                        class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                    </svg>
+                                    {{ __('dashboard.logout') }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </header>
 
