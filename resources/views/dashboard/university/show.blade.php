@@ -13,14 +13,14 @@
 @endif
 
 {{-- University info card --}}
-<div class="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-8">
 
     <div class="flex items-start justify-between gap-4 mb-6">
         <div class="flex items-center gap-4">
             @if($university->logo_path)
                 <img src="{{ Storage::disk('public')->url($university->logo_path) }}"
                      alt="{{ $university->name }} logo"
-                     class="h-14 w-14 object-contain rounded-xl border border-gray-200 bg-gray-50 p-1 shrink-0">
+                     class="h-14 w-14 object-contain rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-1 shrink-0">
             @else
                 <div class="h-14 w-14 rounded-xl border border-gray-200 bg-gray-100 flex items-center justify-center shrink-0">
                     <svg class="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,55 +29,55 @@
                 </div>
             @endif
             <div>
-                <h2 class="text-xl font-bold text-gray-900">{{ $university->name }}</h2>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ $university->name }}</h2>
                 <p class="text-sm text-gray-400 mt-0.5" dir="rtl">{{ $university->name_ar }}</p>
             </div>
         </div>
         <a href="{{ route('dashboard.university.edit') }}"
-           class="shrink-0 px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+           class="shrink-0 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors">
             {{ __('university.edit_university') }}
         </a>
     </div>
 
     <dl class="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-5 text-sm">
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.address') }}</dt>
-            <dd class="text-gray-700">{{ $university->address }}</dd>
+            <dt class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{{ __('university.address') }}</dt>
+            <dd class="text-gray-700 dark:text-gray-300">{{ $university->address }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.established') }}</dt>
-            <dd class="text-gray-700">
+            <dt class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{{ __('university.established') }}</dt>
+            <dd class="text-gray-700 dark:text-gray-300">
                 {{ $university->established_at?->format('Y') ?? '—' }}
             </dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.president') }}</dt>
-            <dd class="text-gray-700">
+            <dt class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{{ __('university.president') }}</dt>
+            <dd class="text-gray-700 dark:text-gray-300">
                 @if($university->president)
                     {{ $university->president->user->first_name }} {{ $university->president->user->last_name }}
                 @else
-                    <span class="text-gray-400">{{ __('common.not_assigned') }}</span>
+                    <span class="text-gray-400 dark:text-gray-600">{{ __('common.not_assigned') }}</span>
                 @endif
             </dd>
         </div>
         @if($university->phone)
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.phone') }}</dt>
-            <dd class="text-gray-700">{{ $university->phone }}</dd>
+            <dt class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{{ __('university.phone') }}</dt>
+            <dd class="text-gray-700 dark:text-gray-300">{{ $university->phone }}</dd>
         </div>
         @endif
         @if($university->email)
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.email') }}</dt>
-            <dd class="text-gray-700">
+            <dt class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{{ __('university.email') }}</dt>
+            <dd class="text-gray-700 dark:text-gray-300">
                 <a href="mailto:{{ $university->email }}" class="text-blue-600 hover:underline">{{ $university->email }}</a>
             </dd>
         </div>
         @endif
         @if($university->website)
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.website') }}</dt>
-            <dd class="text-gray-700">
+            <dt class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{{ __('university.website') }}</dt>
+            <dd class="text-gray-700 dark:text-gray-300">
                 <a href="{{ $university->website }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
                     {{ $university->website }}
                 </a>
@@ -92,7 +92,7 @@
 <div class="flex items-center justify-between mb-4">
     <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">
         {{ __('university.vice_presidents') }}
-        <span class="ml-2 text-xs font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full normal-case tracking-normal">
+        <span class="ml-2 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full normal-case tracking-normal">
             {{ $university->vicePresidents->count() }}
         </span>
     </h3>
@@ -105,16 +105,16 @@
     </a>
 </div>
 
-<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
     @if($university->vicePresidents->isEmpty())
-        <div class="px-6 py-10 text-center text-sm text-gray-400">
+        <div class="px-6 py-10 text-center text-sm text-gray-400 dark:text-gray-500">
             {{ __('university.no_vice_presidents') }}
             <a href="{{ route('dashboard.university.vice-presidents.create') }}" class="text-blue-600 hover:underline">{{ __('university.add_one') }}</a>
         </div>
     @else
-        <table class="w-full text-sm">
+        <table class="w-full text-sm dark:text-gray-200">
             <thead>
-                <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     <th class="px-5 py-3 text-start">#</th>
                     <th class="px-5 py-3 text-start">{{ __('common.professor') }}</th>
                     <th class="px-5 py-3 text-start">{{ __('university.title_col') }}</th>
@@ -124,33 +124,33 @@
                     <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
                 @foreach($university->vicePresidents as $vp)
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <td class="px-5 py-3.5 text-gray-400 text-xs">{{ $vp->order }}</td>
                         <td class="px-5 py-3.5">
-                            <p class="font-medium text-gray-900">
+                            <p class="font-medium text-gray-900 dark:text-white">
                                 {{ $vp->professor->user->first_name }} {{ $vp->professor->user->last_name }}
                             </p>
-                            <p class="text-xs text-gray-400 mt-0.5">{{ $vp->professor->user->email }}</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{{ $vp->professor->user->email }}</p>
                         </td>
                         <td class="px-5 py-3.5">
-                            <p class="text-gray-700">{{ $vp->title }}</p>
-                            <p class="text-xs text-gray-400 mt-0.5" dir="rtl">{{ $vp->title_ar }}</p>
+                            <p class="text-gray-700 dark:text-gray-300">{{ $vp->title }}</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5" dir="rtl">{{ $vp->title_ar }}</p>
                         </td>
                         <td class="px-5 py-3.5">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $vp->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
                                 {{ $vp->is_active ? __('common.active') : __('common.inactive') }}
                             </span>
                         </td>
-                        <td class="px-5 py-3.5 text-gray-600 text-xs">{{ $vp->appointed_at->format('Y-m-d') }}</td>
-                        <td class="px-5 py-3.5 text-gray-600 text-xs">
+                        <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400 text-xs">{{ $vp->appointed_at->format('Y-m-d') }}</td>
+                        <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400 text-xs">
                             {{ $vp->ended_at?->format('Y-m-d') ?? '—' }}
                         </td>
                         <td class="px-5 py-3.5">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.university.vice-presidents.edit', $vp) }}"
-                                   class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                                   class="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                     {{ __('common.edit') }}
                                 </a>
                                 <form method="POST" action="{{ route('dashboard.university.vice-presidents.destroy', $vp) }}"
@@ -158,7 +158,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
-                                            class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                            class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
                                         {{ __('university.remove') }}
                                     </button>
                                 </form>

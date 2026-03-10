@@ -24,6 +24,8 @@ return [
     'nav_announcements'      => 'الإعلانات',
 
     // Sidebar footer
+    'dark_mode'              => 'الوضع الداكن',
+    'light_mode'             => 'الوضع الفاتح',
     'logout'                 => 'تسجيل الخروج',
 
     // Notification panel

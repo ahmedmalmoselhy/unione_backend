@@ -7,15 +7,15 @@
 
 {{-- Breadcrumb --}}
 <nav class="flex items-center gap-2 text-sm mb-6">
-    <a href="{{ route('dashboard.departments.index') }}" class="text-gray-400 hover:text-gray-700 transition-colors">{{ __('departments.title') }}</a>
-    <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <a href="{{ route('dashboard.departments.index') }}" class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">{{ __('departments.title') }}</a>
+    <svg class="w-3.5 h-3.5 text-gray-300 dark:text-gray-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
     </svg>
-    <a href="{{ route('dashboard.departments.show', $department) }}" class="text-gray-400 hover:text-gray-700 transition-colors">{{ $department->name }}</a>
-    <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <a href="{{ route('dashboard.departments.show', $department) }}" class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">{{ $department->name }}</a>
+    <svg class="w-3.5 h-3.5 text-gray-300 dark:text-gray-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
     </svg>
-    <span class="text-gray-700 font-medium">{{ __('departments.assign_head_page_title') }}</span>
+    <span class="text-gray-700 dark:text-gray-300 font-medium">{{ __('departments.assign_head_page_title') }}</span>
 </nav>
 
 {{-- Flash messages --}}
@@ -30,12 +30,12 @@
 
 {{-- Faculty context --}}
 <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-6 text-sm text-gray-500">
-    {{ __('departments.faculty_context') }}: <span class="font-medium text-gray-700">{{ $department->faculty->name }}</span>
+    {{ __('departments.faculty_context') }}: <span class="font-medium text-gray-700 dark:text-gray-300">{{ $department->faculty->name }}</span>
 </div>
 
 {{-- Current head card --}}
-<div class="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('departments.current_head_section') }}</h3>
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
+    <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">{{ __('departments.current_head_section') }}</h3>
 
     @if($department->head)
         <div class="flex items-center justify-between gap-4">
@@ -44,7 +44,7 @@
                     {{ strtoupper(substr($department->head->first_name, 0, 1)) }}{{ strtoupper(substr($department->head->last_name, 0, 1)) }}
                 </div>
                 <div>
-                    <p class="font-medium text-gray-900">{{ $department->head->first_name }} {{ $department->head->last_name }}</p>
+                    <p class="font-medium text-gray-900 dark:text-white">{{ $department->head->first_name }} {{ $department->head->last_name }}</p>
                     <p class="text-xs text-gray-400">{{ $department->head->email }}</p>
                 </div>
             </div>
@@ -53,7 +53,7 @@
                 @csrf
                 @method('DELETE')
                 <button type="submit"
-                        class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                        class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
                     {{ __('departments.remove_head') }}
                 </button>
             </form>
@@ -64,8 +64,8 @@
 </div>
 
 {{-- Assign form --}}
-<div class="bg-white rounded-2xl border border-gray-200 p-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
+    <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
         {{ $department->head ? __('departments.reassign_head') : __('departments.assign_head_page_title') }}
     </h3>
 
@@ -78,7 +78,7 @@
             {{-- Professors --}}
             @if($professors->isNotEmpty())
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('departments.from_professors') }}</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('departments.from_professors') }}</label>
                     <div class="space-y-2 max-h-48 overflow-y-auto rounded-lg border border-gray-200 p-3">
                         @foreach($professors as $professor)
                             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 rounded-lg px-2 py-1.5 transition-colors">
@@ -86,7 +86,7 @@
                                        class="text-blue-600 focus:ring-blue-500"
                                        {{ old('user_id') == $professor->user_id ? 'checked' : '' }}>
                                 <div>
-                                    <p class="text-sm font-medium text-gray-900">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
                                         {{ $professor->user->first_name }} {{ $professor->user->last_name }}
                                     </p>
                                     <p class="text-xs text-gray-400">
@@ -106,7 +106,7 @@
             {{-- Employees --}}
             @if($employees->isNotEmpty())
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('departments.from_employees') }}</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ __('departments.from_employees') }}</label>
                     <div class="space-y-2 max-h-48 overflow-y-auto rounded-lg border border-gray-200 p-3">
                         @foreach($employees as $employee)
                             <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 rounded-lg px-2 py-1.5 transition-colors">
@@ -114,7 +114,7 @@
                                        class="text-blue-600 focus:ring-blue-500"
                                        {{ old('user_id') == $employee->user_id ? 'checked' : '' }}>
                                 <div>
-                                    <p class="text-sm font-medium text-gray-900">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
                                         {{ $employee->user->first_name }} {{ $employee->user->last_name }}
                                     </p>
                                     <p class="text-xs text-gray-400">

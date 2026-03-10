@@ -26,12 +26,12 @@
 
 {{-- Section: Course Information --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('courses.course_information') }}</h3>
+    <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">{{ __('courses.course_information') }}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {{-- Code --}}
         <div>
-            <label for="code" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.code') }} <span class="text-red-500">*</span></label>
+            <label for="code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('courses.code') }} <span class="text-red-500">*</span></label>
             <input
                 id="code"
                 type="text"
@@ -41,7 +41,7 @@
                 autocomplete="off"
                 placeholder="e.g. CS101"
                 class="w-full px-3.5 py-2.5 rounded-lg border text-sm font-mono transition-colors
-                       {{ $errors->has('code') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                       {{ $errors->has('code') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             />
             @error('code')
@@ -51,13 +51,13 @@
 
         {{-- Level --}}
         <div>
-            <label for="level" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.level') }} <span class="text-red-500">*</span></label>
+            <label for="level" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('courses.level') }} <span class="text-red-500">*</span></label>
             <select
                 id="level"
                 name="level"
                 required
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('level') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('level') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             >
                 <option value="">{{ __('courses.select_level') }}</option>
@@ -72,7 +72,7 @@
 
         {{-- Name (EN) --}}
         <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.name_english') }} <span class="text-red-500">*</span></label>
+            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('courses.name_english') }} <span class="text-red-500">*</span></label>
             <input
                 id="name"
                 type="text"
@@ -81,8 +81,8 @@
                 required
                 autocomplete="off"
                 placeholder="e.g. Introduction to Computer Science"
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('name') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('name') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             />
             @error('name')
@@ -92,7 +92,7 @@
 
         {{-- Name (AR) --}}
         <div>
-            <label for="name_ar" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.name_arabic') }} <span class="text-red-500">*</span></label>
+            <label for="name_ar" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('courses.name_arabic') }} <span class="text-red-500">*</span></label>
             <input
                 id="name_ar"
                 type="text"
@@ -102,8 +102,8 @@
                 autocomplete="off"
                 dir="rtl"
                 placeholder="e.g. مقدمة في علوم الحاسب"
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('name_ar') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('name_ar') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             />
             @error('name_ar')
@@ -113,7 +113,7 @@
 
         {{-- Credit Hours --}}
         <div>
-            <label for="credit_hours" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.credit_hours') }} <span class="text-red-500">*</span></label>
+            <label for="credit_hours" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('courses.credit_hours') }} <span class="text-red-500">*</span></label>
             <input
                 id="credit_hours"
                 type="number"
@@ -122,8 +122,8 @@
                 required
                 min="1"
                 max="12"
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('credit_hours') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('credit_hours') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             />
             @error('credit_hours')
@@ -133,7 +133,7 @@
 
         {{-- Lecture Hours --}}
         <div>
-            <label for="lecture_hours" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.lecture_hours') }} <span class="text-red-500">*</span></label>
+            <label for="lecture_hours" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('courses.lecture_hours') }} <span class="text-red-500">*</span></label>
             <input
                 id="lecture_hours"
                 type="number"
@@ -142,8 +142,8 @@
                 required
                 min="0"
                 max="12"
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('lecture_hours') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('lecture_hours') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             />
             @error('lecture_hours')
@@ -153,7 +153,7 @@
 
         {{-- Lab Hours --}}
         <div>
-            <label for="lab_hours" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.lab_hours') }} <span class="text-red-500">*</span></label>
+            <label for="lab_hours" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('courses.lab_hours') }} <span class="text-red-500">*</span></label>
             <input
                 id="lab_hours"
                 type="number"
@@ -162,8 +162,8 @@
                 required
                 min="0"
                 max="12"
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('lab_hours') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('lab_hours') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             />
             @error('lab_hours')
@@ -173,15 +173,15 @@
 
         {{-- Description --}}
         <div class="md:col-span-2">
-            <label for="description" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.description') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
+            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('courses.description') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
             <textarea
                 id="description"
                 name="description"
                 rows="3"
                 autocomplete="off"
                 placeholder="Brief course description..."
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('description') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('description') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             >{{ old('description', $course?->description) }}</textarea>
             @error('description')
@@ -199,7 +199,7 @@
                 {{ old('is_elective', $course?->is_elective ?? false) ? 'checked' : '' }}
                 class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
-            <label for="is_elective" class="text-sm font-medium text-gray-700">{{ __('courses.is_elective') }}</label>
+            <label for="is_elective" class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('courses.is_elective') }}</label>
         </div>
 
         {{-- Is Active (edit only) --}}
@@ -213,7 +213,7 @@
                     {{ old('is_active', $course?->is_active ?? true) ? 'checked' : '' }}
                     class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <label for="is_active" class="text-sm font-medium text-gray-700">{{ __('courses.active') }}</label>
+                <label for="is_active" class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('courses.active') }}</label>
             </div>
         @endif
 
@@ -222,7 +222,7 @@
 
 {{-- Section: Department Assignments --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('courses.department_assignments') }} <span class="text-red-500">*</span></h3>
+    <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">{{ __('courses.department_assignments') }} <span class="text-red-500">*</span></h3>
     @error('departments')
         <p class="mb-3 text-xs text-red-600">{{ $message }}</p>
     @enderror
@@ -231,7 +231,7 @@
         {{-- Existing rows will be rendered here, new rows via JS --}}
     </div>
 
-    <button type="button" onclick="addDeptRow()" class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+    <button type="button" onclick="addDeptRow()" class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
@@ -241,13 +241,13 @@
 
 {{-- Section: Prerequisites --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('courses.prerequisites') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></h3>
+    <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">{{ __('courses.prerequisites') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></h3>
 
     <div id="prereq-container" class="space-y-3">
         {{-- Rows rendered via JS --}}
     </div>
 
-    <button type="button" onclick="addPrereqRow()" class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+    <button type="button" onclick="addPrereqRow()" class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
@@ -305,7 +305,7 @@
                 class="flex-1 px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-200 focus:outline-none focus:ring-2">
                 ${buildDeptOptions(deptId)}
             </select>
-            <label class="flex items-center gap-1.5 text-xs text-gray-600 whitespace-nowrap">
+            <label class="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400 whitespace-nowrap">
                 <input type="checkbox" name="departments[${idx}][is_owner]" value="1" ${isOwner ? 'checked' : ''}
                     class="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"/>
                 ${LNG_owner}

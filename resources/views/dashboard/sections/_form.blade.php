@@ -15,18 +15,18 @@
 
 {{-- Section: Assignment --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('sections.section_assignment') }}</h3>
+    <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">{{ __('sections.section_assignment') }}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {{-- Course --}}
         <div>
-            <label for="course_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.course') }} <span class="text-red-500">*</span></label>
+            <label for="course_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('common.course') }} <span class="text-red-500">*</span></label>
             <select
                 id="course_id"
                 name="course_id"
                 required
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('course_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('course_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             >
                 <option value="">{{ __('sections.select_course') }}</option>
@@ -43,13 +43,13 @@
 
         {{-- Professor --}}
         <div>
-            <label for="professor_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('sections.professor') }} <span class="text-red-500">*</span></label>
+            <label for="professor_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('sections.professor') }} <span class="text-red-500">*</span></label>
             <select
                 id="professor_id"
                 name="professor_id"
                 required
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('professor_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('professor_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             >
                 <option value="">{{ __('sections.select_professor') }}</option>
@@ -66,13 +66,13 @@
 
         {{-- Academic Term --}}
         <div>
-            <label for="academic_term_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('sections.academic_term') }} <span class="text-red-500">*</span></label>
+            <label for="academic_term_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('sections.academic_term') }} <span class="text-red-500">*</span></label>
             <select
                 id="academic_term_id"
                 name="academic_term_id"
                 required
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('academic_term_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('academic_term_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             >
                 <option value="">{{ __('sections.select_term') }}</option>
@@ -89,7 +89,7 @@
 
         {{-- Capacity --}}
         <div>
-            <label for="capacity" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('sections.capacity') }} <span class="text-red-500">*</span></label>
+            <label for="capacity" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('sections.capacity') }} <span class="text-red-500">*</span></label>
             <input
                 id="capacity"
                 type="number"
@@ -99,8 +99,8 @@
                 min="1"
                 max="999"
                 placeholder="e.g. 40"
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('capacity') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('capacity') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             />
             @error('capacity')
@@ -110,7 +110,7 @@
 
         {{-- Room --}}
         <div>
-            <label for="room" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('sections.room') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
+            <label for="room" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('sections.room') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
             <input
                 id="room"
                 type="text"
@@ -118,8 +118,8 @@
                 value="{{ old('room', $section?->room) }}"
                 autocomplete="off"
                 placeholder="e.g. B-204"
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('room') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('room') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             />
             @error('room')
@@ -138,7 +138,7 @@
                     {{ old('is_active', $section?->is_active ?? true) ? 'checked' : '' }}
                     class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <label for="is_active" class="text-sm font-medium text-gray-700">{{ __('sections.active') }}</label>
+                <label for="is_active" class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('sections.active') }}</label>
             </div>
         @endif
 
@@ -147,7 +147,7 @@
 
 {{-- Section: Schedule --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('sections.schedule') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></h3>
+    <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">{{ __('sections.schedule') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></h3>
     @error('schedule')
         <p class="mb-3 text-xs text-red-600">{{ $message }}</p>
     @enderror
@@ -156,7 +156,7 @@
         {{-- Rendered via JS --}}
     </div>
 
-    <button type="button" onclick="addScheduleRow()" class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+    <button type="button" onclick="addScheduleRow()" class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>

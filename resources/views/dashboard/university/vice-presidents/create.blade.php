@@ -9,23 +9,23 @@
 
     {{-- Breadcrumb --}}
     <nav class="flex items-center gap-2 text-sm mb-6">
-        <a href="{{ route('dashboard.university.show') }}" class="text-gray-400 hover:text-gray-700 transition-colors">{{ __('university.title') }}</a>
-        <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <a href="{{ route('dashboard.university.show') }}" class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">{{ __('university.title') }}</a>
+        <svg class="w-3.5 h-3.5 text-gray-300 dark:text-gray-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
         </svg>
-        <span class="text-gray-700 font-medium">{{ __('university.add_vice_president') }}</span>
+        <span class="text-gray-700 dark:text-gray-300 font-medium">{{ __('university.add_vice_president') }}</span>
     </nav>
 
-    <div class="bg-white rounded-2xl border border-gray-200 p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
 
         <form method="POST" action="{{ route('dashboard.university.vice-presidents.store') }}" class="space-y-5">
             @csrf
 
             @include('dashboard.university.vice-presidents._form', ['vicePresident' => null])
 
-            <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100">
+            <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100 dark:border-gray-700">
                 <a href="{{ route('dashboard.university.show') }}"
-                   class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                   class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                     {{ __('common.cancel') }}
                 </a>
                 <button type="submit"

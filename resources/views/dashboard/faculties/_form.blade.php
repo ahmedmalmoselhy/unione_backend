@@ -18,12 +18,12 @@
 
     {{-- Logo --}}
     <div class="md:col-span-2">
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('faculties.faculty_logo') }}</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('faculties.faculty_logo') }}</label>
         @if($isEdit && $faculty?->logo_path)
             <div id="current-logo-wrapper" class="mb-3 flex items-center gap-4">
                 <img src="{{ Storage::disk('public')->url($faculty->logo_path) }}"
                      alt="Faculty logo"
-                     class="h-14 w-14 object-contain rounded-lg border border-gray-200 bg-gray-50 p-1">
+                     class="h-14 w-14 object-contain rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-1">
                 <label class="flex items-center gap-1.5 text-sm text-red-600 cursor-pointer">
                     <input type="checkbox" name="remove_logo" value="1"
                            class="rounded border-gray-300 text-red-600 focus:ring-red-400"
@@ -33,7 +33,7 @@
             </div>
         @endif
         <div class="flex items-center gap-3">
-            <label class="cursor-pointer flex items-center gap-2 px-3.5 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+            <label class="cursor-pointer flex items-center gap-2 px-3.5 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
@@ -47,12 +47,12 @@
         @error('logo')
             <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
         @enderror
-        <p class="mt-1.5 text-xs text-gray-400">{{ __('common.logo_hint') }}</p>
+        <p class="mt-1.5 text-xs text-gray-400 dark:text-gray-500">{{ __('common.logo_hint') }}</p>
     </div>
 
     {{-- Name (English) --}}
     <div>
-        <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.name') }} <span class="text-red-500">*</span></label>
+        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('common.name') }} <span class="text-red-500">*</span></label>
         <input
             id="name"
             type="text"
@@ -61,8 +61,8 @@
             required
             autocomplete="off"
             placeholder="e.g. Faculty of Engineering"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('name') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('name') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('name')
@@ -72,7 +72,7 @@
 
     {{-- Name (Arabic) --}}
     <div>
-        <label for="name_ar" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.name_ar') }} <span class="text-red-500">*</span></label>
+        <label for="name_ar" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('common.name_ar') }} <span class="text-red-500">*</span></label>
         <input
             id="name_ar"
             type="text"
@@ -82,8 +82,8 @@
             dir="rtl"
             autocomplete="off"
             placeholder="مثال: كلية الهندسة"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('name_ar') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('name_ar') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('name_ar')
@@ -93,7 +93,7 @@
 
     {{-- Code --}}
     <div>
-        <label for="code" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.code') }} <span class="text-red-500">*</span></label>
+        <label for="code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('common.code') }} <span class="text-red-500">*</span></label>
         <input
             id="code"
             type="text"
@@ -104,7 +104,7 @@
             placeholder="e.g. ENG"
             maxlength="20"
             class="w-full px-3.5 py-2.5 rounded-lg border text-sm font-mono uppercase transition-colors
-                   {{ $errors->has('code') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                   {{ $errors->has('code') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('code')
@@ -114,13 +114,13 @@
 
     {{-- Enrollment Type --}}
     <div>
-        <label for="enrollment_type" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.enrollment_type') }} <span class="text-red-500">*</span></label>
+        <label for="enrollment_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('common.enrollment_type') }} <span class="text-red-500">*</span></label>
         <select
             id="enrollment_type"
             name="enrollment_type"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('enrollment_type') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('enrollment_type') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         >
             <option value="">{{ __('faculties.select_type') }}</option>
@@ -141,12 +141,12 @@
 
     {{-- Dean --}}
     <div class="md:col-span-2">
-        <label for="dean_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.dean') }} <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span></label>
+        <label for="dean_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('common.dean') }} <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span></label>
         <select
             id="dean_id"
             name="dean_id"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('dean_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('dean_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         >
             <option value="">{{ __('faculties.no_dean_assigned') }}</option>
@@ -171,7 +171,7 @@
             {{ old('is_active', $faculty?->is_active ?? true) ? 'checked' : '' }}
             class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
-        <label for="is_active" class="text-sm font-medium text-gray-700">{{ __('faculties.active_label') }}</label>
+        <label for="is_active" class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('faculties.active_label') }}</label>
     </div>
 
 </div>

@@ -7,7 +7,7 @@
 
 {{-- Filters --}}
 <form method="GET" action="{{ route('dashboard.audit-logs.index') }}"
-      class="bg-white rounded-2xl border border-gray-200 p-5 mb-6 flex flex-wrap gap-3 items-end">
+      class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 mb-6 flex flex-wrap gap-3 items-end">
 
     <div class="flex-1 min-w-[180px]">
         <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('common.search') }}</label>
@@ -55,7 +55,7 @@
         </button>
         @if(request()->hasAny(['search','action','type','date_from','date_to']))
             <a href="{{ route('dashboard.audit-logs.index') }}"
-               class="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">
+               class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 {{ __('common.clear') }}
             </a>
         @endif
@@ -69,14 +69,14 @@
 
 {{-- Log table --}}
 @if($logs->isEmpty())
-    <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center text-sm text-gray-400">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-12 text-center text-sm text-gray-400 dark:text-gray-500">
         {{ __('audit_log.no_entries') }}
     </div>
 @else
-    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
-        <table class="w-full text-sm">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+        <table class="w-full text-sm dark:text-gray-200">
             <thead>
-                <tr class="border-b border-gray-100 text-left">
+                <tr class="border-b border-gray-100 dark:border-gray-700 text-left">
                     <th class="px-5 py-3 font-medium text-gray-500 w-40">{{ __('audit_log.when') }}</th>
                     <th class="px-5 py-3 font-medium text-gray-500 w-24">{{ __('audit_log.action') }}</th>
                     <th class="px-5 py-3 font-medium text-gray-500 w-36">{{ __('audit_log.type') }}</th>
@@ -85,7 +85,7 @@
                     <th class="px-5 py-3 font-medium text-gray-500 w-10"></th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
                 @foreach($logs as $log)
                     @php
                         $actionStyles = [
@@ -93,25 +93,25 @@
                             'updated'  => 'bg-blue-100 text-blue-700',
                             'deleted'  => 'bg-red-100 text-red-700',
                             'assigned' => 'bg-amber-100 text-amber-700',
-                            'revoked'  => 'bg-gray-100 text-gray-600',
+                            'revoked'  => 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400',
                         ];
-                        $badgeClass = $actionStyles[$log->action] ?? 'bg-gray-100 text-gray-600';
+                        $badgeClass = $actionStyles[$log->action] ?? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400';
                     @endphp
-                    <tr x-data="{ open: false }" class="hover:bg-gray-50 transition-colors">
+                    <tr x-data="{ open: false }" class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <td class="px-5 py-3 text-gray-500 text-xs whitespace-nowrap">
                             {{ $log->created_at->format('d M Y') }}<br>
-                            <span class="text-gray-400">{{ $log->created_at->format('H:i:s') }}</span>
+                            <span class="text-gray-400 dark:text-gray-600">{{ $log->created_at->format('H:i:s') }}</span>
                         </td>
                         <td class="px-5 py-3">
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
                                 {{ ucfirst($log->action) }}
                             </span>
                         </td>
-                        <td class="px-5 py-3 text-gray-600 text-xs font-mono">{{ $log->auditable_type }}</td>
-                        <td class="px-5 py-3 text-gray-800">{{ $log->description }}</td>
+                        <td class="px-5 py-3 text-gray-600 dark:text-gray-400 text-xs font-mono">{{ $log->auditable_type }}</td>
+                        <td class="px-5 py-3 text-gray-800 dark:text-gray-200">{{ $log->description }}</td>
                         <td class="px-5 py-3">
                             @if($log->user)
-                                <p class="font-medium text-gray-900 text-xs">{{ $log->user->first_name }} {{ $log->user->last_name }}</p>
+                                <p class="font-medium text-gray-900 dark:text-white text-xs">{{ $log->user->first_name }} {{ $log->user->last_name }}</p>
                                 <p class="text-gray-400 text-xs truncate">{{ $log->user->email }}</p>
                             @else
                                 <span class="text-gray-400 text-xs">{{ __('audit_log.system') }}</span>
@@ -120,7 +120,7 @@
                         <td class="px-5 py-3 text-end">
                             @if($log->old_values || $log->new_values)
                                 <button @click="open = !open"
-                                        class="text-gray-400 hover:text-gray-700 transition-colors"
+                                        class="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                                         title="Show details">
                                     <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''"
                                          fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,7 +134,7 @@
                     {{-- Expandable detail row --}}
                     @if($log->old_values || $log->new_values)
                         <tr x-show="open" x-cloak
-                            class="bg-gray-50 border-b border-gray-100">
+                            class="bg-gray-50 border-b border-gray-100 dark:border-gray-700">
                             <td colspan="6" class="px-5 py-4">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     @if($log->old_values)

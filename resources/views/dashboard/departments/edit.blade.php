@@ -7,7 +7,7 @@
 
 <div class="max-w-2xl">
 
-    <div class="bg-white rounded-2xl border border-gray-200 p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
 
         <form method="POST" action="{{ route('dashboard.departments.update', $department) }}" enctype="multipart/form-data" class="space-y-5">
             @csrf
@@ -19,9 +19,9 @@
                 @include('dashboard.departments._form_managerial')
             @endif
 
-            <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100">
+            <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100 dark:border-gray-700">
                 <a href="{{ route('dashboard.departments.index') }}"
-                   class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                   class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                     {{ __('common.cancel') }}
                 </a>
                 <button type="submit"

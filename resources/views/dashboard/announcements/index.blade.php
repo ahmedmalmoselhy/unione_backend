@@ -42,7 +42,7 @@
 
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
-    <p class="text-sm text-gray-500">{{ $announcements->total() }} {{ __('announcements.title') }}</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $announcements->total() }} {{ __('announcements.title') }}</p>
     @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
         <a href="{{ route('dashboard.announcements.create') }}"
            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
@@ -55,15 +55,15 @@
 </div>
 
 {{-- Table --}}
-<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
     @if($announcements->isEmpty())
-        <div class="px-6 py-16 text-center text-sm text-gray-400">
+        <div class="px-6 py-16 text-center text-sm text-gray-400 dark:text-gray-500">
             No announcements yet. <a href="{{ route('dashboard.announcements.create') }}" class="text-blue-600 hover:underline">{{ __('announcements.no_announcements_found') }}</a>
         </div>
     @else
-        <table class="w-full text-sm">
+        <table class="w-full text-sm dark:text-gray-200">
             <thead>
-                <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     <th class="px-5 py-3 text-start">{{ __('announcements.title_label') }}</th>
                     <th class="px-5 py-3 text-start">{{ __('announcements.type') }}</th>
                     <th class="px-5 py-3 text-start">{{ __('announcements.visibility') }}</th>
@@ -73,16 +73,16 @@
                     <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
                 @foreach($announcements as $announcement)
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <td class="px-5 py-3.5">
-                            <p class="font-medium text-gray-900 truncate max-w-xs">{{ $announcement->title }}</p>
+                            <p class="font-medium text-gray-900 dark:text-white truncate max-w-xs">{{ $announcement->title }}</p>
                         </td>
                         <td class="px-5 py-3.5">
                             @php
                                 $typeColors = [
-                                    'general'        => 'bg-gray-100 text-gray-600',
+                                    'general'        => 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400',
                                     'academic'       => 'bg-blue-100 text-blue-700',
                                     'administrative' => 'bg-purple-100 text-purple-700',
                                     'urgent'         => 'bg-red-100 text-red-700',
@@ -94,7 +94,7 @@
                                     'urgent'         => __('announcements.type_urgent'),
                                 ];
                             @endphp
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $typeColors[$announcement->type] ?? 'bg-gray-100 text-gray-600' }}">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $typeColors[$announcement->type] ?? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400' }}">
                                 {{ $typeLabels[$announcement->type] ?? ucfirst($announcement->type) }}
                             </span>
                         </td>
@@ -114,15 +114,15 @@
                                 ];
                                 $targetName = $targetLabels[$announcement->visibility][$announcement->target_id] ?? null;
                             @endphp
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $visColors[$announcement->visibility] ?? 'bg-gray-100 text-gray-600' }}">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $visColors[$announcement->visibility] ?? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400' }}">
                                 {{ $visLabels[$announcement->visibility] ?? ucfirst($announcement->visibility) }}
                             </span>
                             @if($targetName)
                                 <p class="mt-1 text-gray-500 truncate max-w-[160px]">{{ $targetName }}</p>
                             @endif
                         </td>
-                        <td class="px-5 py-3.5 text-gray-600">{{ $announcement->author?->first_name }} {{ $announcement->author?->last_name }}</td>
-                        <td class="px-5 py-3.5 text-center text-gray-600">{{ $announcement->reads_count }}</td>
+                        <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400">{{ $announcement->author?->first_name }} {{ $announcement->author?->last_name }}</td>
+                        <td class="px-5 py-3.5 text-center text-gray-600 dark:text-gray-400">{{ $announcement->reads_count }}</td>
                         <td class="px-5 py-3.5">
                             @if($announcement->published_at === null)
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">{{ __('announcements.draft') }}</span>
@@ -135,12 +135,12 @@
                         <td class="px-5 py-3.5">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.announcements.show', $announcement) }}"
-                                   class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+                                   class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
                                     {{ __('common.view') }}
                                 </a>
                                 @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
                                     <a href="{{ route('dashboard.announcements.edit', $announcement) }}"
-                                       class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                                       class="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                         {{ __('common.edit') }}
                                     </a>
                                     <form method="POST" action="{{ route('dashboard.announcements.destroy', $announcement) }}"
@@ -148,7 +148,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                                class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
                                             {{ __('common.delete') }}
                                         </button>
                                     </form>
@@ -161,7 +161,7 @@
         </table>
 
         @if($announcements->hasPages())
-            <div class="px-5 py-4 border-t border-gray-100">
+            <div class="px-5 py-4 border-t border-gray-100 dark:border-gray-700">
                 {{ $announcements->links() }}
             </div>
         @endif

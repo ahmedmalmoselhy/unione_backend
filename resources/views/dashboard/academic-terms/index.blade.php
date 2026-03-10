@@ -36,7 +36,7 @@
 
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
-    <p class="text-sm text-gray-500">{{ $terms->total() }} {{ Str::plural('term', $terms->total()) }} total</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $terms->total() }} {{ Str::plural('term', $terms->total()) }} total</p>
     <a href="{{ route('dashboard.academic-terms.create') }}"
        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,15 +47,15 @@
 </div>
 
 {{-- Table --}}
-<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
     @if($terms->isEmpty())
-        <div class="px-6 py-16 text-center text-sm text-gray-400">
+        <div class="px-6 py-16 text-center text-sm text-gray-400 dark:text-gray-500">
             No academic terms found. <a href="{{ route('dashboard.academic-terms.create') }}" class="text-blue-600 hover:underline">{{ __('academic_terms.create_first') }}</a>
         </div>
     @else
-        <table class="w-full text-sm">
+        <table class="w-full text-sm dark:text-gray-200">
             <thead>
-                <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     <th class="px-5 py-3 text-start">{{ __('common.name') }}</th>
                     <th class="px-5 py-3 text-start">{{ __('academic_terms.academic_year') }}</th>
                     <th class="px-5 py-3 text-start">{{ __('academic_terms.semester') }}</th>
@@ -65,14 +65,14 @@
                     <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
                 @foreach($terms as $term)
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <td class="px-5 py-3.5">
-                            <div class="font-medium text-gray-900">{{ $term->local_name }}</div>
-                            <div class="text-xs text-gray-400 mt-0.5" dir="auto">{{ app()->getLocale() === 'ar' ? $term->name : $term->name_ar }}</div>
+                            <div class="font-medium text-gray-900 dark:text-white">{{ $term->local_name }}</div>
+                            <div class="text-xs text-gray-400 dark:text-gray-500 mt-0.5" dir="auto">{{ app()->getLocale() === 'ar' ? $term->name : $term->name_ar }}</div>
                         </td>
-                        <td class="px-5 py-3.5 text-gray-600">{{ $term->academic_year }}/{{ $term->academic_year + 1 }}</td>
+                        <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400">{{ $term->academic_year }}/{{ $term->academic_year + 1 }}</td>
                         <td class="px-5 py-3.5">
                             @php
                                 $semesterStyles = [
@@ -81,14 +81,14 @@
                                     'summer' => 'bg-amber-50 text-amber-700',
                                 ];
                             @endphp
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $semesterStyles[$term->semester] ?? 'bg-gray-100 text-gray-600' }}">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $semesterStyles[$term->semester] ?? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400' }}">
                                 {{ __('academic_terms.semester_' . $term->semester . '_short') }}
                             </span>
                         </td>
-                        <td class="px-5 py-3.5 text-xs text-gray-500">
+                        <td class="px-5 py-3.5 text-xs text-gray-500 dark:text-gray-400">
                             {{ $term->starts_at->format('M d') }} — {{ $term->ends_at->format('M d, Y') }}
                         </td>
-                        <td class="px-5 py-3.5 text-xs text-gray-500">
+                        <td class="px-5 py-3.5 text-xs text-gray-500 dark:text-gray-400">
                             {{ $term->registration_starts_at->format('M d') }} — {{ $term->registration_ends_at->format('M d') }}
                         </td>
                         <td class="px-5 py-3.5">
@@ -99,11 +99,11 @@
                         <td class="px-5 py-3.5">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.academic-terms.show', $term) }}"
-                                   class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+                                   class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
                                     {{ __('common.view') }}
                                 </a>
                                 <a href="{{ route('dashboard.academic-terms.edit', $term) }}"
-                                   class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                                   class="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                     {{ __('common.edit') }}
                                 </a>
                                 <form method="POST" action="{{ route('dashboard.academic-terms.destroy', $term) }}"
@@ -111,7 +111,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
-                                            class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                            class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
                                         {{ __('common.delete') }}
                                     </button>
                                 </form>
@@ -124,7 +124,7 @@
 
         {{-- Pagination --}}
         @if($terms->hasPages())
-            <div class="px-5 py-4 border-t border-gray-100">
+            <div class="px-5 py-4 border-t border-gray-100 dark:border-gray-700">
                 {{ $terms->links() }}
             </div>
         @endif

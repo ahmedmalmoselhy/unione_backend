@@ -24,6 +24,8 @@ return [
     'nav_announcements'      => 'Announcements',
 
     // Sidebar footer
+    'dark_mode'              => 'Dark Mode',
+    'light_mode'             => 'Light Mode',
     'logout'                 => 'Logout',
 
     // Notification panel

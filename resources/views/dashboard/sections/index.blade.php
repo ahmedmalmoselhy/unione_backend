@@ -37,7 +37,7 @@
 
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
-    <p class="text-sm text-gray-500">{{ $sections->total() }} {{ Str::plural(__('sections.title'), $sections->total()) }}</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $sections->total() }} {{ Str::plural(__('sections.title'), $sections->total()) }}</p>
     @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
         <a href="{{ route('dashboard.sections.create') }}"
            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
@@ -50,15 +50,15 @@
 </div>
 
 {{-- Table --}}
-<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
     @if($sections->isEmpty())
-        <div class="px-6 py-16 text-center text-sm text-gray-400">
+        <div class="px-6 py-16 text-center text-sm text-gray-400 dark:text-gray-500">
             {{ __('sections.no_sections_found') }}
         </div>
     @else
-        <table class="w-full text-sm">
+        <table class="w-full text-sm dark:text-gray-200">
             <thead>
-                <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     <th class="px-5 py-3 text-start">{{ __('common.course') }}</th>
                     <th class="px-5 py-3 text-start">{{ __('sections.professor') }}</th>
                     <th class="px-5 py-3 text-start">{{ __('common.term') }}</th>
@@ -69,25 +69,25 @@
                     <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
                 @foreach($sections as $section)
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <td class="px-5 py-3.5">
-                            <span class="font-mono text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $section->course->code }}</span>
-                            <span class="ml-1.5 text-gray-700">{{ $section->course->local_name }}</span>
+                            <span class="font-mono text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded">{{ $section->course->code }}</span>
+                            <span class="ml-1.5 text-gray-700 dark:text-gray-300">{{ $section->course->local_name }}</span>
                         </td>
-                        <td class="px-5 py-3.5 text-gray-600">
+                        <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400">
                             {{ $section->professor?->user?->first_name }} {{ $section->professor?->user?->last_name }}
                         </td>
                         <td class="px-5 py-3.5">
                             @if($section->academicTerm)
-                                <span class="text-xs text-gray-600">{{ $section->academicTerm->local_name }}</span>
+                                <span class="text-xs text-gray-600 dark:text-gray-400">{{ $section->academicTerm->local_name }}</span>
                             @else
                                 <span class="text-xs text-gray-400">—</span>
                             @endif
                         </td>
-                        <td class="px-5 py-3.5 text-gray-600">{{ $section->capacity }}</td>
-                        <td class="px-5 py-3.5 text-gray-600">{{ $section->room ?? '—' }}</td>
+                        <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400">{{ $section->capacity }}</td>
+                        <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400">{{ $section->room ?? '—' }}</td>
                         <td class="px-5 py-3.5">
                             @if($section->schedule && count($section->schedule))
                                 <div class="flex flex-wrap gap-1">
@@ -110,12 +110,12 @@
                         <td class="px-5 py-3.5">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.sections.show', $section) }}"
-                                   class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+                                   class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
                                     {{ __('common.view') }}
                                 </a>
                                 @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
                                     <a href="{{ route('dashboard.sections.edit', $section) }}"
-                                       class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                                       class="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                         {{ __('common.edit') }}
                                     </a>
                                     <form method="POST" action="{{ route('dashboard.sections.destroy', $section) }}"
@@ -123,7 +123,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                                class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
                                             {{ __('common.delete') }}
                                         </button>
                                     </form>
@@ -137,7 +137,7 @@
 
         {{-- Pagination --}}
         @if($sections->hasPages())
-            <div class="px-5 py-4 border-t border-gray-100">
+            <div class="px-5 py-4 border-t border-gray-100 dark:border-gray-700">
                 {{ $sections->links() }}
             </div>
         @endif

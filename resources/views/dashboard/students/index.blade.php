@@ -48,10 +48,10 @@
 
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
-    <p class="text-sm text-gray-500">{{ $students->total() }} {{ Str::plural(__('students.title'), $students->total()) }}</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $students->total() }} {{ Str::plural(__('students.title'), $students->total()) }}</p>
     <div class="flex items-center gap-2">
         <a href="{{ route('dashboard.students.export', request()->query()) }}"
-           class="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition-colors">
+           class="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg transition-colors">
             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
             </svg>
@@ -59,7 +59,7 @@
         </a>
         @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
             <button onclick="document.getElementById('students-import-modal').classList.remove('hidden')"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition-colors">
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg transition-colors">
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
@@ -80,14 +80,14 @@
 <div id="students-import-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="flex min-h-full items-center justify-center p-4">
         <div class="fixed inset-0 bg-black/40" onclick="document.getElementById('students-import-modal').classList.add('hidden')"></div>
-        <div class="relative bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 z-10">
+        <div class="relative bg-white dark:bg-gray-800 w-full max-w-lg rounded-2xl shadow-xl p-6 z-10">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-base font-semibold text-gray-900">{{ __('students.import_students') }}</h3>
-                <button onclick="document.getElementById('students-import-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
+                <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ __('students.import_students') }}</h3>
+                <button onclick="document.getElementById('students-import-modal').classList.add('hidden')" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-            <p class="text-sm text-gray-500 mb-4">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
                 {{ __('students.import_description') }}
                 <a href="{{ route('dashboard.students.import-template') }}" class="text-blue-600 hover:underline font-medium">{{ __('students.download_template') }}</a>.
             </p>
@@ -100,11 +100,11 @@
                     <label for="students-import-file" class="cursor-pointer text-sm text-blue-600 hover:underline font-medium">{{ __('students.choose_file') }}</label>
                     <input id="students-import-file" name="file" type="file" accept=".csv,.xlsx,.xls" class="sr-only"
                            onchange="document.getElementById('students-import-filename').textContent = this.files[0]?.name ?? ''">
-                    <p id="students-import-filename" class="text-xs text-gray-400 mt-1">{{ __('students.file_hint') }}</p>
+                    <p id="students-import-filename" class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ __('students.file_hint') }}</p>
                 </div>
                 <div class="flex gap-2 justify-end">
                     <button type="button" onclick="document.getElementById('students-import-modal').classList.add('hidden')"
-                            class="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">{{ __('common.cancel') }}</button>
+                            class="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors">{{ __('common.cancel') }}</button>
                     <button type="submit"
                             class="px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">{{ __('students.upload_import') }}</button>
                 </div>
@@ -114,15 +114,15 @@
 </div>
 
 {{-- Table --}}
-<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
     @if($students->isEmpty())
-        <div class="px-6 py-16 text-center text-sm text-gray-400">
+        <div class="px-6 py-16 text-center text-sm text-gray-400 dark:text-gray-500">
             {{ __('students.no_students_found') }}
         </div>
     @else
-        <table class="w-full text-sm">
+        <table class="w-full text-sm dark:text-gray-200">
             <thead>
-                <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     <th class="px-5 py-3 text-start">{{ __('students.title') }}</th>
                     <th class="px-5 py-3 text-start">{{ __('students.student_number') }}</th>
                     <th class="px-5 py-3 text-start">{{ __('students.faculty') }}</th>
@@ -133,22 +133,22 @@
                     <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
                 @foreach($students as $student)
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                         <td class="px-5 py-3.5">
                             <div>
-                                <p class="font-medium text-gray-900">{{ $student->user->first_name }} {{ $student->user->last_name }}</p>
-                                <p class="text-xs text-gray-400 mt-0.5">{{ $student->user->email }}</p>
+                                <p class="font-medium text-gray-900 dark:text-white">{{ $student->user->first_name }} {{ $student->user->last_name }}</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{{ $student->user->email }}</p>
                             </div>
                         </td>
                         <td class="px-5 py-3.5">
-                            <span class="font-mono text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $student->student_number }}</span>
+                            <span class="font-mono text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded">{{ $student->student_number }}</span>
                         </td>
-                        <td class="px-5 py-3.5 text-gray-600">{{ $student->faculty?->code }}</td>
-                        <td class="px-5 py-3.5 text-gray-600">{{ $student->department?->local_name ?? '—' }}</td>
-                        <td class="px-5 py-3.5 text-gray-600">{{ $student->academic_year }}</td>
-                        <td class="px-5 py-3.5 text-gray-600">{{ $student->gpa ?? '—' }}</td>
+                        <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400">{{ $student->faculty?->code }}</td>
+                        <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400">{{ $student->department?->local_name ?? '—' }}</td>
+                        <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400">{{ $student->academic_year }}</td>
+                        <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400">{{ $student->gpa ?? '—' }}</td>
                         <td class="px-5 py-3.5">
                             @php
                                 $statusColors = [
@@ -171,12 +171,12 @@
                         <td class="px-5 py-3.5">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.students.show', $student) }}"
-                                   class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+                                   class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
                                     {{ __('common.view') }}
                                 </a>
                                 @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
                                     <a href="{{ route('dashboard.students.edit', $student) }}"
-                                       class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                                       class="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                         {{ __('common.edit') }}
                                     </a>
                                     <form method="POST" action="{{ route('dashboard.students.destroy', $student) }}"
@@ -184,7 +184,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                                class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
                                             {{ __('common.delete') }}
                                         </button>
                                     </form>
@@ -198,7 +198,7 @@
 
         {{-- Pagination --}}
         @if($students->hasPages())
-            <div class="px-5 py-4 border-t border-gray-100">
+            <div class="px-5 py-4 border-t border-gray-100 dark:border-gray-700">
                 {{ $students->links() }}
             </div>
         @endif

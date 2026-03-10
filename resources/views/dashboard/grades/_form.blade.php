@@ -13,12 +13,12 @@
 
     {{-- Enrollment --}}
     <div class="md:col-span-2">
-        <label for="enrollment_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.enrollment') }} <span class="text-red-500">*</span></label>
+        <label for="enrollment_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('grades.enrollment') }} <span class="text-red-500">*</span></label>
 
         @if($isEdit)
             <input type="hidden" name="enrollment_id" value="{{ $grade->enrollment_id }}"/>
-            <div class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-700">
-                <span class="font-mono bg-gray-200 text-gray-700 px-2 py-0.5 rounded text-xs">{{ $grade->enrollment?->section?->course?->code }}</span>
+            <div class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm text-gray-700">
+                <span class="font-mono bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded text-xs">{{ $grade->enrollment?->section?->course?->code }}</span>
                 <span class="ml-1.5">{{ $grade->enrollment?->section?->course?->name }}</span>
                 <span class="mx-1.5 text-gray-400">—</span>
                 {{ $grade->enrollment?->student?->user?->first_name }} {{ $grade->enrollment?->student?->user?->last_name }}
@@ -29,8 +29,8 @@
                 id="enrollment_id"
                 name="enrollment_id"
                 required
-                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                       {{ $errors->has('enrollment_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+                class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                       {{ $errors->has('enrollment_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                        focus:outline-none focus:ring-2"
             >
                 <option value="">{{ __('grades.select_enrollment') }}</option>
@@ -51,7 +51,7 @@
 
     {{-- Midterm --}}
     <div>
-        <label for="midterm" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.midterm') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
+        <label for="midterm" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('grades.midterm') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
         <input
             id="midterm"
             type="number"
@@ -60,8 +60,8 @@
             step="0.01"
             min="0"
             max="100"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('midterm') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('midterm') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('midterm')
@@ -71,7 +71,7 @@
 
     {{-- Coursework --}}
     <div>
-        <label for="coursework" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.coursework') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
+        <label for="coursework" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('grades.coursework') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
         <input
             id="coursework"
             type="number"
@@ -80,8 +80,8 @@
             step="0.01"
             min="0"
             max="100"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('coursework') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('coursework') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('coursework')
@@ -91,7 +91,7 @@
 
     {{-- Final --}}
     <div>
-        <label for="final" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.final') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
+        <label for="final" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('grades.final') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
         <input
             id="final"
             type="number"
@@ -100,8 +100,8 @@
             step="0.01"
             min="0"
             max="100"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('final') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('final') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('final')
@@ -111,7 +111,7 @@
 
     {{-- Total --}}
     <div>
-        <label for="total" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.total') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
+        <label for="total" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('grades.total') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
         <input
             id="total"
             type="number"
@@ -120,8 +120,8 @@
             step="0.01"
             min="0"
             max="100"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('total') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('total') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('total')
@@ -131,7 +131,7 @@
 
     {{-- Letter Grade --}}
     <div>
-        <label for="letter_grade" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.letter_grade') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.eg_letter') }}</span></label>
+        <label for="letter_grade" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('grades.letter_grade') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.eg_letter') }}</span></label>
         <input
             id="letter_grade"
             type="text"
@@ -139,8 +139,8 @@
             value="{{ old('letter_grade', $grade?->letter_grade) }}"
             maxlength="3"
             placeholder="A+"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('letter_grade') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('letter_grade') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('letter_grade')
@@ -150,7 +150,7 @@
 
     {{-- Grade Points --}}
     <div>
-        <label for="grade_points" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.grade_points') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_gpa') }}</span></label>
+        <label for="grade_points" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('grades.grade_points') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_gpa') }}</span></label>
         <input
             id="grade_points"
             type="number"
@@ -160,8 +160,8 @@
             min="0"
             max="4"
             placeholder="3.70"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('grade_points') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('grade_points') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('grade_points')

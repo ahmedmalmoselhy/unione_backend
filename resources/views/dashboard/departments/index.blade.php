@@ -37,7 +37,7 @@
 
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
-    <p class="text-sm text-gray-500">{{ $departments->total() }} {{ Str::plural('department', $departments->total()) }} total</p>
+    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $departments->total() }} {{ Str::plural('department', $departments->total()) }} total</p>
     @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
         <div class="flex items-center gap-2">
             <a href="{{ route('dashboard.departments.create.academic') }}"
@@ -59,7 +59,7 @@
 </div>
 
 @if($departments->isEmpty())
-    <div class="bg-white rounded-2xl border border-gray-200 px-6 py-16 text-center text-sm text-gray-400">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 px-6 py-16 text-center text-sm text-gray-400 dark:text-gray-500">
         {{ __('departments.no_departments_found') }}
     </div>
 @else
@@ -70,19 +70,19 @@
 
     {{-- Academic Departments --}}
     <div class="mb-8">
-        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+        <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
             {{ __('common.academic') }}
             <span class="ml-2 text-xs font-medium bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full normal-case tracking-normal">
                 {{ $academic->count() }}
             </span>
         </h3>
-        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             @if($academic->isEmpty())
-                <div class="px-6 py-10 text-center text-sm text-gray-400">{{ __('departments.no_academic_on_page') }}</div>
+                <div class="px-6 py-10 text-center text-sm text-gray-400 dark:text-gray-500">{{ __('departments.no_academic_on_page') }}</div>
             @else
-                <table class="w-full text-sm">
+                <table class="w-full text-sm dark:text-gray-200">
                     <thead>
-                        <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                             <th class="px-5 py-3 text-start">{{ __('common.name') }}</th>
                             <th class="px-5 py-3 text-start">{{ __('common.faculty') }}</th>
                             <th class="px-5 py-3 text-start">{{ __('common.code') }}</th>
@@ -91,31 +91,31 @@
                             <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
+                    <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
                         @foreach($academic as $department)
-                            <tr class="hover:bg-gray-50 transition-colors">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                 <td class="px-5 py-3.5">
                                     <div class="flex items-center gap-2">
                                         <div>
-                                            <p class="font-medium text-gray-900">{{ $department->local_name }}</p>
-                                            <p class="text-xs text-gray-400 mt-0.5" dir="auto">{{ app()->getLocale() === 'ar' ? $department->name : $department->name_ar }}</p>
+                                            <p class="font-medium text-gray-900 dark:text-white">{{ $department->local_name }}</p>
+                                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5" dir="auto">{{ app()->getLocale() === 'ar' ? $department->name : $department->name_ar }}</p>
                                         </div>
                                         @if($department->is_preparatory)
                                             <span class="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">PREP</span>
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-5 py-3.5 text-gray-600 text-xs">
+                                <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400 text-xs">
                                     {{ $department->faculty?->local_name ?? '—' }}
                                 </td>
                                 <td class="px-5 py-3.5">
-                                    <span class="font-mono text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $department->code }}</span>
+                                    <span class="font-mono text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded">{{ $department->code }}</span>
                                 </td>
-                                <td class="px-5 py-3.5 text-gray-600">
+                                <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400">
                                     @if($department->head)
                                         {{ $department->head->first_name }} {{ $department->head->last_name }}
                                     @else
-                                        <span class="text-gray-400">—</span>
+                                        <span class="text-gray-400 dark:text-gray-600">—</span>
                                     @endif
                                 </td>
                                 <td class="px-5 py-3.5">
@@ -126,12 +126,12 @@
                                 <td class="px-5 py-3.5">
                                     <div class="flex items-center justify-end gap-2">
                                         <a href="{{ route('dashboard.departments.show', $department) }}"
-                                           class="px-3 py-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors">
+                                           class="px-3 py-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors">
                                             {{ __('common.view') }}
                                         </a>
                                         @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
                                             <a href="{{ route('dashboard.departments.edit', $department) }}"
-                                               class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                                               class="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                                 {{ __('common.edit') }}
                                             </a>
                                             @if(! $department->is_mandatory)
@@ -140,13 +140,13 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
-                                                            class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                                            class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
                                                         {{ __('common.delete') }}
                                                     </button>
                                                 </form>
                                             @endif
                                             <a href="{{ route('dashboard.departments.assign-admin', $department) }}"
-                                               class="px-3 py-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition-colors">
+                                               class="px-3 py-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors">
                                                 {{ __('common.assign_admin') }}
                                             </a>
                                         @endif
@@ -162,19 +162,19 @@
 
     {{-- Managerial Departments --}}
     <div class="mb-6">
-        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+        <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
             {{ __('common.managerial') }}
             <span class="ml-2 text-xs font-medium bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full normal-case tracking-normal">
                 {{ $managerial->count() }}
             </span>
         </h3>
-        <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             @if($managerial->isEmpty())
-                <div class="px-6 py-10 text-center text-sm text-gray-400">{{ __('departments.no_managerial_on_page') }}</div>
+                <div class="px-6 py-10 text-center text-sm text-gray-400 dark:text-gray-500">{{ __('departments.no_managerial_on_page') }}</div>
             @else
-                <table class="w-full text-sm">
+                <table class="w-full text-sm dark:text-gray-200">
                     <thead>
-                        <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                             <th class="px-5 py-3 text-start">{{ __('common.name') }}</th>
                             <th class="px-5 py-3 text-start">{{ __('common.faculty') }}</th>
                             <th class="px-5 py-3 text-start">{{ __('common.code') }}</th>
@@ -183,24 +183,24 @@
                             <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50">
+                    <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
                         @foreach($managerial as $department)
-                            <tr class="hover:bg-gray-50 transition-colors">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                 <td class="px-5 py-3.5">
-                                    <p class="font-medium text-gray-900">{{ $department->local_name }}</p>
-                                    <p class="text-xs text-gray-400 mt-0.5" dir="auto">{{ app()->getLocale() === 'ar' ? $department->name : $department->name_ar }}</p>
+                                    <p class="font-medium text-gray-900 dark:text-white">{{ $department->local_name }}</p>
+                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5" dir="auto">{{ app()->getLocale() === 'ar' ? $department->name : $department->name_ar }}</p>
                                 </td>
-                                <td class="px-5 py-3.5 text-gray-600 text-xs">
+                                <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400 text-xs">
                                     {{ $department->faculty?->local_name ?? '—' }}
                                 </td>
                                 <td class="px-5 py-3.5">
-                                    <span class="font-mono text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $department->code }}</span>
+                                    <span class="font-mono text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded">{{ $department->code }}</span>
                                 </td>
-                                <td class="px-5 py-3.5 text-gray-600">
+                                <td class="px-5 py-3.5 text-gray-600 dark:text-gray-400">
                                     @if($department->head)
                                         {{ $department->head->first_name }} {{ $department->head->last_name }}
                                     @else
-                                        <span class="text-gray-400">—</span>
+                                        <span class="text-gray-400 dark:text-gray-600">—</span>
                                     @endif
                                 </td>
                                 <td class="px-5 py-3.5">
@@ -211,12 +211,12 @@
                                 <td class="px-5 py-3.5">
                                     <div class="flex items-center justify-end gap-2">
                                         <a href="{{ route('dashboard.departments.show', $department) }}"
-                                           class="px-3 py-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors">
+                                           class="px-3 py-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors">
                                             {{ __('common.view') }}
                                         </a>
                                         @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
                                             <a href="{{ route('dashboard.departments.edit', $department) }}"
-                                               class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                                               class="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                                                 {{ __('common.edit') }}
                                             </a>
                                             @if(! $department->is_mandatory)
@@ -225,7 +225,7 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
-                                                            class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                                            class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
                                                         {{ __('common.delete') }}
                                                     </button>
                                                 </form>
@@ -243,7 +243,7 @@
 
     {{-- Pagination --}}
     @if($departments->hasPages())
-        <div class="px-5 py-4 border-t border-gray-100">
+        <div class="px-5 py-4 border-t border-gray-100 dark:border-gray-700">
             {{ $departments->links() }}
         </div>
     @endif

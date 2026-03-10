@@ -11,13 +11,13 @@
 
     {{-- Professor --}}
     <div class="md:col-span-2">
-        <label for="professor_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.professor') }} <span class="text-red-500">*</span></label>
+        <label for="professor_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('common.professor') }} <span class="text-red-500">*</span></label>
         <select
             id="professor_id"
             name="professor_id"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('professor_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('professor_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         >
             <option value="">{{ __('university.select_professor') }}</option>
@@ -34,7 +34,7 @@
 
     {{-- Title (English) --}}
     <div>
-        <label for="title" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('university.title_label') }} <span class="text-red-500">*</span></label>
+        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('university.title_label') }} <span class="text-red-500">*</span></label>
         <input
             id="title"
             type="text"
@@ -43,8 +43,8 @@
             required
             autocomplete="off"
             placeholder="e.g. Vice President for Academic Affairs"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('title') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('title') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('title')
@@ -54,7 +54,7 @@
 
     {{-- Title (Arabic) --}}
     <div>
-        <label for="title_ar" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('university.title_ar_label') }} <span class="text-red-500">*</span></label>
+        <label for="title_ar" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('university.title_ar_label') }} <span class="text-red-500">*</span></label>
         <input
             id="title_ar"
             type="text"
@@ -64,8 +64,8 @@
             dir="rtl"
             autocomplete="off"
             placeholder="مثال: نائب الرئيس للشؤون الأكاديمية"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('title_ar') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('title_ar') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('title_ar')
@@ -75,7 +75,7 @@
 
     {{-- Order --}}
     <div>
-        <label for="order" class="block text-sm font-medium text-gray-700 mb-1.5">
+        <label for="order" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
             {{ __('university.display_order') }} <span class="text-red-500">*</span>
         </label>
         <input
@@ -85,8 +85,8 @@
             value="{{ old('order', $vicePresident?->order ?? 0) }}"
             required
             min="0"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('order') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('order') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('order')
@@ -96,15 +96,15 @@
 
     {{-- Appointed At --}}
     <div>
-        <label for="appointed_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('university.appointed_date') }} <span class="text-red-500">*</span></label>
+        <label for="appointed_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('university.appointed_date') }} <span class="text-red-500">*</span></label>
         <input
             id="appointed_at"
             type="date"
             name="appointed_at"
             value="{{ old('appointed_at', $vicePresident?->appointed_at?->format('Y-m-d')) }}"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('appointed_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('appointed_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('appointed_at')
@@ -114,7 +114,7 @@
 
     {{-- Ended At --}}
     <div>
-        <label for="ended_at" class="block text-sm font-medium text-gray-700 mb-1.5">
+        <label for="ended_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
             {{ __('university.end_date') }}
             <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span>
         </label>
@@ -123,8 +123,8 @@
             type="date"
             name="ended_at"
             value="{{ old('ended_at', $vicePresident?->ended_at?->format('Y-m-d')) }}"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('ended_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('ended_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('ended_at')
@@ -142,7 +142,7 @@
             {{ old('is_active', $vicePresident?->is_active ?? true) ? 'checked' : '' }}
             class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
-        <label for="is_active" class="text-sm font-medium text-gray-700">{{ __('university.active_label') }}</label>
+        <label for="is_active" class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('university.active_label') }}</label>
     </div>
 
 </div>

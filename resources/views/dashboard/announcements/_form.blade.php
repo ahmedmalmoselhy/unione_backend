@@ -15,15 +15,15 @@
 
     {{-- Title --}}
     <div class="md:col-span-2">
-        <label for="title" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.title_label') }} <span class="text-red-500">*</span></label>
+        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('announcements.title_label') }} <span class="text-red-500">*</span></label>
         <input
             id="title"
             type="text"
             name="title"
             value="{{ old('title', $announcement?->title) }}"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('title') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('title') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('title')
@@ -33,14 +33,14 @@
 
     {{-- Body --}}
     <div class="md:col-span-2">
-        <label for="body" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.body') }} <span class="text-red-500">*</span></label>
+        <label for="body" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('announcements.body') }} <span class="text-red-500">*</span></label>
         <textarea
             id="body"
             name="body"
             rows="6"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('body') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('body') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         >{{ old('body', $announcement?->body) }}</textarea>
         @error('body')
@@ -50,13 +50,13 @@
 
     {{-- Type --}}
     <div>
-        <label for="type" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.type') }} <span class="text-red-500">*</span></label>
+        <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('announcements.type') }} <span class="text-red-500">*</span></label>
         <select
             id="type"
             name="type"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('type') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('type') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         >
             @foreach(['general' => __('announcements.type_general'), 'academic' => __('announcements.type_academic'), 'administrative' => __('announcements.type_administrative'), 'urgent' => __('announcements.type_urgent')] as $val => $label)
@@ -70,13 +70,13 @@
 
     {{-- Visibility --}}
     <div>
-        <label for="visibility" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.visibility') }} <span class="text-red-500">*</span></label>
+        <label for="visibility" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('announcements.visibility') }} <span class="text-red-500">*</span></label>
         <select
             id="visibility"
             name="visibility"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('visibility') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('visibility') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         >
             @php
@@ -93,7 +93,7 @@
 
     {{-- Target: Faculty --}}
     <div id="target-faculty" class="md:col-span-2" style="display:none;">
-        <label for="target_faculty" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.target_faculty') }}</label>
+        <label for="target_faculty" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('announcements.target_faculty') }}</label>
         <select
             id="target_faculty"
             name="target_id_faculty"
@@ -113,7 +113,7 @@
 
     {{-- Target: Department --}}
     <div id="target-department" class="md:col-span-2" style="display:none;">
-        <label for="target_department" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.target_department') }}</label>
+        <label for="target_department" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('announcements.target_department') }}</label>
         <select
             id="target_department"
             name="target_id_department"
@@ -133,7 +133,7 @@
 
     {{-- Target: Section --}}
     <div id="target-section" class="md:col-span-2" style="display:none;">
-        <label for="target_section" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.target_section') }}</label>
+        <label for="target_section" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('announcements.target_section') }}</label>
         <select
             id="target_section"
             name="target_id_section"
@@ -157,14 +157,14 @@
 
     {{-- Published At --}}
     <div>
-        <label for="published_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.published_at') }} <span class="text-xs font-normal text-gray-400">({{ __('announcements.leave_blank_draft') }})</span></label>
+        <label for="published_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('announcements.published_at') }} <span class="text-xs font-normal text-gray-400">({{ __('announcements.leave_blank_draft') }})</span></label>
         <input
             id="published_at"
             type="datetime-local"
             name="published_at"
             value="{{ old('published_at', $announcement?->published_at?->format('Y-m-d\TH:i')) }}"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('published_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('published_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('published_at')
@@ -174,14 +174,14 @@
 
     {{-- Expires At --}}
     <div>
-        <label for="expires_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.expires_at') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
+        <label for="expires_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('announcements.expires_at') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
         <input
             id="expires_at"
             type="datetime-local"
             name="expires_at"
             value="{{ old('expires_at', $announcement?->expires_at?->format('Y-m-d\TH:i')) }}"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('expires_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('expires_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('expires_at')

@@ -13,7 +13,7 @@
 
 {{-- Actions bar --}}
 <div class="flex items-center justify-between mb-4">
-    <p class="text-sm text-gray-500">
+    <p class="text-sm text-gray-500 dark:text-gray-400">
         {{ $notifications->total() }} notification{{ $notifications->total() !== 1 ? 's' : '' }}
     </p>
     @if(auth()->user()->unreadNotifications()->exists())
@@ -28,7 +28,7 @@
 </div>
 
 @if($notifications->isEmpty())
-    <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-12 text-center">
         <svg class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                   d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
@@ -36,7 +36,7 @@
         <p class="text-sm text-gray-400">No notifications yet.</p>
     </div>
 @else
-    <div class="bg-white rounded-2xl border border-gray-200 divide-y divide-gray-100 mb-4">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 mb-4">
         @foreach($notifications as $notification)
             @php
                 $data   = $notification->data;
@@ -78,13 +78,13 @@
                 {{-- Content --}}
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-0.5">
-                        <p class="text-sm font-semibold text-gray-900 truncate">{{ $data['title'] ?? 'Notification' }}</p>
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $data['title'] ?? 'Notification' }}</p>
                         @if(! $isRead)
                             <span class="inline-block w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
                         @endif
                     </div>
-                    <p class="text-sm text-gray-600 leading-snug">{{ $data['body'] ?? '' }}</p>
-                    <p class="text-xs text-gray-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-snug">{{ $data['body'] ?? '' }}</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
                 </div>
 
                 {{-- Actions --}}

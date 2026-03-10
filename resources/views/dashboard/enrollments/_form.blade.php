@@ -15,13 +15,13 @@
 
     {{-- Student --}}
     <div class="md:col-span-2">
-        <label for="student_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('enrollments.student') }} <span class="text-red-500">*</span></label>
+        <label for="student_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('enrollments.student') }} <span class="text-red-500">*</span></label>
         <select
             id="student_id"
             name="student_id"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('student_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('student_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         >
             <option value="">{{ __('enrollments.select_student') }}</option>
@@ -38,13 +38,13 @@
 
     {{-- Academic Term --}}
     <div>
-        <label for="academic_term_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('sections.academic_term') }} <span class="text-red-500">*</span></label>
+        <label for="academic_term_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('sections.academic_term') }} <span class="text-red-500">*</span></label>
         <select
             id="academic_term_id"
             name="academic_term_id"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('academic_term_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('academic_term_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         >
             <option value="">{{ __('enrollments.select_term') }}</option>
@@ -65,13 +65,13 @@
 
     {{-- Section --}}
     <div>
-        <label for="section_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('enrollments.section') }} <span class="text-red-500">*</span></label>
+        <label for="section_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('enrollments.section') }} <span class="text-red-500">*</span></label>
         <select
             id="section_id"
             name="section_id"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('section_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('section_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         >
             <option value="">{{ __('enrollments.select_section') }}</option>
@@ -93,13 +93,13 @@
 
     {{-- Status --}}
     <div>
-        <label for="status" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.status') }} <span class="text-red-500">*</span></label>
+        <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('common.status') }} <span class="text-red-500">*</span></label>
         <select
             id="status"
             name="status"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('status') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('status') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         >
             @foreach(['registered' => __('enrollments.status_registered'), 'dropped' => __('enrollments.status_dropped'), 'completed' => __('enrollments.status_completed'), 'failed' => __('enrollments.status_failed'), 'incomplete' => __('enrollments.status_incomplete')] as $val => $label)
@@ -113,15 +113,15 @@
 
     {{-- Registered At --}}
     <div>
-        <label for="registered_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('enrollments.registered_at') }} <span class="text-red-500">*</span></label>
+        <label for="registered_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('enrollments.registered_at') }} <span class="text-red-500">*</span></label>
         <input
             id="registered_at"
             type="datetime-local"
             name="registered_at"
             value="{{ old('registered_at', $enrollment?->registered_at?->format('Y-m-d\TH:i')) }}"
             required
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('registered_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('registered_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('registered_at')
@@ -131,14 +131,14 @@
 
     {{-- Dropped At --}}
     <div>
-        <label for="dropped_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('enrollments.dropped_at') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
+        <label for="dropped_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('enrollments.dropped_at') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
         <input
             id="dropped_at"
             type="datetime-local"
             name="dropped_at"
             value="{{ old('dropped_at', $enrollment?->dropped_at?->format('Y-m-d\TH:i')) }}"
-            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors
-                   {{ $errors->has('dropped_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
+            class="w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-gray-700 dark:text-gray-200
+                   {{ $errors->has('dropped_at') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-200 dark:focus:ring-blue-800' }}
                    focus:outline-none focus:ring-2"
         />
         @error('dropped_at')
