@@ -24,8 +24,46 @@ use App\Http\Controllers\Dashboard\UniversityController;
 use App\Http\Controllers\Dashboard\UniversityVicePresidentController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+/*
+|--------------------------------------------------------------------------
+| Portal routes (students, professors, employees)
+|--------------------------------------------------------------------------
+*/
+
+// Portal login/logout — no auth required
+Route::get('/', [\App\Http\Controllers\Portal\AuthController::class, 'showLogin'])->name('portal.login');
+Route::post('/login', [\App\Http\Controllers\Portal\AuthController::class, 'login'])->name('portal.login.post');
+Route::post('/logout', [\App\Http\Controllers\Portal\AuthController::class, 'logout'])->name('portal.logout');
+Route::post('/locale', [LocaleController::class, 'store'])->name('portal.locale');
+
+// Protected portal routes
+Route::middleware('portal')->group(function () {
+
+    Route::get('/home', [\App\Http\Controllers\Portal\HomeController::class, 'index'])->name('portal.home');
+    Route::get('/profile', [\App\Http\Controllers\Portal\ProfileController::class, 'show'])->name('portal.profile');
+    Route::get('/schedule', [\App\Http\Controllers\Portal\ScheduleController::class, 'index'])->name('portal.schedule');
+
+    // Announcements
+    Route::get('/announcements', [\App\Http\Controllers\Portal\AnnouncementController::class, 'index'])->name('portal.announcements.index');
+    Route::post('/announcements/{id}/read', [\App\Http\Controllers\Portal\AnnouncementController::class, 'markRead'])->name('portal.announcements.read');
+
+    // Notifications
+    Route::get('/notifications', [\App\Http\Controllers\Portal\NotificationController::class, 'index'])->name('portal.notifications.index');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\Portal\NotificationController::class, 'markAllRead'])->name('portal.notifications.read-all');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\Portal\NotificationController::class, 'markRead'])->name('portal.notifications.read');
+    Route::delete('/notifications/{id}', [\App\Http\Controllers\Portal\NotificationController::class, 'destroy'])->name('portal.notifications.destroy');
+
+    // Student: courses & grades
+    Route::get('/courses', [\App\Http\Controllers\Portal\Student\EnrollmentController::class, 'index'])->name('portal.enrollments.index');
+    Route::get('/courses/enroll', [\App\Http\Controllers\Portal\Student\EnrollmentController::class, 'create'])->name('portal.enrollments.create');
+    Route::post('/courses', [\App\Http\Controllers\Portal\Student\EnrollmentController::class, 'store'])->name('portal.enrollments.store');
+    Route::delete('/courses/{enrollment}', [\App\Http\Controllers\Portal\Student\EnrollmentController::class, 'destroy'])->name('portal.enrollments.destroy');
+    Route::get('/grades', [\App\Http\Controllers\Portal\Student\GradeController::class, 'index'])->name('portal.grades');
+
+    // Professor: sections & grading
+    Route::get('/sections', [\App\Http\Controllers\Portal\Professor\SectionController::class, 'index'])->name('portal.sections.index');
+    Route::get('/sections/{section}', [\App\Http\Controllers\Portal\Professor\SectionController::class, 'show'])->name('portal.sections.show');
+    Route::post('/sections/{section}/grades', [\App\Http\Controllers\Portal\Professor\SectionController::class, 'postGrade'])->name('portal.sections.grade');
 });
 
 /*

@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Controllers\Portal\Student;
+
+use App\Http\Controllers\Controller;
+use App\Models\AcademicTerm;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
+class GradeController extends Controller
+{
+    public function index(Request $request): View
+    {
+        $student = $request->user()->student()->firstOrFail();
+
+        $enrollments = $student->enrollments()
+            ->with([
+                'section.course',
+                'section.academicTerm',
+                'grade',
+            ])
+            ->whereHas('grade')
+            ->orderByDesc('created_at')
+            ->get();
+
+        // Group by academic term
+        $byTerm = $enrollments->groupBy(fn ($e) => $e->section?->academicTerm?->name ?? 'Unknown');
+
+        // Calculate cumulative GPA from graded enrollments
+        $gpa = $student->gpa;
+
+        return view('portal.student.grades', compact('byTerm', 'gpa'));
+    }
+}

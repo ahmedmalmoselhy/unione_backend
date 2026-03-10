@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->alias([
             'dashboard'        => \App\Http\Middleware\DashboardMiddleware::class,
+            'portal'           => \App\Http\Middleware\PortalMiddleware::class,
             'admin'            => \App\Http\Middleware\AdminMiddleware::class,
             'university.admin' => \App\Http\Middleware\UniversityAdminMiddleware::class,
             'scoped.admin'     => \App\Http\Middleware\ScopedAdminMiddleware::class,
