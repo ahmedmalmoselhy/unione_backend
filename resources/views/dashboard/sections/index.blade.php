@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.app')
 
-@section('title', 'Sections')
-@section('heading', 'Sections')
+@section('title', __('sections.title'))
+@section('heading', __('sections.title'))
 
 @section('content')
 
@@ -29,22 +29,22 @@
     'action'  => route('dashboard.sections.index'),
     'search'  => request('search'),
     'filters' => [
-        ['name' => 'course_id', 'label' => 'Course', 'value' => request('course_id'), 'options' => $courses->toArray()],
-        ['name' => 'term_id', 'label' => 'Term', 'value' => request('term_id'), 'options' => $terms->toArray()],
-        ['name' => 'status', 'label' => 'Status', 'value' => request('status'), 'options' => ['active' => 'Active', 'inactive' => 'Inactive']],
+        ['name' => 'course_id', 'label' => __('common.course'), 'value' => request('course_id'), 'options' => $courses->toArray()],
+        ['name' => 'term_id', 'label' => __('common.term'), 'value' => request('term_id'), 'options' => $terms->toArray()],
+        ['name' => 'status', 'label' => __('common.status'), 'value' => request('status'), 'options' => ['active' => __('common.active'), 'inactive' => __('common.inactive')]],
     ],
 ])
 
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
-    <p class="text-sm text-gray-500">{{ $sections->total() }} {{ Str::plural('section', $sections->total()) }} total</p>
+    <p class="text-sm text-gray-500">{{ $sections->total() }} {{ Str::plural(__('sections.title'), $sections->total()) }}</p>
     @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
         <a href="{{ route('dashboard.sections.create') }}"
            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            New Section
+            {{ __('sections.new_section') }}
         </a>
     @endif
 </div>
@@ -53,20 +53,20 @@
 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
     @if($sections->isEmpty())
         <div class="px-6 py-16 text-center text-sm text-gray-400">
-            No sections found. <a href="{{ route('dashboard.sections.create') }}" class="text-blue-600 hover:underline">Create the first one.</a>
+            {{ __('sections.no_sections_found') }}
         </div>
     @else
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    <th class="px-5 py-3 text-start">Course</th>
-                    <th class="px-5 py-3 text-start">Professor</th>
-                    <th class="px-5 py-3 text-start">Term</th>
-                    <th class="px-5 py-3 text-start">Capacity</th>
-                    <th class="px-5 py-3 text-start">Room</th>
-                    <th class="px-5 py-3 text-start">Schedule</th>
-                    <th class="px-5 py-3 text-start">Status</th>
-                    <th class="px-5 py-3 text-end">Actions</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.course') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('sections.professor') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.term') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('sections.capacity') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('sections.room') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('sections.schedule') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.status') }}</th>
+                    <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -74,14 +74,14 @@
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-5 py-3.5">
                             <span class="font-mono text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $section->course->code }}</span>
-                            <span class="ml-1.5 text-gray-700">{{ $section->course->name }}</span>
+                            <span class="ml-1.5 text-gray-700">{{ $section->course->local_name }}</span>
                         </td>
                         <td class="px-5 py-3.5 text-gray-600">
                             {{ $section->professor?->user?->first_name }} {{ $section->professor?->user?->last_name }}
                         </td>
                         <td class="px-5 py-3.5">
                             @if($section->academicTerm)
-                                <span class="text-xs text-gray-600">{{ $section->academicTerm->name }}</span>
+                                <span class="text-xs text-gray-600">{{ $section->academicTerm->local_name }}</span>
                             @else
                                 <span class="text-xs text-gray-400">—</span>
                             @endif
@@ -104,27 +104,27 @@
                         </td>
                         <td class="px-5 py-3.5">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $section->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                {{ $section->is_active ? 'Active' : 'Inactive' }}
+                                {{ $section->is_active ? __('common.active') : __('common.inactive') }}
                             </span>
                         </td>
                         <td class="px-5 py-3.5">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.sections.show', $section) }}"
                                    class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
-                                    View
+                                    {{ __('common.view') }}
                                 </a>
                                 @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
                                     <a href="{{ route('dashboard.sections.edit', $section) }}"
                                        class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                                        Edit
+                                        {{ __('common.edit') }}
                                     </a>
                                     <form method="POST" action="{{ route('dashboard.sections.destroy', $section) }}"
-                                          onsubmit="return confirm('Delete this section? This action cannot be undone.')">
+                                          onsubmit="return confirm('{{ addslashes(__('sections.confirm_delete')) }}')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
                                                 class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                                            Delete
+                                            {{ __('common.delete') }}
                                         </button>
                                     </form>
                                 @endif

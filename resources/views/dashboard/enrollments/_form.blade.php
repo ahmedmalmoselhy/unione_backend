@@ -15,7 +15,7 @@
 
     {{-- Student --}}
     <div class="md:col-span-2">
-        <label for="student_id" class="block text-sm font-medium text-gray-700 mb-1.5">Student <span class="text-red-500">*</span></label>
+        <label for="student_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('enrollments.student') }} <span class="text-red-500">*</span></label>
         <select
             id="student_id"
             name="student_id"
@@ -24,7 +24,7 @@
                    {{ $errors->has('student_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                    focus:outline-none focus:ring-2"
         >
-            <option value="">Select student...</option>
+            <option value="">{{ __('enrollments.select_student') }}</option>
             @foreach($students as $student)
                 <option value="{{ $student->id }}" {{ (int) old('student_id', $enrollment?->student_id) === $student->id ? 'selected' : '' }}>
                     {{ $student->user->first_name }} {{ $student->user->last_name }} ({{ $student->student_number }})
@@ -38,7 +38,7 @@
 
     {{-- Academic Term --}}
     <div>
-        <label for="academic_term_id" class="block text-sm font-medium text-gray-700 mb-1.5">Academic Term <span class="text-red-500">*</span></label>
+        <label for="academic_term_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('sections.academic_term') }} <span class="text-red-500">*</span></label>
         <select
             id="academic_term_id"
             name="academic_term_id"
@@ -47,14 +47,14 @@
                    {{ $errors->has('academic_term_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                    focus:outline-none focus:ring-2"
         >
-            <option value="">Select term...</option>
+            <option value="">{{ __('enrollments.select_term') }}</option>
             @foreach($academicTerms as $term)
                 <option
                     value="{{ $term->id }}"
                     data-term="{{ $term->id }}"
                     {{ (int) old('academic_term_id', $enrollment?->academic_term_id) === $term->id ? 'selected' : '' }}
                 >
-                    {{ $term->name }}{{ $term->is_active ? ' (Current)' : '' }}
+                    {{ $term->name }}{{ $term->is_active ? ' ' . __('enrollments.current_suffix') : '' }}
                 </option>
             @endforeach
         </select>
@@ -65,7 +65,7 @@
 
     {{-- Section --}}
     <div>
-        <label for="section_id" class="block text-sm font-medium text-gray-700 mb-1.5">Section <span class="text-red-500">*</span></label>
+        <label for="section_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('enrollments.section') }} <span class="text-red-500">*</span></label>
         <select
             id="section_id"
             name="section_id"
@@ -74,7 +74,7 @@
                    {{ $errors->has('section_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                    focus:outline-none focus:ring-2"
         >
-            <option value="">Select section...</option>
+            <option value="">{{ __('enrollments.select_section') }}</option>
             @foreach($sections as $section)
                 <option
                     value="{{ $section->id }}"
@@ -93,7 +93,7 @@
 
     {{-- Status --}}
     <div>
-        <label for="status" class="block text-sm font-medium text-gray-700 mb-1.5">Status <span class="text-red-500">*</span></label>
+        <label for="status" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.status') }} <span class="text-red-500">*</span></label>
         <select
             id="status"
             name="status"
@@ -102,7 +102,7 @@
                    {{ $errors->has('status') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                    focus:outline-none focus:ring-2"
         >
-            @foreach(['registered' => 'Registered', 'dropped' => 'Dropped', 'completed' => 'Completed', 'failed' => 'Failed', 'incomplete' => 'Incomplete'] as $val => $label)
+            @foreach(['registered' => __('enrollments.status_registered'), 'dropped' => __('enrollments.status_dropped'), 'completed' => __('enrollments.status_completed'), 'failed' => __('enrollments.status_failed'), 'incomplete' => __('enrollments.status_incomplete')] as $val => $label)
                 <option value="{{ $val }}" {{ old('status', $enrollment?->status ?? 'registered') === $val ? 'selected' : '' }}>{{ $label }}</option>
             @endforeach
         </select>
@@ -113,7 +113,7 @@
 
     {{-- Registered At --}}
     <div>
-        <label for="registered_at" class="block text-sm font-medium text-gray-700 mb-1.5">Registered At <span class="text-red-500">*</span></label>
+        <label for="registered_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('enrollments.registered_at') }} <span class="text-red-500">*</span></label>
         <input
             id="registered_at"
             type="datetime-local"
@@ -131,7 +131,7 @@
 
     {{-- Dropped At --}}
     <div>
-        <label for="dropped_at" class="block text-sm font-medium text-gray-700 mb-1.5">Dropped At <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+        <label for="dropped_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('enrollments.dropped_at') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
         <input
             id="dropped_at"
             type="datetime-local"

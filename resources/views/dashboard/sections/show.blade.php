@@ -7,7 +7,7 @@
 
 {{-- Breadcrumb --}}
 <nav class="flex items-center gap-2 text-sm mb-6">
-    <a href="{{ route('dashboard.sections.index') }}" class="text-gray-400 hover:text-gray-700 transition-colors">Sections</a>
+    <a href="{{ route('dashboard.sections.index') }}" class="text-gray-400 hover:text-gray-700 transition-colors">{{ __('sections.title') }}</a>
     <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
     </svg>
@@ -28,12 +28,12 @@
         </div>
         <div class="flex items-center gap-2 shrink-0">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $section->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                {{ $section->is_active ? 'Active' : 'Inactive' }}
+                {{ $section->is_active ? __('common.active') : __('common.inactive') }}
             </span>
             @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
                 <a href="{{ route('dashboard.sections.edit', $section) }}"
                    class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                    Edit Section
+                    {{ __('sections.edit_section') }}
                 </a>
             @endif
         </div>
@@ -41,23 +41,23 @@
 
     <dl class="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-5 text-sm">
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Professor</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('sections.professor') }}</dt>
             <dd class="text-gray-700">{{ $section->professor?->user?->first_name }} {{ $section->professor?->user?->last_name }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Academic Term</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('sections.academic_term') }}</dt>
             <dd class="text-gray-700">{{ $section->academicTerm?->name ?? '—' }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Capacity</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('sections.capacity') }}</dt>
             <dd class="text-gray-700">{{ $section->capacity }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Room</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('sections.room') }}</dt>
             <dd class="text-gray-700">{{ $section->room ?? '—' }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Enrolled</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('sections.enrolled') }}</dt>
             <dd class="text-gray-700">{{ $section->enrollments->count() }} / {{ $section->capacity }}</dd>
         </div>
     </dl>
@@ -66,7 +66,7 @@
 {{-- Schedule --}}
 @if($section->schedule && count($section->schedule))
     <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
-        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Schedule</h3>
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('sections.schedule') }}</h3>
         <div class="flex flex-wrap gap-2">
             @foreach($section->schedule as $slot)
                 <div class="flex items-center gap-2 px-3 py-2 rounded-lg border {{ ($slot['type'] ?? 'lecture') === 'lab' ? 'border-purple-200 bg-purple-50' : 'border-blue-200 bg-blue-50' }}">
@@ -86,19 +86,19 @@
 {{-- Enrollments --}}
 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Enrolled Students ({{ $section->enrollments->count() }})</h3>
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">{{ __('sections.enrolled_students', ['count' => $section->enrollments->count()]) }}</h3>
     </div>
 
     @if($section->enrollments->isEmpty())
-        <div class="px-6 py-10 text-center text-sm text-gray-400">No students enrolled in this section yet.</div>
+        <div class="px-6 py-10 text-center text-sm text-gray-400">{{ __('sections.no_students_enrolled') }}</div>
     @else
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    <th class="px-5 py-3 text-start">Student Name</th>
-                    <th class="px-5 py-3 text-start">Email</th>
-                    <th class="px-5 py-3 text-start">Status</th>
-                    <th class="px-5 py-3 text-start">Enrolled At</th>
+                    <th class="px-5 py-3 text-start">{{ __('sections.student_name') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.email') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.status') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('sections.enrolled_at') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">

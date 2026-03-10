@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title'                          => 'Faculties',
+    'new_faculty'                    => 'New Faculty',
+    'create_faculty'                 => 'Create Faculty',
+    'edit_faculty'                   => 'Edit Faculty',
+    'no_faculties_found'             => 'No faculties found.',
+    'create_first'                   => 'Create the first one.',
+    'faculty_logo'                   => 'Faculty Logo',
+    'departments'                    => 'Departments',
+    'confirm_delete'                 => "Delete faculty ':name'? This action cannot be undone.",
+    'enrollment_type_immediate'      => 'Immediate',
+    'enrollment_type_deferred'       => 'Deferred',
+    'enrollment_type_none'           => 'None',
+    'enrollment_type_hint_immediate' => 'Immediate — students are assigned to a department upon enrollment',
+    'enrollment_type_hint_deferred'  => 'Deferred — students choose a department after enrollment',
+    'enrollment_type_hint_none'      => 'None — this faculty has no departments',
+    'select_type'                    => 'Select type...',
+    'no_dean_assigned'               => '— No dean assigned —',
+    'no_academic_departments'        => 'No academic departments yet.',
+    'no_managerial_departments'      => 'No managerial departments yet.',
+    'add_one'                        => 'Add one',
+    'academic_btn'                   => 'Academic',
+    'managerial_btn'                 => 'Managerial',
+    'active_label'                   => 'Active',
+];

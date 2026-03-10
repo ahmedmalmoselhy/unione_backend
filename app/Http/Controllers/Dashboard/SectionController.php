@@ -34,8 +34,10 @@ class SectionController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        $courses = Course::where('is_active', true)->orderBy('code')->get()->pluck(null, 'id')->map(fn ($c) => $c->code . ' — ' . $c->name);
-        $terms = AcademicTerm::orderByDesc('academic_year')->pluck('name', 'id');
+        $nameCol = app()->getLocale() === 'ar' ? 'name_ar' : 'name';
+        $courses = Course::where('is_active', true)->orderBy('code')->get(['id', 'code', 'name', 'name_ar'])
+            ->mapWithKeys(fn ($c) => [$c->id => $c->code . ' — ' . ($c->$nameCol ?: $c->name)]);
+        $terms   = AcademicTerm::orderByDesc('academic_year')->pluck($nameCol, 'id');
 
         return view('dashboard.sections.index', compact('sections', 'courses', 'terms'));
     }

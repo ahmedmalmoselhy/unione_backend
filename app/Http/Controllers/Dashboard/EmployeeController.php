@@ -42,7 +42,8 @@ class EmployeeController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        $departments = Department::orderBy('name')->pluck('name', 'id');
+        $nameCol     = app()->getLocale() === 'ar' ? 'name_ar' : 'name';
+        $departments = Department::orderBy('name')->pluck($nameCol, 'id');
 
         return view('dashboard.employees.index', compact('employees', 'departments'));
     }

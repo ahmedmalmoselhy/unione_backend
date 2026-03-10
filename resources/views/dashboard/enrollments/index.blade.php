@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.app')
 
-@section('title', 'Enrollments')
-@section('heading', 'Enrollments')
+@section('title', __('enrollments.title'))
+@section('heading', __('enrollments.title'))
 
 @section('content')
 
@@ -20,21 +20,27 @@
     'action'  => route('dashboard.enrollments.index'),
     'search'  => request('search'),
     'filters' => [
-        ['name' => 'term_id', 'label' => 'Term', 'value' => request('term_id'), 'options' => $terms->toArray()],
-        ['name' => 'status', 'label' => 'Status', 'value' => request('status'), 'options' => ['registered' => 'Registered', 'completed' => 'Completed', 'dropped' => 'Dropped', 'failed' => 'Failed', 'incomplete' => 'Incomplete']],
+        ['name' => 'term_id', 'label' => __('enrollments.term'), 'value' => request('term_id'), 'options' => $terms->toArray()],
+        ['name' => 'status', 'label' => __('common.status'), 'value' => request('status'), 'options' => [
+            'registered'  => __('enrollments.status_registered'),
+            'completed'   => __('enrollments.status_completed'),
+            'dropped'     => __('enrollments.status_dropped'),
+            'failed'      => __('enrollments.status_failed'),
+            'incomplete'  => __('enrollments.status_incomplete'),
+        ]],
     ],
 ])
 
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
-    <p class="text-sm text-gray-500">{{ $enrollments->total() }} {{ Str::plural('enrollment', $enrollments->total()) }} total</p>
+    <p class="text-sm text-gray-500">{{ $enrollments->total() }} {{ __('enrollments.title') }}</p>
     <div class="flex items-center gap-2">
         <a href="{{ route('dashboard.enrollments.export', request()->query()) }}"
            class="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition-colors">
             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
             </svg>
-            Export
+            {{ __('common.export') }}
         </a>
         @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
             <a href="{{ route('dashboard.enrollments.create') }}"
@@ -42,7 +48,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
-                New Enrollment
+                {{ __('enrollments.new_enrollment') }}
             </a>
         @endif
     </div>
@@ -52,18 +58,18 @@
 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
     @if($enrollments->isEmpty())
         <div class="px-6 py-16 text-center text-sm text-gray-400">
-            No enrollments found. <a href="{{ route('dashboard.enrollments.create') }}" class="text-blue-600 hover:underline">Create the first one.</a>
+            No enrollments found. <a href="{{ route('dashboard.enrollments.create') }}" class="text-blue-600 hover:underline">{{ __('enrollments.no_enrollments_found') }}</a>
         </div>
     @else
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    <th class="px-5 py-3 text-start">Student</th>
-                    <th class="px-5 py-3 text-start">Course / Section</th>
-                    <th class="px-5 py-3 text-start">Term</th>
-                    <th class="px-5 py-3 text-start">Status</th>
-                    <th class="px-5 py-3 text-start">Registered</th>
-                    <th class="px-5 py-3 text-end">Actions</th>
+                    <th class="px-5 py-3 text-start">{{ __('enrollments.student') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('enrollments.course_section') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('enrollments.term') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.status') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('enrollments.registered') }}</th>
+                    <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -77,9 +83,9 @@
                         </td>
                         <td class="px-5 py-3.5">
                             <span class="font-mono text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $enrollment->section?->course?->code }}</span>
-                            <span class="ml-1.5 text-gray-600">{{ $enrollment->section?->course?->name }}</span>
+                            <span class="ml-1.5 text-gray-600">{{ $enrollment->section?->course?->local_name }}</span>
                         </td>
-                        <td class="px-5 py-3.5 text-gray-600 text-xs">{{ $enrollment->academicTerm?->name ?? '—' }}</td>
+                        <td class="px-5 py-3.5 text-gray-600 text-xs">{{ $enrollment->academicTerm?->local_name ?? '—' }}</td>
                         <td class="px-5 py-3.5">
                             @php
                                 $statusColors = [
@@ -89,9 +95,16 @@
                                     'failed'     => 'bg-red-100 text-red-700',
                                     'incomplete' => 'bg-gray-100 text-gray-500',
                                 ];
+                                $statusLabels = [
+                                    'registered' => __('enrollments.status_registered'),
+                                    'completed'  => __('enrollments.status_completed'),
+                                    'dropped'    => __('enrollments.status_dropped'),
+                                    'failed'     => __('enrollments.status_failed'),
+                                    'incomplete' => __('enrollments.status_incomplete'),
+                                ];
                             @endphp
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$enrollment->status] ?? 'bg-gray-100 text-gray-500' }}">
-                                {{ ucfirst($enrollment->status) }}
+                                {{ $statusLabels[$enrollment->status] ?? ucfirst($enrollment->status) }}
                             </span>
                         </td>
                         <td class="px-5 py-3.5 text-xs text-gray-500">{{ $enrollment->registered_at?->format('M d, Y') }}</td>
@@ -99,20 +112,20 @@
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.enrollments.show', $enrollment) }}"
                                    class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
-                                    View
+                                    {{ __('common.view') }}
                                 </a>
                                 @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
                                     <a href="{{ route('dashboard.enrollments.edit', $enrollment) }}"
                                        class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                                        Edit
+                                        {{ __('common.edit') }}
                                     </a>
                                     <form method="POST" action="{{ route('dashboard.enrollments.destroy', $enrollment) }}"
-                                          onsubmit="return confirm('Delete this enrollment? This action cannot be undone.')">
+                                          onsubmit="return confirm('{{ addslashes(__('enrollments.confirm_delete')) }}')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
                                                 class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                                            Delete
+                                            {{ __('common.delete') }}
                                         </button>
                                     </form>
                                 @endif

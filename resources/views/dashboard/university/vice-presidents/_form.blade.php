@@ -11,7 +11,7 @@
 
     {{-- Professor --}}
     <div class="md:col-span-2">
-        <label for="professor_id" class="block text-sm font-medium text-gray-700 mb-1.5">Professor <span class="text-red-500">*</span></label>
+        <label for="professor_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.professor') }} <span class="text-red-500">*</span></label>
         <select
             id="professor_id"
             name="professor_id"
@@ -20,7 +20,7 @@
                    {{ $errors->has('professor_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                    focus:outline-none focus:ring-2"
         >
-            <option value="">Select professor...</option>
+            <option value="">{{ __('university.select_professor') }}</option>
             @foreach($professors as $professor)
                 <option value="{{ $professor->id }}" {{ old('professor_id', $vicePresident?->professor_id) == $professor->id ? 'selected' : '' }}>
                     {{ $professor->user->first_name }} {{ $professor->user->last_name }} ({{ $professor->user->email }})
@@ -34,7 +34,7 @@
 
     {{-- Title (English) --}}
     <div>
-        <label for="title" class="block text-sm font-medium text-gray-700 mb-1.5">Title <span class="text-red-500">*</span></label>
+        <label for="title" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('university.title_label') }} <span class="text-red-500">*</span></label>
         <input
             id="title"
             type="text"
@@ -54,7 +54,7 @@
 
     {{-- Title (Arabic) --}}
     <div>
-        <label for="title_ar" class="block text-sm font-medium text-gray-700 mb-1.5">Title (Arabic) <span class="text-red-500">*</span></label>
+        <label for="title_ar" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('university.title_ar_label') }} <span class="text-red-500">*</span></label>
         <input
             id="title_ar"
             type="text"
@@ -76,7 +76,7 @@
     {{-- Order --}}
     <div>
         <label for="order" class="block text-sm font-medium text-gray-700 mb-1.5">
-            Display Order <span class="text-red-500">*</span>
+            {{ __('university.display_order') }} <span class="text-red-500">*</span>
         </label>
         <input
             id="order"
@@ -96,7 +96,7 @@
 
     {{-- Appointed At --}}
     <div>
-        <label for="appointed_at" class="block text-sm font-medium text-gray-700 mb-1.5">Appointed Date <span class="text-red-500">*</span></label>
+        <label for="appointed_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('university.appointed_date') }} <span class="text-red-500">*</span></label>
         <input
             id="appointed_at"
             type="date"
@@ -115,8 +115,8 @@
     {{-- Ended At --}}
     <div>
         <label for="ended_at" class="block text-sm font-medium text-gray-700 mb-1.5">
-            End Date
-            <span class="text-xs font-normal text-gray-400">(optional)</span>
+            {{ __('university.end_date') }}
+            <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span>
         </label>
         <input
             id="ended_at"
@@ -142,7 +142,7 @@
             {{ old('is_active', $vicePresident?->is_active ?? true) ? 'checked' : '' }}
             class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
-        <label for="is_active" class="text-sm font-medium text-gray-700">Active</label>
+        <label for="is_active" class="text-sm font-medium text-gray-700">{{ __('university.active_label') }}</label>
     </div>
 
 </div>

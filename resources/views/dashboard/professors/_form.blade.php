@@ -9,17 +9,17 @@
     $isEdit = isset($professor) && $professor !== null;
     $user = $professor?->user;
     $ranks = [
-        'lecturer'             => 'Lecturer',
-        'assistant_professor'  => 'Assistant Professor',
-        'associate_professor'  => 'Associate Professor',
-        'professor'            => 'Professor',
+        'lecturer'             => __('professors.rank_lecturer'),
+        'assistant_professor'  => __('professors.rank_assistant_professor'),
+        'associate_professor'  => __('professors.rank_associate_professor'),
+        'professor'            => __('professors.rank_professor'),
     ];
     $grouped = $departments->groupBy(fn ($d) => $d->faculty?->name ?? 'Unknown');
 @endphp
 
 {{-- Section: Profile Picture --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Profile Picture</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('professors.profile_picture') }}</h3>
     <div>
         @if($isEdit && $user?->avatar_path)
             <div id="current-avatar-wrapper" class="mb-3 flex items-center gap-4">
@@ -30,7 +30,7 @@
                     <input type="checkbox" name="remove_avatar" value="1"
                            class="rounded border-gray-300 text-red-600 focus:ring-red-400"
                            onchange="document.getElementById('current-avatar-wrapper').style.opacity = this.checked ? '0.4' : '1'">
-                    Remove current photo
+                    {{ __('professors.remove_photo') }}
                 </label>
             </div>
         @endif
@@ -39,7 +39,7 @@
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                 </svg>
-                Choose photo
+                {{ __('professors.choose_photo') }}
                 <input type="file" name="avatar" id="avatar" accept="image/*" class="hidden"
                        onchange="const f=this.files[0];const p=document.getElementById('avatar-preview');if(f){p.src=URL.createObjectURL(f);p.classList.remove('hidden');document.getElementById('avatar-filename').textContent=f.name;}else{p.classList.add('hidden');document.getElementById('avatar-filename').textContent='';}">
             </label>
@@ -49,18 +49,18 @@
         @error('avatar')
             <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
         @enderror
-        <p class="mt-1.5 text-xs text-gray-400">Accepted: JPG, PNG, WebP — max 2 MB</p>
+        <p class="mt-1.5 text-xs text-gray-400">{{ __('professors.photo_hint') }}</p>
     </div>
 </div>
 
 {{-- Section: Personal Information --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Personal Information</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('professors.personal_information') }}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {{-- National ID --}}
         <div>
-            <label for="national_id" class="block text-sm font-medium text-gray-700 mb-1.5">National ID <span class="text-red-500">*</span></label>
+            <label for="national_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('professors.national_id') }} <span class="text-red-500">*</span></label>
             <input
                 id="national_id"
                 type="text"
@@ -80,7 +80,7 @@
 
         {{-- Email --}}
         <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">Email <span class="text-red-500">*</span></label>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.email') }} <span class="text-red-500">*</span></label>
             <input
                 id="email"
                 type="email"
@@ -100,7 +100,7 @@
 
         {{-- First Name --}}
         <div>
-            <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1.5">First Name <span class="text-red-500">*</span></label>
+            <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('professors.first_name') }} <span class="text-red-500">*</span></label>
             <input
                 id="first_name"
                 type="text"
@@ -120,7 +120,7 @@
 
         {{-- Last Name --}}
         <div>
-            <label for="last_name" class="block text-sm font-medium text-gray-700 mb-1.5">Last Name <span class="text-red-500">*</span></label>
+            <label for="last_name" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('professors.last_name') }} <span class="text-red-500">*</span></label>
             <input
                 id="last_name"
                 type="text"
@@ -141,9 +141,9 @@
         {{-- Password --}}
         <div>
             <label for="password" class="block text-sm font-medium text-gray-700 mb-1.5">
-                Password
+                {{ __('common.password') }}
                 @if($isEdit)
-                    <span class="text-xs font-normal text-gray-400">(leave blank to keep current)</span>
+                    <span class="text-xs font-normal text-gray-400">({{ __('professors.password_hint') }})</span>
                 @else
                     <span class="text-red-500">*</span>
                 @endif
@@ -167,7 +167,7 @@
         {{-- Password Confirmation --}}
         <div>
             <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1.5">
-                Confirm Password
+                {{ __('common.confirm_password') }}
                 @if(!$isEdit)
                     <span class="text-red-500">*</span>
                 @endif
@@ -187,7 +187,7 @@
 
         {{-- Phone --}}
         <div>
-            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1.5">Phone <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('professors.phone') }} <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span></label>
             <input
                 id="phone"
                 type="text"
@@ -206,7 +206,7 @@
 
         {{-- Gender --}}
         <div>
-            <label for="gender" class="block text-sm font-medium text-gray-700 mb-1.5">Gender <span class="text-red-500">*</span></label>
+            <label for="gender" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('professors.gender') }} <span class="text-red-500">*</span></label>
             <select
                 id="gender"
                 name="gender"
@@ -215,9 +215,9 @@
                        {{ $errors->has('gender') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                        focus:outline-none focus:ring-2"
             >
-                <option value="">Select gender...</option>
-                <option value="male" {{ old('gender', $user?->gender) === 'male' ? 'selected' : '' }}>Male</option>
-                <option value="female" {{ old('gender', $user?->gender) === 'female' ? 'selected' : '' }}>Female</option>
+                <option value="">{{ __('professors.select_gender') }}</option>
+                <option value="male" {{ old('gender', $user?->gender) === 'male' ? 'selected' : '' }}>{{ __('professors.gender_male') }}</option>
+                <option value="female" {{ old('gender', $user?->gender) === 'female' ? 'selected' : '' }}>{{ __('professors.gender_female') }}</option>
             </select>
             @error('gender')
                 <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
@@ -226,7 +226,7 @@
 
         {{-- Date of Birth --}}
         <div>
-            <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-1.5">Date of Birth <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('professors.date_of_birth') }} <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span></label>
             <input
                 id="date_of_birth"
                 type="date"
@@ -246,12 +246,12 @@
 
 {{-- Section: Professor Information --}}
 <div>
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Professor Information</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('professors.professor_information') }}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {{-- Staff Number --}}
         <div>
-            <label for="staff_number" class="block text-sm font-medium text-gray-700 mb-1.5">Staff Number <span class="text-red-500">*</span></label>
+            <label for="staff_number" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('professors.staff_number_full') }} <span class="text-red-500">*</span></label>
             <input
                 id="staff_number"
                 type="text"
@@ -271,7 +271,7 @@
 
         {{-- Department --}}
         <div>
-            <label for="department_id" class="block text-sm font-medium text-gray-700 mb-1.5">Department <span class="text-red-500">*</span></label>
+            <label for="department_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.department') }} <span class="text-red-500">*</span></label>
             <select
                 id="department_id"
                 name="department_id"
@@ -280,7 +280,7 @@
                        {{ $errors->has('department_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                        focus:outline-none focus:ring-2"
             >
-                <option value="">Select department...</option>
+                <option value="">{{ __('professors.select_department') }}</option>
                 @foreach($grouped as $facultyName => $depts)
                     <optgroup label="{{ $facultyName }}">
                         @foreach($depts as $dept)
@@ -298,7 +298,7 @@
 
         {{-- Specialization --}}
         <div>
-            <label for="specialization" class="block text-sm font-medium text-gray-700 mb-1.5">Specialization <span class="text-red-500">*</span></label>
+            <label for="specialization" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('professors.specialization') }} <span class="text-red-500">*</span></label>
             <input
                 id="specialization"
                 type="text"
@@ -318,7 +318,7 @@
 
         {{-- Academic Rank --}}
         <div>
-            <label for="academic_rank" class="block text-sm font-medium text-gray-700 mb-1.5">Academic Rank <span class="text-red-500">*</span></label>
+            <label for="academic_rank" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('professors.academic_rank') }} <span class="text-red-500">*</span></label>
             <select
                 id="academic_rank"
                 name="academic_rank"
@@ -327,7 +327,7 @@
                        {{ $errors->has('academic_rank') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                        focus:outline-none focus:ring-2"
             >
-                <option value="">Select rank...</option>
+                <option value="">{{ __('professors.select_rank') }}</option>
                 @foreach($ranks as $value => $label)
                     <option value="{{ $value }}" {{ old('academic_rank', $professor?->academic_rank) === $value ? 'selected' : '' }}>
                         {{ $label }}
@@ -341,7 +341,7 @@
 
         {{-- Office Location --}}
         <div>
-            <label for="office_location" class="block text-sm font-medium text-gray-700 mb-1.5">Office Location <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <label for="office_location" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('professors.office_location') }} <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span></label>
             <input
                 id="office_location"
                 type="text"
@@ -360,7 +360,7 @@
 
         {{-- Hired At --}}
         <div>
-            <label for="hired_at" class="block text-sm font-medium text-gray-700 mb-1.5">Hire Date <span class="text-red-500">*</span></label>
+            <label for="hired_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('professors.hire_date') }} <span class="text-red-500">*</span></label>
             <input
                 id="hired_at"
                 type="date"
@@ -387,7 +387,7 @@
                     {{ old('is_active', $user?->is_active ?? true) ? 'checked' : '' }}
                     class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <label for="is_active" class="text-sm font-medium text-gray-700">Active</label>
+                <label for="is_active" class="text-sm font-medium text-gray-700">{{ __('professors.active') }}</label>
             </div>
         @endif
 

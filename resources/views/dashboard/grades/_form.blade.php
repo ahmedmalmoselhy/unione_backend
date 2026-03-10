@@ -13,7 +13,7 @@
 
     {{-- Enrollment --}}
     <div class="md:col-span-2">
-        <label for="enrollment_id" class="block text-sm font-medium text-gray-700 mb-1.5">Enrollment <span class="text-red-500">*</span></label>
+        <label for="enrollment_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.enrollment') }} <span class="text-red-500">*</span></label>
 
         @if($isEdit)
             <input type="hidden" name="enrollment_id" value="{{ $grade->enrollment_id }}"/>
@@ -33,7 +33,7 @@
                        {{ $errors->has('enrollment_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                        focus:outline-none focus:ring-2"
             >
-                <option value="">Select enrollment...</option>
+                <option value="">{{ __('grades.select_enrollment') }}</option>
                 @foreach($enrollments as $enrollment)
                     <option value="{{ $enrollment->id }}" {{ (int) old('enrollment_id') === $enrollment->id ? 'selected' : '' }}>
                         {{ $enrollment->student?->user?->first_name }} {{ $enrollment->student?->user?->last_name }}
@@ -51,7 +51,7 @@
 
     {{-- Midterm --}}
     <div>
-        <label for="midterm" class="block text-sm font-medium text-gray-700 mb-1.5">Midterm <span class="text-xs font-normal text-gray-400">(0–100)</span></label>
+        <label for="midterm" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.midterm') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
         <input
             id="midterm"
             type="number"
@@ -71,7 +71,7 @@
 
     {{-- Coursework --}}
     <div>
-        <label for="coursework" class="block text-sm font-medium text-gray-700 mb-1.5">Coursework <span class="text-xs font-normal text-gray-400">(0–100)</span></label>
+        <label for="coursework" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.coursework') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
         <input
             id="coursework"
             type="number"
@@ -91,7 +91,7 @@
 
     {{-- Final --}}
     <div>
-        <label for="final" class="block text-sm font-medium text-gray-700 mb-1.5">Final <span class="text-xs font-normal text-gray-400">(0–100)</span></label>
+        <label for="final" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.final') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
         <input
             id="final"
             type="number"
@@ -111,7 +111,7 @@
 
     {{-- Total --}}
     <div>
-        <label for="total" class="block text-sm font-medium text-gray-700 mb-1.5">Total <span class="text-xs font-normal text-gray-400">(0–100)</span></label>
+        <label for="total" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.total') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_0_100') }}</span></label>
         <input
             id="total"
             type="number"
@@ -131,7 +131,7 @@
 
     {{-- Letter Grade --}}
     <div>
-        <label for="letter_grade" class="block text-sm font-medium text-gray-700 mb-1.5">Letter Grade <span class="text-xs font-normal text-gray-400">(e.g. A, B+)</span></label>
+        <label for="letter_grade" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.letter_grade') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.eg_letter') }}</span></label>
         <input
             id="letter_grade"
             type="text"
@@ -150,7 +150,7 @@
 
     {{-- Grade Points --}}
     <div>
-        <label for="grade_points" class="block text-sm font-medium text-gray-700 mb-1.5">Grade Points <span class="text-xs font-normal text-gray-400">(0.00–4.00)</span></label>
+        <label for="grade_points" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('grades.grade_points') }} <span class="text-xs font-normal text-gray-400">{{ __('grades.range_gpa') }}</span></label>
         <input
             id="grade_points"
             type="number"

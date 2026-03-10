@@ -7,7 +7,7 @@
 
 {{-- Breadcrumb --}}
 <nav class="flex items-center gap-2 text-sm mb-6">
-    <a href="{{ route('dashboard.departments.index') }}" class="text-gray-400 hover:text-gray-700 transition-colors">Departments</a>
+    <a href="{{ route('dashboard.departments.index') }}" class="text-gray-400 hover:text-gray-700 transition-colors">{{ __('departments.title') }}</a>
     <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
     </svg>
@@ -31,29 +31,29 @@
         <div class="flex items-center gap-2 shrink-0">
             @if($department->is_mandatory)
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
-                    Mandatory
+                    {{ __('departments.mandatory') }}
                 </span>
             @endif
             @if($department->is_preparatory)
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
-                    Preparatory
+                    {{ __('departments.preparatory') }}
                 </span>
             @endif
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $department->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                {{ $department->is_active ? 'Active' : 'Inactive' }}
+                {{ $department->is_active ? __('common.active') : __('common.inactive') }}
             </span>
             @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
                 <a href="{{ route('dashboard.departments.assign-head', $department) }}"
                    class="px-3 py-1.5 text-xs font-medium text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors">
-                    Assign Head
+                    {{ __('departments.assign_head') }}
                 </a>
                 <a href="{{ route('dashboard.departments.assign-admin', $department) }}"
                    class="px-3 py-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-lg transition-colors">
-                    Assign Admin
+                    {{ __('common.assign_admin') }}
                 </a>
                 <a href="{{ route('dashboard.departments.edit', $department) }}"
                    class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                    Edit
+                    {{ __('common.edit') }}
                 </a>
             @endif
         </div>
@@ -61,46 +61,46 @@
 
     <dl class="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-5 text-sm">
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Code</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('common.code') }}</dt>
             <dd><span class="font-mono text-sm bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $department->code }}</span></dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Type</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('common.type') }}</dt>
             <dd>
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $department->type === 'academic' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700' }}">
-                    {{ ucfirst($department->type) }}
+                    {{ __('common.' . $department->type) }}
                 </span>
             </dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Faculty</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('common.faculty') }}</dt>
             <dd class="text-gray-700">{{ $department->faculty?->name ?? '—' }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Head / Manager</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('departments.head_manager') }}</dt>
             <dd class="text-gray-700">
                 @if($department->head)
                     <span class="font-medium">{{ $department->head->first_name }} {{ $department->head->last_name }}</span>
                     @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
                         <a href="{{ route('dashboard.departments.assign-head', $department) }}"
-                           class="ml-2 text-xs text-amber-600 hover:underline">Change</a>
+                           class="ml-2 text-xs text-amber-600 hover:underline">{{ __('departments.change') }}</a>
                     @endif
                 @else
                     @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
                         <a href="{{ route('dashboard.departments.assign-head', $department) }}"
-                           class="text-amber-600 hover:underline text-sm">Not assigned — click to assign</a>
+                           class="text-amber-600 hover:underline text-sm">{{ __('departments.not_assigned_click') }}</a>
                     @else
-                        <span class="text-gray-400">Not assigned</span>
+                        <span class="text-gray-400">{{ __('common.not_assigned') }}</span>
                     @endif
                 @endif
             </dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Professors</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('departments.professors') }}</dt>
             <dd class="text-gray-700">{{ $department->professors->count() }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Students</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('departments.students') }}</dt>
             <dd class="text-gray-700">{{ $department->students->count() }}</dd>
         </div>
     </dl>
@@ -109,12 +109,12 @@
 {{-- Professors --}}
 <div class="mb-6">
     <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-        Professors
+        {{ __('departments.professors') }}
         <span class="ml-2 text-xs font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full normal-case tracking-normal">{{ $department->professors->count() }}</span>
     </h3>
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         @if($department->professors->isEmpty())
-            <div class="px-6 py-8 text-center text-sm text-gray-400">No professors assigned to this department.</div>
+            <div class="px-6 py-8 text-center text-sm text-gray-400">{{ __('departments.no_professors_assigned') }}</div>
         @else
             <table class="w-full text-sm">
                 <thead>
@@ -138,7 +138,7 @@
                             <td class="px-5 py-3.5 text-gray-600 text-xs">{{ $professor->specialization ?? '—' }}</td>
                             <td class="px-5 py-3.5">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $professor->user->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                    {{ $professor->user->is_active ? 'Active' : 'Inactive' }}
+                                    {{ $professor->user->is_active ? __('common.active') : __('common.inactive') }}
                                 </span>
                             </td>
                         </tr>
@@ -152,20 +152,20 @@
 {{-- Employees --}}
 <div class="mb-6">
     <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-        Employees
+        {{ __('departments.employees') }}
         <span class="ml-2 text-xs font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full normal-case tracking-normal">{{ $department->employees->count() }}</span>
     </h3>
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         @if($department->employees->isEmpty())
-            <div class="px-6 py-8 text-center text-sm text-gray-400">No employees assigned to this department.</div>
+            <div class="px-6 py-8 text-center text-sm text-gray-400">{{ __('departments.no_employees_assigned') }}</div>
         @else
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                        <th class="px-5 py-3 text-start">Name</th>
-                        <th class="px-5 py-3 text-start">Staff No.</th>
-                        <th class="px-5 py-3 text-start">Job Title</th>
-                        <th class="px-5 py-3 text-start">Status</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.name') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('departments.staff_no') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('departments.job_title') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.status') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -181,7 +181,7 @@
                             <td class="px-5 py-3.5 text-gray-600 text-xs">{{ $employee->job_title ?? '—' }}</td>
                             <td class="px-5 py-3.5">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $employee->user->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                    {{ $employee->user->is_active ? 'Active' : 'Inactive' }}
+                                    {{ $employee->user->is_active ? __('common.active') : __('common.inactive') }}
                                 </span>
                             </td>
                         </tr>
@@ -195,12 +195,12 @@
 {{-- Students --}}
 <div class="mb-6">
     <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-        Students
+        {{ __('departments.students') }}
         <span class="ml-2 text-xs font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full normal-case tracking-normal">{{ $department->students->count() }}</span>
     </h3>
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         @if($department->students->isEmpty())
-            <div class="px-6 py-8 text-center text-sm text-gray-400">No students enrolled in this department.</div>
+            <div class="px-6 py-8 text-center text-sm text-gray-400">{{ __('departments.no_students_enrolled') }}</div>
         @else
             <table class="w-full text-sm">
                 <thead>
@@ -223,7 +223,7 @@
                             <td class="px-5 py-3.5">
                                 <span class="font-mono text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $student->student_number }}</span>
                             </td>
-                            <td class="px-5 py-3.5 text-gray-600 text-xs">Year {{ $student->academic_year }} · {{ ucfirst($student->semester) }}</td>
+                            <td class="px-5 py-3.5 text-gray-600 text-xs">{{ __('departments.year') }} {{ $student->academic_year }} · {{ ucfirst($student->semester) }}</td>
                             <td class="px-5 py-3.5 text-gray-700">{{ $student->gpa ?? '—' }}</td>
                             <td class="px-5 py-3.5">
                                 @php
@@ -241,7 +241,7 @@
                             <td class="px-5 py-3.5 text-end">
                                 <a href="{{ route('dashboard.students.show', $student) }}"
                                    class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                                    View
+                                    {{ __('common.view') }}
                                 </a>
                             </td>
                         </tr>
@@ -255,22 +255,22 @@
 {{-- Courses --}}
 <div class="mb-6">
     <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-        Courses
+        {{ __('departments.courses') }}
         <span class="ml-2 text-xs font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full normal-case tracking-normal">{{ $department->courses->count() }}</span>
     </h3>
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         @if($department->courses->isEmpty())
-            <div class="px-6 py-8 text-center text-sm text-gray-400">No courses assigned to this department.</div>
+            <div class="px-6 py-8 text-center text-sm text-gray-400">{{ __('departments.no_courses_assigned') }}</div>
         @else
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                        <th class="px-5 py-3 text-start">Code</th>
-                        <th class="px-5 py-3 text-start">Name</th>
-                        <th class="px-5 py-3 text-start">Credit Hours</th>
-                        <th class="px-5 py-3 text-start">Level</th>
-                        <th class="px-5 py-3 text-start">Ownership</th>
-                        <th class="px-5 py-3 text-start">Status</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.code') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.name') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('departments.credit_hours') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('departments.level') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('departments.ownership') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.status') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -283,18 +283,18 @@
                                 <p class="font-medium text-gray-900">{{ $course->name }}</p>
                                 <p class="text-xs text-gray-400 mt-0.5" dir="rtl">{{ $course->name_ar }}</p>
                             </td>
-                            <td class="px-5 py-3.5 text-gray-600">{{ $course->credit_hours }} hrs</td>
-                            <td class="px-5 py-3.5 text-gray-600 text-xs">{{ $course->level ? 'Level ' . $course->level : '—' }}</td>
+                            <td class="px-5 py-3.5 text-gray-600">{{ $course->credit_hours }} {{ __('departments.credit_hours_unit') }}</td>
+                            <td class="px-5 py-3.5 text-gray-600 text-xs">{{ $course->level ? __('departments.level') . ' ' . $course->level : '—' }}</td>
                             <td class="px-5 py-3.5">
                                 @if($course->pivot->is_owner)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Owner</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">{{ __('departments.owner') }}</span>
                                 @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Shared</span>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">{{ __('departments.shared') }}</span>
                                 @endif
                             </td>
                             <td class="px-5 py-3.5">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $course->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                    {{ $course->is_active ? 'Active' : 'Inactive' }}
+                                    {{ $course->is_active ? __('common.active') : __('common.inactive') }}
                                 </span>
                             </td>
                         </tr>

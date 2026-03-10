@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.app')
 
-@section('title', 'Students')
-@section('heading', 'Students')
+@section('title', __('students.title'))
+@section('heading', __('students.title'))
 
 @section('content')
 
@@ -26,7 +26,7 @@
 
 @if(session('import_errors'))
     <div class="mb-6 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 p-4">
-        <p class="font-semibold mb-2">Import failed — fix these errors and try again:</p>
+        <p class="font-semibold mb-2">{{ __('students.import_failed') }}</p>
         <ul class="list-disc list-inside space-y-0.5 max-h-48 overflow-y-auto">
             @foreach(session('import_errors') as $err)
                 <li>{{ $err }}</li>
@@ -40,22 +40,22 @@
     'action'  => route('dashboard.students.index'),
     'search'  => request('search'),
     'filters' => [
-        ['name' => 'faculty_id', 'label' => 'Faculty', 'value' => request('faculty_id'), 'options' => $faculties->toArray()],
-        ['name' => 'enrollment_status', 'label' => 'Enrollment', 'value' => request('enrollment_status'), 'options' => ['active' => 'Active', 'suspended' => 'Suspended', 'graduated' => 'Graduated', 'withdrawn' => 'Withdrawn']],
-        ['name' => 'status', 'label' => 'Account', 'value' => request('status'), 'options' => ['active' => 'Active', 'inactive' => 'Inactive']],
+        ['name' => 'faculty_id', 'label' => __('students.faculty'), 'value' => request('faculty_id'), 'options' => $faculties->toArray()],
+        ['name' => 'enrollment_status', 'label' => __('students.enrollment_status'), 'value' => request('enrollment_status'), 'options' => ['active' => __('students.status_active'), 'suspended' => __('students.status_suspended'), 'graduated' => __('students.status_graduated'), 'withdrawn' => __('students.status_withdrawn')]],
+        ['name' => 'status', 'label' => __('students.account_status'), 'value' => request('status'), 'options' => ['active' => __('common.active'), 'inactive' => __('common.inactive')]],
     ],
 ])
 
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
-    <p class="text-sm text-gray-500">{{ $students->total() }} {{ Str::plural('student', $students->total()) }} total</p>
+    <p class="text-sm text-gray-500">{{ $students->total() }} {{ Str::plural(__('students.title'), $students->total()) }}</p>
     <div class="flex items-center gap-2">
         <a href="{{ route('dashboard.students.export', request()->query()) }}"
            class="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition-colors">
             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
             </svg>
-            Export
+            {{ __('common.export') }}
         </a>
         @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
             <button onclick="document.getElementById('students-import-modal').classList.remove('hidden')"
@@ -63,14 +63,14 @@
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
-                Import
+                {{ __('common.import') }}
             </button>
             <a href="{{ route('dashboard.students.create') }}"
                class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
-                New Student
+                {{ __('students.new_student') }}
             </a>
         @endif
     </div>
@@ -82,15 +82,14 @@
         <div class="fixed inset-0 bg-black/40" onclick="document.getElementById('students-import-modal').classList.add('hidden')"></div>
         <div class="relative bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 z-10">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-base font-semibold text-gray-900">Import Students</h3>
+                <h3 class="text-base font-semibold text-gray-900">{{ __('students.import_students') }}</h3>
                 <button onclick="document.getElementById('students-import-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
             <p class="text-sm text-gray-500 mb-4">
-                Upload a <strong class="text-gray-700">.csv</strong> or <strong class="text-gray-700">.xlsx</strong> file to bulk-create students.
-                Initial password is set to each student's national ID, and they will be prompted to change it.
-                <a href="{{ route('dashboard.students.import-template') }}" class="text-blue-600 hover:underline font-medium">Download template</a>.
+                {{ __('students.import_description') }}
+                <a href="{{ route('dashboard.students.import-template') }}" class="text-blue-600 hover:underline font-medium">{{ __('students.download_template') }}</a>.
             </p>
             <form action="{{ route('dashboard.students.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -98,16 +97,16 @@
                     <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                     </svg>
-                    <label for="students-import-file" class="cursor-pointer text-sm text-blue-600 hover:underline font-medium">Choose file</label>
+                    <label for="students-import-file" class="cursor-pointer text-sm text-blue-600 hover:underline font-medium">{{ __('students.choose_file') }}</label>
                     <input id="students-import-file" name="file" type="file" accept=".csv,.xlsx,.xls" class="sr-only"
                            onchange="document.getElementById('students-import-filename').textContent = this.files[0]?.name ?? ''">
-                    <p id="students-import-filename" class="text-xs text-gray-400 mt-1">CSV or Excel, max 5 MB</p>
+                    <p id="students-import-filename" class="text-xs text-gray-400 mt-1">{{ __('students.file_hint') }}</p>
                 </div>
                 <div class="flex gap-2 justify-end">
                     <button type="button" onclick="document.getElementById('students-import-modal').classList.add('hidden')"
-                            class="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">Cancel</button>
+                            class="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">{{ __('common.cancel') }}</button>
                     <button type="submit"
-                            class="px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">Upload &amp; Import</button>
+                            class="px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">{{ __('students.upload_import') }}</button>
                 </div>
             </form>
         </div>
@@ -118,20 +117,20 @@
 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
     @if($students->isEmpty())
         <div class="px-6 py-16 text-center text-sm text-gray-400">
-            No students found. <a href="{{ route('dashboard.students.create') }}" class="text-blue-600 hover:underline">Create the first one.</a>
+            {{ __('students.no_students_found') }}
         </div>
     @else
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    <th class="px-5 py-3 text-start">Student</th>
-                    <th class="px-5 py-3 text-start">Student #</th>
-                    <th class="px-5 py-3 text-start">Faculty</th>
-                    <th class="px-5 py-3 text-start">Department</th>
-                    <th class="px-5 py-3 text-start">Year</th>
-                    <th class="px-5 py-3 text-start">GPA</th>
-                    <th class="px-5 py-3 text-start">Status</th>
-                    <th class="px-5 py-3 text-end">Actions</th>
+                    <th class="px-5 py-3 text-start">{{ __('students.title') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('students.student_number') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('students.faculty') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('students.department') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('students.academic_year') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('students.gpa') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.status') }}</th>
+                    <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -147,7 +146,7 @@
                             <span class="font-mono text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $student->student_number }}</span>
                         </td>
                         <td class="px-5 py-3.5 text-gray-600">{{ $student->faculty?->code }}</td>
-                        <td class="px-5 py-3.5 text-gray-600">{{ $student->department?->name ?? '—' }}</td>
+                        <td class="px-5 py-3.5 text-gray-600">{{ $student->department?->local_name ?? '—' }}</td>
                         <td class="px-5 py-3.5 text-gray-600">{{ $student->academic_year }}</td>
                         <td class="px-5 py-3.5 text-gray-600">{{ $student->gpa ?? '—' }}</td>
                         <td class="px-5 py-3.5">
@@ -158,29 +157,35 @@
                                     'graduated' => 'bg-blue-100 text-blue-700',
                                     'withdrawn' => 'bg-gray-100 text-gray-500',
                                 ];
+                                $statusLabels = [
+                                    'active'    => __('students.status_active'),
+                                    'suspended' => __('students.status_suspended'),
+                                    'graduated' => __('students.status_graduated'),
+                                    'withdrawn' => __('students.status_withdrawn'),
+                                ];
                             @endphp
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$student->enrollment_status] ?? 'bg-gray-100 text-gray-500' }}">
-                                {{ ucfirst($student->enrollment_status) }}
+                                {{ $statusLabels[$student->enrollment_status] ?? ucfirst($student->enrollment_status) }}
                             </span>
                         </td>
                         <td class="px-5 py-3.5">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.students.show', $student) }}"
                                    class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
-                                    View
+                                    {{ __('common.view') }}
                                 </a>
                                 @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
                                     <a href="{{ route('dashboard.students.edit', $student) }}"
                                        class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                                        Edit
+                                        {{ __('common.edit') }}
                                     </a>
                                     <form method="POST" action="{{ route('dashboard.students.destroy', $student) }}"
-                                          onsubmit="return confirm('Delete this student? This action cannot be undone.')">
+                                          onsubmit="return confirm('{{ addslashes(__('students.confirm_delete')) }}')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
                                                 class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                                            Delete
+                                            {{ __('common.delete') }}
                                         </button>
                                     </form>
                                 @endif

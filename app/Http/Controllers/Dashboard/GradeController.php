@@ -43,7 +43,8 @@ class GradeController extends Controller
             ->paginate(20)
             ->withQueryString();
 
-        $terms = AcademicTerm::orderByDesc('academic_year')->pluck('name', 'id');
+        $nameCol = app()->getLocale() === 'ar' ? 'name_ar' : 'name';
+        $terms   = AcademicTerm::orderByDesc('academic_year')->pluck($nameCol, 'id');
 
         return view('dashboard.grades.index', compact('grades', 'terms'));
     }

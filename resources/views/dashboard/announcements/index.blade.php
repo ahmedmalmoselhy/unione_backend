@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.app')
 
-@section('title', 'Announcements')
-@section('heading', 'Announcements')
+@section('title', __('announcements.title'))
+@section('heading', __('announcements.title'))
 
 @section('content')
 
@@ -20,22 +20,36 @@
     'action'  => route('dashboard.announcements.index'),
     'search'  => request('search'),
     'filters' => [
-        ['name' => 'type', 'label' => 'Type', 'value' => request('type'), 'options' => ['general' => 'General', 'academic' => 'Academic', 'administrative' => 'Administrative', 'urgent' => 'Urgent']],
-        ['name' => 'visibility', 'label' => 'Visibility', 'value' => request('visibility'), 'options' => ['university' => 'University', 'faculty' => 'Faculty', 'department' => 'Department', 'section' => 'Section']],
-        ['name' => 'pub_status', 'label' => 'Status', 'value' => request('pub_status'), 'options' => ['published' => 'Published', 'draft' => 'Draft', 'expired' => 'Expired']],
+        ['name' => 'type', 'label' => __('announcements.type'), 'value' => request('type'), 'options' => [
+            'general'        => __('announcements.type_general'),
+            'academic'       => __('announcements.type_academic'),
+            'administrative' => __('announcements.type_administrative'),
+            'urgent'         => __('announcements.type_urgent'),
+        ]],
+        ['name' => 'visibility', 'label' => __('announcements.visibility'), 'value' => request('visibility'), 'options' => [
+            'university' => __('announcements.vis_university'),
+            'faculty'    => __('announcements.vis_faculty'),
+            'department' => __('announcements.vis_department'),
+            'section'    => __('announcements.vis_section'),
+        ]],
+        ['name' => 'pub_status', 'label' => __('common.status'), 'value' => request('pub_status'), 'options' => [
+            'published' => __('announcements.published'),
+            'draft'     => __('announcements.draft'),
+            'expired'   => __('announcements.expired'),
+        ]],
     ],
 ])
 
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
-    <p class="text-sm text-gray-500">{{ $announcements->total() }} {{ Str::plural('announcement', $announcements->total()) }} total</p>
+    <p class="text-sm text-gray-500">{{ $announcements->total() }} {{ __('announcements.title') }}</p>
     @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
         <a href="{{ route('dashboard.announcements.create') }}"
            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            New Announcement
+            {{ __('announcements.new_announcement') }}
         </a>
     @endif
 </div>
@@ -44,19 +58,19 @@
 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
     @if($announcements->isEmpty())
         <div class="px-6 py-16 text-center text-sm text-gray-400">
-            No announcements yet. <a href="{{ route('dashboard.announcements.create') }}" class="text-blue-600 hover:underline">Create the first one.</a>
+            No announcements yet. <a href="{{ route('dashboard.announcements.create') }}" class="text-blue-600 hover:underline">{{ __('announcements.no_announcements_found') }}</a>
         </div>
     @else
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    <th class="px-5 py-3 text-start">Title</th>
-                    <th class="px-5 py-3 text-start">Type</th>
-                    <th class="px-5 py-3 text-start">Visibility</th>
-                    <th class="px-5 py-3 text-start">Author</th>
-                    <th class="px-5 py-3 text-center">Reads</th>
-                    <th class="px-5 py-3 text-start">Status</th>
-                    <th class="px-5 py-3 text-end">Actions</th>
+                    <th class="px-5 py-3 text-start">{{ __('announcements.title_label') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('announcements.type') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('announcements.visibility') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('announcements.author') }}</th>
+                    <th class="px-5 py-3 text-center">{{ __('announcements.reads') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.status') }}</th>
+                    <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -73,9 +87,15 @@
                                     'administrative' => 'bg-purple-100 text-purple-700',
                                     'urgent'         => 'bg-red-100 text-red-700',
                                 ];
+                                $typeLabels = [
+                                    'general'        => __('announcements.type_general'),
+                                    'academic'       => __('announcements.type_academic'),
+                                    'administrative' => __('announcements.type_administrative'),
+                                    'urgent'         => __('announcements.type_urgent'),
+                                ];
                             @endphp
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $typeColors[$announcement->type] ?? 'bg-gray-100 text-gray-600' }}">
-                                {{ ucfirst($announcement->type) }}
+                                {{ $typeLabels[$announcement->type] ?? ucfirst($announcement->type) }}
                             </span>
                         </td>
                         <td class="px-5 py-3.5 text-xs">
@@ -86,10 +106,16 @@
                                     'department' => 'bg-purple-50 text-purple-700',
                                     'section'    => 'bg-teal-50 text-teal-700',
                                 ];
+                                $visLabels = [
+                                    'university' => __('announcements.vis_university'),
+                                    'faculty'    => __('announcements.vis_faculty'),
+                                    'department' => __('announcements.vis_department'),
+                                    'section'    => __('announcements.vis_section'),
+                                ];
                                 $targetName = $targetLabels[$announcement->visibility][$announcement->target_id] ?? null;
                             @endphp
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $visColors[$announcement->visibility] ?? 'bg-gray-100 text-gray-600' }}">
-                                {{ ucfirst($announcement->visibility) }}
+                                {{ $visLabels[$announcement->visibility] ?? ucfirst($announcement->visibility) }}
                             </span>
                             @if($targetName)
                                 <p class="mt-1 text-gray-500 truncate max-w-[160px]">{{ $targetName }}</p>
@@ -99,31 +125,31 @@
                         <td class="px-5 py-3.5 text-center text-gray-600">{{ $announcement->reads_count }}</td>
                         <td class="px-5 py-3.5">
                             @if($announcement->published_at === null)
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">Draft</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">{{ __('announcements.draft') }}</span>
                             @elseif($announcement->expires_at && $announcement->expires_at->isPast())
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Expired</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">{{ __('announcements.expired') }}</span>
                             @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Published</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">{{ __('announcements.published') }}</span>
                             @endif
                         </td>
                         <td class="px-5 py-3.5">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.announcements.show', $announcement) }}"
                                    class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
-                                    View
+                                    {{ __('common.view') }}
                                 </a>
                                 @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
                                     <a href="{{ route('dashboard.announcements.edit', $announcement) }}"
                                        class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                                        Edit
+                                        {{ __('common.edit') }}
                                     </a>
                                     <form method="POST" action="{{ route('dashboard.announcements.destroy', $announcement) }}"
-                                          onsubmit="return confirm('Delete this announcement?')">
+                                          onsubmit="return confirm('{{ addslashes(__('announcements.confirm_delete')) }}')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
                                                 class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                                            Delete
+                                            {{ __('common.delete') }}
                                         </button>
                                     </form>
                                 @endif

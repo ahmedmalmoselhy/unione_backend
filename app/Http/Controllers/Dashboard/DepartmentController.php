@@ -36,7 +36,8 @@ class DepartmentController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        $faculties = Faculty::orderBy('name')->pluck('name', 'id');
+        $nameCol   = app()->getLocale() === 'ar' ? 'name_ar' : 'name';
+        $faculties = Faculty::orderBy('name')->pluck($nameCol, 'id');
 
         return view('dashboard.departments.index', compact('departments', 'faculties'));
     }

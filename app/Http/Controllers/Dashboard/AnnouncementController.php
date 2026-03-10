@@ -70,12 +70,13 @@ class AnnouncementController extends Controller
         $fIds       = $col->where('visibility', 'faculty')->pluck('target_id')->filter();
         $dIds       = $col->where('visibility', 'department')->pluck('target_id')->filter();
         $sIds       = $col->where('visibility', 'section')->pluck('target_id')->filter();
+        $nameCol      = app()->getLocale() === 'ar' ? 'name_ar' : 'name';
         $targetLabels = [
-            'faculty'    => Faculty::whereIn('id', $fIds)->pluck('name', 'id'),
-            'department' => Department::whereIn('id', $dIds)->pluck('name', 'id'),
+            'faculty'    => Faculty::whereIn('id', $fIds)->pluck($nameCol, 'id'),
+            'department' => Department::whereIn('id', $dIds)->pluck($nameCol, 'id'),
             'section'    => $sIds->isNotEmpty()
                 ? Section::with('course')->whereIn('id', $sIds)->get()
-                    ->mapWithKeys(fn ($s) => [$s->id => ($s->course->code ?? '') . ' — ' . ($s->course->name ?? '')])
+                    ->mapWithKeys(fn ($s) => [$s->id => ($s->course->code ?? '') . ' — ' . ($s->course->$nameCol ?? $s->course->name ?? '')])
                 : collect(),
         ];
 

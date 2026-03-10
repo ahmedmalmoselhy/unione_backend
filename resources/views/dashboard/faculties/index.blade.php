@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.app')
 
-@section('title', 'Faculties')
-@section('heading', 'Faculties')
+@section('title', __('faculties.title'))
+@section('heading', __('faculties.title'))
 
 @section('content')
 
@@ -29,8 +29,8 @@
     'action'  => route('dashboard.faculties.index'),
     'search'  => request('search'),
     'filters' => [
-        ['name' => 'enrollment_type', 'label' => 'Enrollment Type', 'value' => request('enrollment_type'), 'options' => ['immediate' => 'Immediate', 'deferred' => 'Deferred', 'none' => 'None']],
-        ['name' => 'status', 'label' => 'Status', 'value' => request('status'), 'options' => ['active' => 'Active', 'inactive' => 'Inactive']],
+        ['name' => 'enrollment_type', 'label' => __('common.enrollment_type'), 'value' => request('enrollment_type'), 'options' => ['immediate' => __('faculties.enrollment_type_immediate'), 'deferred' => __('faculties.enrollment_type_deferred'), 'none' => __('faculties.enrollment_type_none')]],
+        ['name' => 'status', 'label' => __('common.status'), 'value' => request('status'), 'options' => ['active' => __('common.active'), 'inactive' => __('common.inactive')]],
     ],
 ])
 
@@ -43,7 +43,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
-            New Faculty
+            {{ __('faculties.new_faculty') }}
         </a>
     @endif
 </div>
@@ -52,26 +52,26 @@
 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
     @if($faculties->isEmpty())
         <div class="px-6 py-16 text-center text-sm text-gray-400">
-            No faculties found. <a href="{{ route('dashboard.faculties.create') }}" class="text-blue-600 hover:underline">Create the first one.</a>
+            No faculties found. <a href="{{ route('dashboard.faculties.create') }}" class="text-blue-600 hover:underline">{{ __('faculties.create_first') }}</a>
         </div>
     @else
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    <th class="px-5 py-3 text-start">Name</th>
-                    <th class="px-5 py-3 text-start">Code</th>
-                    <th class="px-5 py-3 text-start">Enrollment Type</th>
-                    <th class="px-5 py-3 text-start">Dean</th>
-                    <th class="px-5 py-3 text-start">Status</th>
-                    <th class="px-5 py-3 text-end">Actions</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.name') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.code') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.enrollment_type') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.dean') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.status') }}</th>
+                    <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
                 @foreach($faculties as $faculty)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-5 py-3.5">
-                            <div class="font-medium text-gray-900">{{ $faculty->name }}</div>
-                            <div class="text-xs text-gray-400 mt-0.5" dir="rtl">{{ $faculty->name_ar }}</div>
+                            <div class="font-medium text-gray-900">{{ $faculty->local_name }}</div>
+                            <div class="text-xs text-gray-400 mt-0.5" dir="auto">{{ app()->getLocale() === 'ar' ? $faculty->name : $faculty->name_ar }}</div>
                         </td>
                         <td class="px-5 py-3.5">
                             <span class="font-mono text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $faculty->code }}</span>
@@ -85,7 +85,7 @@
                                 ];
                             @endphp
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $typeStyles[$faculty->enrollment_type] ?? 'bg-gray-100 text-gray-600' }}">
-                                {{ ucfirst($faculty->enrollment_type) }}
+                                {{ __('faculties.enrollment_type_' . $faculty->enrollment_type) }}
                             </span>
                         </td>
                         <td class="px-5 py-3.5 text-gray-600">
@@ -97,32 +97,32 @@
                         </td>
                         <td class="px-5 py-3.5">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $faculty->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                {{ $faculty->is_active ? 'Active' : 'Inactive' }}
+                                {{ $faculty->is_active ? __('common.active') : __('common.inactive') }}
                             </span>
                         </td>
                         <td class="px-5 py-3.5">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.faculties.show', $faculty) }}"
                                    class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
-                                    View
+                                    {{ __('common.view') }}
                                 </a>
                                 @if(auth()->user()->isSystemAdmin())
                                     <a href="{{ route('dashboard.faculties.edit', $faculty) }}"
                                        class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                                        Edit
+                                        {{ __('common.edit') }}
                                     </a>
                                     <form method="POST" action="{{ route('dashboard.faculties.destroy', $faculty) }}"
-                                          onsubmit="return confirm('Delete faculty \'{{ addslashes($faculty->name) }}\'? This action cannot be undone.')">
+                                          onsubmit="return confirm('{{ __('faculties.confirm_delete', ['name' => addslashes($faculty->local_name)]) }}')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
                                                 class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                                            Delete
+                                            {{ __('common.delete') }}
                                         </button>
                                     </form>
                                     <a href="{{ route('dashboard.faculties.assign-admin', $faculty) }}"
                                        class="px-3 py-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition-colors">
-                                        Assign Admin
+                                        {{ __('common.assign_admin') }}
                                     </a>
                                 @endif
                             </div>

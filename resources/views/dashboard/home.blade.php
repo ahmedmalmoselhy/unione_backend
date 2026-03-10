@@ -1,7 +1,7 @@
-@extends('dashboard.layouts.app')
+﻿@extends('dashboard.layouts.app')
 
-@section('title', 'Home')
-@section('heading', 'Home')
+@section('title', __('home.title'))
+@section('heading', __('home.title'))
 
 @section('content')
 
@@ -13,7 +13,7 @@
         </div>
         <div>
             <h2 class="text-xl font-semibold text-gray-900">
-                Welcome, {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
+                {{ __('home.welcome', ['name' => auth()->user()->first_name . ' ' . auth()->user()->last_name]) }}
             </h2>
             <div class="flex items-center gap-2 mt-1">
                 @foreach(auth()->user()->roles()->whereNull('role_user.revoked_at')->get() as $userRole)
@@ -31,7 +31,7 @@
      ════════════════════════════════════════ --}}
 @if($role === 'system_admin')
 
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">University Overview</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('home.university_overview') }}</h3>
 
     @php
     $statCards = [
@@ -66,7 +66,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">{{ $card['label'] }}</p>
+                    <p class="text-sm text-gray-500">{{ __('home.' . $card['key']) }}</p>
                     <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ number_format($globalStats[$card['key']]) }}</p>
                 </div>
             </div>
@@ -78,17 +78,17 @@
 
         {{-- Donut: Student Enrollment Status --}}
         <div class="xl:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 flex flex-col">
-            <p class="text-sm font-semibold text-gray-700">Student Enrollment Status</p>
-            <p class="text-xs text-gray-400 mt-0.5 mb-4">University-wide breakdown</p>
+            <p class="text-sm font-semibold text-gray-700">{{ __('home.chart_enrollment_status') }}</p>
+            <p class="text-xs text-gray-400 mt-0.5 mb-4">{{ __('home.chart_enrollment_subtitle') }}</p>
             <div class="flex-1 relative" style="min-height:190px">
                 <canvas id="studentStatusChart"></canvas>
             </div>
             <div class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
                 @foreach([
-                    ['label' => 'Active',    'color' => 'bg-emerald-500', 'val' => $faculties->sum('active_students_count')],
-                    ['label' => 'Graduated', 'color' => 'bg-blue-500',    'val' => $faculties->sum('graduated_students_count')],
-                    ['label' => 'Suspended', 'color' => 'bg-amber-500',   'val' => $faculties->sum('suspended_students_count')],
-                    ['label' => 'Withdrawn', 'color' => 'bg-red-500',     'val' => $faculties->sum('withdrawn_students_count')],
+                    ['label' => __('home.active'),    'color' => 'bg-emerald-500', 'val' => $faculties->sum('active_students_count')],
+                    ['label' => __('home.graduated'), 'color' => 'bg-blue-500',    'val' => $faculties->sum('graduated_students_count')],
+                    ['label' => __('home.suspended'), 'color' => 'bg-amber-500',   'val' => $faculties->sum('suspended_students_count')],
+                    ['label' => __('home.withdrawn'), 'color' => 'bg-red-500',     'val' => $faculties->sum('withdrawn_students_count')],
                 ] as $item)
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full {{ $item['color'] }} shrink-0"></span>
@@ -101,8 +101,8 @@
 
         {{-- Stacked Bar: Students by Faculty --}}
         <div class="xl:col-span-3 bg-white rounded-2xl border border-gray-200 p-6 flex flex-col">
-            <p class="text-sm font-semibold text-gray-700">Students by Faculty</p>
-            <p class="text-xs text-gray-400 mt-0.5 mb-4">By enrollment status</p>
+            <p class="text-sm font-semibold text-gray-700">{{ __('home.chart_by_faculty') }}</p>
+            <p class="text-xs text-gray-400 mt-0.5 mb-4">{{ __('home.chart_by_faculty_subtitle') }}</p>
             <div class="flex-1 relative" style="min-height:190px">
                 <canvas id="studentsByFacultyChart"></canvas>
             </div>
@@ -112,18 +112,18 @@
 
     {{-- Grouped Bar: Staff by Faculty --}}
     <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-10">
-        <p class="text-sm font-semibold text-gray-700">Staff by Faculty</p>
-        <p class="text-xs text-gray-400 mt-0.5 mb-4">Professors &amp; Employees</p>
+        <p class="text-sm font-semibold text-gray-700">{{ __('home.chart_staff_by_faculty') }}</p>
+        <p class="text-xs text-gray-400 mt-0.5 mb-4">{{ __('home.chart_staff_subtitle') }}</p>
         <div class="relative" style="height:180px">
             <canvas id="staffByFacultyChart"></canvas>
         </div>
     </div>
 
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">By Faculty</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('home.by_faculty') }}</h3>
 
     @if($faculties->isEmpty())
         <div class="bg-white rounded-2xl border border-gray-200 p-8 text-center text-sm text-gray-400">
-            No faculties found.
+            {{ __('home.no_faculties') }}
         </div>
     @else
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -131,34 +131,34 @@
                 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                     <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
                         <div class="min-w-0">
-                            <p class="font-semibold text-gray-900 truncate">{{ $faculty->name }}</p>
+                            <p class="font-semibold text-gray-900 truncate">{{ $faculty->name_ar ?? $faculty->name }}</p>
                             @if($faculty->code)
                                 <p class="text-xs text-gray-400 mt-0.5">{{ $faculty->code }}</p>
                             @endif
                         </div>
                         <span class="shrink-0 text-xs font-medium px-2.5 py-1 rounded-full {{ $faculty->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                            {{ $faculty->is_active ? 'Active' : 'Inactive' }}
+                            {{ $faculty->is_active ? __('home.active') : __('home.inactive') }}
                         </span>
                     </div>
                     <div class="divide-y divide-gray-50">
                         <div class="px-5 py-3 flex items-center justify-between text-sm">
-                            <span class="text-gray-500">Departments</span>
+                            <span class="text-gray-500">{{ __('home.departments') }}</span>
                             <span class="font-semibold text-gray-900">{{ number_format($faculty->departments_count) }}</span>
                         </div>
                         <div class="px-5 py-3 flex items-center justify-between text-sm">
-                            <span class="text-gray-500">Professors</span>
+                            <span class="text-gray-500">{{ __('home.professors') }}</span>
                             <span class="font-semibold text-gray-900">{{ number_format($professorsByFaculty[$faculty->id] ?? 0) }}</span>
                         </div>
                         <div class="px-5 py-3 flex items-center justify-between text-sm">
-                            <span class="text-gray-500">Students</span>
+                            <span class="text-gray-500">{{ __('home.students') }}</span>
                             <span class="font-semibold text-gray-900">{{ number_format($faculty->students_count) }}</span>
                         </div>
                         <div class="px-5 py-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
                             @foreach([
-                                ['key' => 'active_students_count',    'label' => 'Active',    'color' => 'text-green-600'],
-                                ['key' => 'graduated_students_count', 'label' => 'Graduated', 'color' => 'text-blue-600'],
-                                ['key' => 'suspended_students_count', 'label' => 'Suspended', 'color' => 'text-amber-600'],
-                                ['key' => 'withdrawn_students_count', 'label' => 'Withdrawn', 'color' => 'text-red-500'],
+                                ['key' => 'active_students_count',    'label' => __('home.active'),    'color' => 'text-green-600'],
+                                ['key' => 'graduated_students_count', 'label' => __('home.graduated'), 'color' => 'text-blue-600'],
+                                ['key' => 'suspended_students_count', 'label' => __('home.suspended'), 'color' => 'text-amber-600'],
+                                ['key' => 'withdrawn_students_count', 'label' => __('home.withdrawn'), 'color' => 'text-red-500'],
                             ] as $row)
                                 <div class="flex items-center justify-between text-xs">
                                     <span class="text-gray-400">{{ $row['label'] }}</span>
@@ -177,25 +177,25 @@
         $warnings = array_filter([
             $dataHealth['faculties_without_admin'] > 0
                 ? ['icon' => 'M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z',
-                   'label' => 'Faculties without an admin',
+                   'label' => __('home.health_faculties_no_admin'),
                    'count' => $dataHealth['faculties_without_admin'],
                    'link'  => route('dashboard.faculties.index')]
                 : null,
             $dataHealth['depts_without_head'] > 0
                 ? ['icon' => 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
-                   'label' => 'Active departments without a department head',
+                   'label' => __('home.health_depts_no_head'),
                    'count' => $dataHealth['depts_without_head'],
                    'link'  => route('dashboard.departments.index', ['no_head' => 1])]
                 : null,
             $dataHealth['sections_without_prof'] > 0
                 ? ['icon' => 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
-                   'label' => 'Active sections without an assigned professor',
+                   'label' => __('home.health_sections_no_prof'),
                    'count' => $dataHealth['sections_without_prof'],
                    'link'  => route('dashboard.sections.index')]
                 : null,
             $dataHealth['students_without_dept'] > 0
                 ? ['icon' => 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z',
-                   'label' => 'Active students without a department',
+                   'label' => __('home.health_students_no_dept'),
                    'count' => $dataHealth['students_without_dept'],
                    'link'  => route('dashboard.students.index', ['no_dept' => 1])]
                 : null,
@@ -204,7 +204,7 @@
     @if(count($warnings) > 0)
         <div class="mt-10 mb-8">
             <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
-                Data Health Warnings
+                {{ __('home.data_health_warnings') }}
             </h3>
             <div class="space-y-2">
                 @foreach($warnings as $w)
@@ -231,21 +231,21 @@
             <svg class="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <p class="text-sm font-medium text-green-700">All data health checks passed — no issues found.</p>
+            <p class="text-sm font-medium text-green-700">{{ __('home.health_all_passed') }}</p>
         </div>
     @endif
 
     {{-- ── QUICK ACTIONS ─────────────────────────────────────── --}}
     <div class="mb-8">
-        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Quick Actions</h3>
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('home.quick_actions') }}</h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
             @foreach([
-                ['label' => 'New Faculty',     'route' => 'dashboard.faculties.create',    'icon' => 'M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z', 'color' => 'blue'],
-                ['label' => 'New Department',  'route' => 'dashboard.departments.create.academic', 'icon' => 'M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z', 'color' => 'indigo'],
-                ['label' => 'New Student',     'route' => 'dashboard.students.create',     'icon' => 'M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z', 'color' => 'emerald'],
-                ['label' => 'New Professor',   'route' => 'dashboard.professors.create',   'icon' => 'M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z', 'color' => 'purple'],
-                ['label' => 'New Course',      'route' => 'dashboard.courses.create',      'icon' => 'M12 9v3m0 0v3m0-3h3m-3 0H9M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253', 'color' => 'teal'],
-                ['label' => 'Audit Log',       'route' => 'dashboard.audit-logs.index',    'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', 'color' => 'gray'],
+                ['label' => __('home.action_new_faculty'),     'route' => 'dashboard.faculties.create',    'icon' => 'M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z', 'color' => 'blue'],
+                ['label' => __('home.action_new_department'),  'route' => 'dashboard.departments.create.academic', 'icon' => 'M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z', 'color' => 'indigo'],
+                ['label' => __('home.action_new_student'),     'route' => 'dashboard.students.create',     'icon' => 'M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z', 'color' => 'emerald'],
+                ['label' => __('home.action_new_professor'),   'route' => 'dashboard.professors.create',   'icon' => 'M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z', 'color' => 'purple'],
+                ['label' => __('home.action_new_course'),      'route' => 'dashboard.courses.create',      'icon' => 'M12 9v3m0 0v3m0-3h3m-3 0H9M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253', 'color' => 'teal'],
+                ['label' => __('home.action_audit_log'),       'route' => 'dashboard.audit-logs.index',    'icon' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01', 'color' => 'gray'],
             ] as $action)
                 @php
                     $qaColors = [
@@ -277,12 +277,12 @@
         {{-- Recent Audit Activity --}}
         <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h3 class="text-sm font-semibold text-gray-700">Recent Audit Activity</h3>
+                <h3 class="text-sm font-semibold text-gray-700">{{ __('home.recent_audit') }}</h3>
                 <a href="{{ route('dashboard.audit-logs.index') }}"
-                   class="text-xs text-blue-600 hover:text-blue-700 font-medium">View all →</a>
+                   class="text-xs text-blue-600 hover:text-blue-700 font-medium">{{ __('home.view_all') }}</a>
             </div>
             @if($recentAuditLogs->isEmpty())
-                <div class="px-5 py-8 text-center text-sm text-gray-400">No audit entries yet.</div>
+                <div class="px-5 py-8 text-center text-sm text-gray-400">{{ __('home.no_audit_entries') }}</div>
             @else
                 <ul class="divide-y divide-gray-50">
                     @foreach($recentAuditLogs as $log)
@@ -316,12 +316,12 @@
         {{-- Recent Admin Assignments --}}
         <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h3 class="text-sm font-semibold text-gray-700">Recent Admin Assignments</h3>
+                <h3 class="text-sm font-semibold text-gray-700">{{ __('home.recent_assignments') }}</h3>
                 <a href="{{ route('dashboard.audit-logs.index', ['action' => 'assigned']) }}"
-                   class="text-xs text-blue-600 hover:text-blue-700 font-medium">View all →</a>
+                   class="text-xs text-blue-600 hover:text-blue-700 font-medium">{{ __('home.view_all') }}</a>
             </div>
             @if($recentAssignments->isEmpty())
-                <div class="px-5 py-8 text-center text-sm text-gray-400">No assignment events yet.</div>
+                <div class="px-5 py-8 text-center text-sm text-gray-400">{{ __('home.no_assignments') }}</div>
             @else
                 <ul class="divide-y divide-gray-50">
                     @foreach($recentAssignments as $log)
@@ -338,7 +338,7 @@
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm text-gray-800 truncate">{{ $log->description }}</p>
                                 <p class="text-xs text-gray-400 mt-0.5">
-                                    By {{ $log->user?->first_name }} {{ $log->user?->last_name }}
+                                    {{ __('home.by_user') }} {{ $log->user?->first_name }} {{ $log->user?->last_name }}
                                     · {{ $log->created_at->diffForHumans() }}
                                 </p>
                             </div>
@@ -366,17 +366,17 @@
         <div class="flex-1 min-w-0">
             <p class="text-sm font-semibold text-indigo-800">{{ $university->name }}</p>
             <p class="text-xs text-indigo-500 mt-0.5">
-                University Administrator
+                {{ __('home.university_admin_role') }}
                 @if($university->established_at) · Est. {{ $university->established_at->format('Y') }}@endif
             </p>
         </div>
         <a href="{{ route('dashboard.university.show') }}"
            class="shrink-0 text-xs font-semibold text-indigo-700 bg-white border border-indigo-200 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors">
-            Manage University →
+            {{ __('home.manage_university') }}
         </a>
     </div>
 
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">University Overview</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('home.university_overview') }}</h3>
 
     @php
     $uaStatCards = [
@@ -409,7 +409,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">{{ $card['label'] }}</p>
+                    <p class="text-sm text-gray-500">{{ __('home.' . $card['key']) }}</p>
                     <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ number_format($globalStats[$card['key']]) }}</p>
                 </div>
             </div>
@@ -419,17 +419,17 @@
     {{-- ── CHARTS ─────────────────────────────────────────────── --}}
     <div class="grid grid-cols-1 xl:grid-cols-5 gap-5 mb-5">
         <div class="xl:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 flex flex-col">
-            <p class="text-sm font-semibold text-gray-700">Student Enrollment Status</p>
-            <p class="text-xs text-gray-400 mt-0.5 mb-4">University-wide breakdown</p>
+            <p class="text-sm font-semibold text-gray-700">{{ __('home.chart_enrollment_status') }}</p>
+            <p class="text-xs text-gray-400 mt-0.5 mb-4">{{ __('home.chart_enrollment_subtitle') }}</p>
             <div class="flex-1 relative" style="min-height:190px">
                 <canvas id="studentStatusChartUA"></canvas>
             </div>
             <div class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
                 @foreach([
-                    ['label' => 'Active',    'color' => 'bg-emerald-500', 'val' => $faculties->sum('active_students_count')],
-                    ['label' => 'Graduated', 'color' => 'bg-blue-500',    'val' => $faculties->sum('graduated_students_count')],
-                    ['label' => 'Suspended', 'color' => 'bg-amber-500',   'val' => $faculties->sum('suspended_students_count')],
-                    ['label' => 'Withdrawn', 'color' => 'bg-red-500',     'val' => $faculties->sum('withdrawn_students_count')],
+                    ['label' => __('home.active'),    'color' => 'bg-emerald-500', 'val' => $faculties->sum('active_students_count')],
+                    ['label' => __('home.graduated'), 'color' => 'bg-blue-500',    'val' => $faculties->sum('graduated_students_count')],
+                    ['label' => __('home.suspended'), 'color' => 'bg-amber-500',   'val' => $faculties->sum('suspended_students_count')],
+                    ['label' => __('home.withdrawn'), 'color' => 'bg-red-500',     'val' => $faculties->sum('withdrawn_students_count')],
                 ] as $item)
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full {{ $item['color'] }} shrink-0"></span>
@@ -440,26 +440,26 @@
             </div>
         </div>
         <div class="xl:col-span-3 bg-white rounded-2xl border border-gray-200 p-6 flex flex-col">
-            <p class="text-sm font-semibold text-gray-700">Students by Faculty</p>
-            <p class="text-xs text-gray-400 mt-0.5 mb-4">By enrollment status</p>
+            <p class="text-sm font-semibold text-gray-700">{{ __('home.chart_by_faculty') }}</p>
+            <p class="text-xs text-gray-400 mt-0.5 mb-4">{{ __('home.chart_by_faculty_subtitle') }}</p>
             <div class="flex-1 relative" style="min-height:190px">
                 <canvas id="studentsByFacultyChartUA"></canvas>
             </div>
         </div>
     </div>
     <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-10">
-        <p class="text-sm font-semibold text-gray-700">Staff by Faculty</p>
-        <p class="text-xs text-gray-400 mt-0.5 mb-4">Professors &amp; Employees</p>
+        <p class="text-sm font-semibold text-gray-700">{{ __('home.chart_staff_by_faculty') }}</p>
+        <p class="text-xs text-gray-400 mt-0.5 mb-4">{{ __('home.chart_staff_subtitle') }}</p>
         <div class="relative" style="height:180px">
             <canvas id="staffByFacultyChartUA"></canvas>
         </div>
     </div>
 
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">By Faculty</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('home.by_faculty') }}</h3>
 
     @if($faculties->isEmpty())
         <div class="bg-white rounded-2xl border border-gray-200 p-8 text-center text-sm text-gray-400">
-            No faculties found.
+            {{ __('home.no_faculties') }}
         </div>
     @else
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -467,34 +467,34 @@
                 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
                     <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
                         <div class="min-w-0">
-                            <p class="font-semibold text-gray-900 truncate">{{ $faculty->name }}</p>
+                            <p class="font-semibold text-gray-900 truncate">{{ $faculty->name_ar ?? $faculty->name }}</p>
                             @if($faculty->code)
                                 <p class="text-xs text-gray-400 mt-0.5">{{ $faculty->code }}</p>
                             @endif
                         </div>
                         <span class="shrink-0 text-xs font-medium px-2.5 py-1 rounded-full {{ $faculty->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                            {{ $faculty->is_active ? 'Active' : 'Inactive' }}
+                            {{ $faculty->is_active ? __('home.active') : __('home.inactive') }}
                         </span>
                     </div>
                     <div class="divide-y divide-gray-50">
                         <div class="px-5 py-3 flex items-center justify-between text-sm">
-                            <span class="text-gray-500">Departments</span>
+                            <span class="text-gray-500">{{ __('home.departments') }}</span>
                             <span class="font-semibold text-gray-900">{{ number_format($faculty->departments_count) }}</span>
                         </div>
                         <div class="px-5 py-3 flex items-center justify-between text-sm">
-                            <span class="text-gray-500">Professors</span>
+                            <span class="text-gray-500">{{ __('home.professors') }}</span>
                             <span class="font-semibold text-gray-900">{{ number_format($professorsByFaculty[$faculty->id] ?? 0) }}</span>
                         </div>
                         <div class="px-5 py-3 flex items-center justify-between text-sm">
-                            <span class="text-gray-500">Students</span>
+                            <span class="text-gray-500">{{ __('home.students') }}</span>
                             <span class="font-semibold text-gray-900">{{ number_format($faculty->students_count) }}</span>
                         </div>
                         <div class="px-5 py-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
                             @foreach([
-                                ['key' => 'active_students_count',    'label' => 'Active',    'color' => 'text-green-600'],
-                                ['key' => 'graduated_students_count', 'label' => 'Graduated', 'color' => 'text-blue-600'],
-                                ['key' => 'suspended_students_count', 'label' => 'Suspended', 'color' => 'text-amber-600'],
-                                ['key' => 'withdrawn_students_count', 'label' => 'Withdrawn', 'color' => 'text-red-500'],
+                                ['key' => 'active_students_count',    'label' => __('home.active'),    'color' => 'text-green-600'],
+                                ['key' => 'graduated_students_count', 'label' => __('home.graduated'), 'color' => 'text-blue-600'],
+                                ['key' => 'suspended_students_count', 'label' => __('home.suspended'), 'color' => 'text-amber-600'],
+                                ['key' => 'withdrawn_students_count', 'label' => __('home.withdrawn'), 'color' => 'text-red-500'],
                             ] as $row)
                                 <div class="flex items-center justify-between text-xs">
                                     <span class="text-gray-400">{{ $row['label'] }}</span>
@@ -520,17 +520,17 @@
                   d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
         </svg>
         <div>
-            <p class="text-sm font-semibold text-blue-800">{{ $faculty->name }}</p>
+            <p class="text-sm font-semibold text-blue-800">{{ $faculty->name_ar ?? $faculty->name }}</p>
             @if($faculty->code)
                 <p class="text-xs text-blue-500 mt-0.5">{{ $faculty->code }}</p>
             @endif
         </div>
         <span class="ms-auto shrink-0 text-xs font-medium px-2.5 py-1 rounded-full {{ $faculty->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-            {{ $faculty->is_active ? 'Active' : 'Inactive' }}
+            {{ $faculty->is_active ? __('home.active') : __('home.inactive') }}
         </span>
     </div>
 
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Faculty Overview</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('home.faculty_overview') }}</h3>
 
     @php
     $facultyCards = [
@@ -559,29 +559,29 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">{{ $card['label'] }}</p>
+                    <p class="text-sm text-gray-500">{{ __('home.' . $card['key']) }}</p>
                     <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ number_format($stats[$card['key']]) }}</p>
                 </div>
             </div>
         @endforeach
     </div>
 
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Departments</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('home.departments_section') }}</h3>
 
     @if($departments->isEmpty())
         <div class="bg-white rounded-2xl border border-gray-200 p-8 text-center text-sm text-gray-400">
-            No departments found.
+            {{ __('home.no_departments') }}
         </div>
     @else
         <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-gray-100 text-left">
-                        <th class="px-5 py-3 font-medium text-gray-500">Department</th>
-                        <th class="px-5 py-3 font-medium text-gray-500 text-center">Professors</th>
-                        <th class="px-5 py-3 font-medium text-gray-500 text-center">Employees</th>
-                        <th class="px-5 py-3 font-medium text-gray-500 text-center">Students</th>
-                        <th class="px-5 py-3 font-medium text-gray-500 text-center">Courses</th>
+                        <th class="px-5 py-3 font-medium text-gray-500">{{ __('home.table_department') }}</th>
+                        <th class="px-5 py-3 font-medium text-gray-500 text-center">{{ __('home.professors') }}</th>
+                        <th class="px-5 py-3 font-medium text-gray-500 text-center">{{ __('home.employees') }}</th>
+                        <th class="px-5 py-3 font-medium text-gray-500 text-center">{{ __('home.students') }}</th>
+                        <th class="px-5 py-3 font-medium text-gray-500 text-center">{{ __('home.courses') }}</th>
                         <th class="px-5 py-3 font-medium text-gray-500"></th>
                     </tr>
                 </thead>
@@ -600,7 +600,7 @@
                             <td class="px-5 py-3 text-center font-semibold text-gray-700">{{ number_format($dept->courses_count) }}</td>
                             <td class="px-5 py-3 text-end">
                                 <a href="{{ route('dashboard.departments.show', $dept) }}"
-                                   class="text-blue-600 hover:text-blue-800 font-medium text-xs">View</a>
+                                   class="text-blue-600 hover:text-blue-800 font-medium text-xs">{{ __('home.view') }}</a>
                             </td>
                         </tr>
                     @endforeach
@@ -628,11 +628,11 @@
             </p>
         </div>
         <span class="ms-auto shrink-0 text-xs font-medium px-2.5 py-1 rounded-full {{ $department->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-            {{ $department->is_active ? 'Active' : 'Inactive' }}
+            {{ $department->is_active ? __('home.active') : __('home.inactive') }}
         </span>
     </div>
 
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Department Overview</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('home.department_overview') }}</h3>
 
     @php
     $deptCards = [
@@ -661,7 +661,7 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">{{ $card['label'] }}</p>
+                    <p class="text-sm text-gray-500">{{ __('home.' . $card['key']) }}</p>
                     <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ number_format($stats[$card['key']]) }}</p>
                 </div>
             </div>
@@ -669,13 +669,13 @@
     </div>
 
     {{-- Student status breakdown --}}
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Student Status</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('home.student_status') }}</h3>
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         @foreach([
-            ['key' => 'active',    'label' => 'Active',    'bg' => 'bg-green-50',  'text' => 'text-green-700',  'num' => 'text-green-800'],
-            ['key' => 'graduated', 'label' => 'Graduated', 'bg' => 'bg-blue-50',   'text' => 'text-blue-600',   'num' => 'text-blue-800'],
-            ['key' => 'suspended', 'label' => 'Suspended', 'bg' => 'bg-amber-50',  'text' => 'text-amber-600',  'num' => 'text-amber-800'],
-            ['key' => 'withdrawn', 'label' => 'Withdrawn', 'bg' => 'bg-red-50',    'text' => 'text-red-500',    'num' => 'text-red-700'],
+            ['key' => 'active',    'label' => __('home.active'),    'bg' => 'bg-green-50',  'text' => 'text-green-700',  'num' => 'text-green-800'],
+            ['key' => 'graduated', 'label' => __('home.graduated'), 'bg' => 'bg-blue-50',   'text' => 'text-blue-600',   'num' => 'text-blue-800'],
+            ['key' => 'suspended', 'label' => __('home.suspended'), 'bg' => 'bg-amber-50',  'text' => 'text-amber-600',  'num' => 'text-amber-800'],
+            ['key' => 'withdrawn', 'label' => __('home.withdrawn'), 'bg' => 'bg-red-50',    'text' => 'text-red-500',    'num' => 'text-red-700'],
         ] as $row)
             <div class="bg-white rounded-2xl border border-gray-200 p-5">
                 <p class="text-sm text-gray-500 mb-1">{{ $row['label'] }}</p>
@@ -714,7 +714,7 @@
         new Chart(document.getElementById(chartId('studentStatusChart')), {
             type: 'doughnut',
             data: {
-                labels: ['Active', 'Graduated', 'Suspended', 'Withdrawn'],
+                labels: [@json(__('home.active')), @json(__('home.graduated')), @json(__('home.suspended')), @json(__('home.withdrawn'))],
                 datasets: [{
                     data: [active, graduated, suspended, withdrawn],
                     backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
@@ -749,7 +749,7 @@
                     ctx.fillText(total.toLocaleString(), cx, cy - 9);
                     ctx.font      = '11px ui-sans-serif,system-ui,sans-serif';
                     ctx.fillStyle = '#9ca3af';
-                    ctx.fillText('Students', cx, cy + 12);
+                    ctx.fillText('{{ __('home.students') }}', cx, cy + 12);
                     ctx.restore();
                 }
             }]
@@ -758,16 +758,16 @@
 
     // ── Students by Faculty (Stacked Bar) ────────────────────
     (function () {
-        const labels = @json($faculties->pluck('name'));
+        const labels = @json(app()->getLocale() === 'ar' ? $faculties->pluck('name_ar') : $faculties->pluck('name'));
         new Chart(document.getElementById(chartId('studentsByFacultyChart')), {
             type: 'bar',
             data: {
                 labels,
                 datasets: [
-                    { label: 'Active',    data: @json($faculties->pluck('active_students_count')->values()),    backgroundColor: '#10b981', stack: 's', borderRadius: 2 },
-                    { label: 'Graduated', data: @json($faculties->pluck('graduated_students_count')->values()), backgroundColor: '#3b82f6', stack: 's', borderRadius: 2 },
-                    { label: 'Suspended', data: @json($faculties->pluck('suspended_students_count')->values()), backgroundColor: '#f59e0b', stack: 's', borderRadius: 2 },
-                    { label: 'Withdrawn', data: @json($faculties->pluck('withdrawn_students_count')->values()), backgroundColor: '#ef4444', stack: 's', borderRadius: 2 },
+                    { label: @json(__('home.active')),    data: @json($faculties->pluck('active_students_count')->values()),    backgroundColor: '#10b981', stack: 's', borderRadius: 2 },
+                    { label: @json(__('home.graduated')), data: @json($faculties->pluck('graduated_students_count')->values()), backgroundColor: '#3b82f6', stack: 's', borderRadius: 2 },
+                    { label: @json(__('home.suspended')), data: @json($faculties->pluck('suspended_students_count')->values()), backgroundColor: '#f59e0b', stack: 's', borderRadius: 2 },
+                    { label: @json(__('home.withdrawn')), data: @json($faculties->pluck('withdrawn_students_count')->values()), backgroundColor: '#ef4444', stack: 's', borderRadius: 2 },
                 ]
             },
             options: {
@@ -786,7 +786,7 @@
 
     // ── Staff by Faculty (Grouped Bar) ───────────────────────
     (function () {
-        const labels   = @json($faculties->pluck('name'));
+        const labels   = @json(app()->getLocale() === 'ar' ? $faculties->pluck('name_ar') : $faculties->pluck('name'));
         const profData = @json($faculties->map(fn ($f) => $professorsByFaculty[$f->id] ?? 0)->values());
         const empData  = @json($faculties->map(fn ($f) => $employeesByFaculty[$f->id] ?? 0)->values());
         new Chart(document.getElementById(chartId('staffByFacultyChart')), {
@@ -794,8 +794,8 @@
             data: {
                 labels,
                 datasets: [
-                    { label: 'Professors', data: profData, backgroundColor: '#6366f1', borderRadius: 4, barPercentage: 0.65 },
-                    { label: 'Employees',  data: empData,  backgroundColor: '#a5b4fc', borderRadius: 4, barPercentage: 0.65 },
+                    { label: @json(__('home.professors')), data: profData, backgroundColor: '#6366f1', borderRadius: 4, barPercentage: 0.65 },
+                    { label: @json(__('home.employees')),  data: empData,  backgroundColor: '#a5b4fc', borderRadius: 4, barPercentage: 0.65 },
                 ]
             },
             options: {

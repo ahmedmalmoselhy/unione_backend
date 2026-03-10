@@ -25,6 +25,11 @@ class Faculty extends Model
         ];
     }
 
+    public function getLocalNameAttribute(): string
+    {
+        return app()->getLocale() === 'ar' ? ($this->name_ar ?: $this->name) : $this->name;
+    }
+
     public function dean(): BelongsTo
     {
         return $this->belongsTo(User::class, 'dean_id');

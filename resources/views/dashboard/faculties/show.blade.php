@@ -7,7 +7,7 @@
 
 {{-- Breadcrumb --}}
 <nav class="flex items-center gap-2 text-sm mb-6">
-    <a href="{{ route('dashboard.faculties.index') }}" class="text-gray-400 hover:text-gray-700 transition-colors">Faculties</a>
+    <a href="{{ route('dashboard.faculties.index') }}" class="text-gray-400 hover:text-gray-700 transition-colors">{{ __('faculties.title') }}</a>
     <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
     </svg>
@@ -31,16 +31,16 @@
         </div>
         <div class="flex items-center gap-2 shrink-0">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $faculty->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                {{ $faculty->is_active ? 'Active' : 'Inactive' }}
+                {{ $faculty->is_active ? __('common.active') : __('common.inactive') }}
             </span>
             @if(auth()->user()->isSystemAdmin())
                 <a href="{{ route('dashboard.faculties.assign-admin', $faculty) }}"
                    class="px-3 py-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-lg transition-colors">
-                    Assign Admin
+                    {{ __('common.assign_admin') }}
                 </a>
                 <a href="{{ route('dashboard.faculties.edit', $faculty) }}"
                    class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                    Edit Faculty
+                    {{ __('faculties.edit_faculty') }}
                 </a>
             @endif
         </div>
@@ -48,11 +48,11 @@
 
     <dl class="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-5 text-sm">
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Code</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('common.code') }}</dt>
             <dd><span class="font-mono text-sm bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $faculty->code }}</span></dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Enrollment Type</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('common.enrollment_type') }}</dt>
             <dd>
                 @php
                     $typeStyles = [
@@ -72,12 +72,12 @@
             </dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Dean</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('common.dean') }}</dt>
             <dd class="text-gray-700">
                 @if($faculty->dean)
                     {{ $faculty->dean->first_name }} {{ $faculty->dean->last_name }}
                 @else
-                    <span class="text-gray-400">Not assigned</span>
+                    <span class="text-gray-400">{{ __('common.not_assigned') }}</span>
                 @endif
             </dd>
         </div>
@@ -88,7 +88,7 @@
 {{-- Departments section header --}}
 <div class="flex items-center justify-between mb-6">
     <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">
-        Departments
+        {{ __('faculties.departments') }}
         <span class="ml-2 text-xs font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full normal-case tracking-normal">
             {{ $faculty->departments->count() }}
         </span>
@@ -100,14 +100,14 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
-                Academic
+                {{ __('faculties.academic_btn') }}
             </a>
             <a href="{{ route('dashboard.departments.create.managerial') }}?faculty_id={{ $faculty->id }}"
                class="inline-flex items-center gap-2 px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
-                Managerial
+                {{ __('faculties.managerial_btn') }}
             </a>
         </div>
     @endif
@@ -121,26 +121,26 @@
 {{-- Academic Departments --}}
 <div class="mb-6">
     <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-1">
-        Academic
+        {{ __('common.academic') }}
         <span class="ml-1.5 font-medium bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded-full normal-case tracking-normal">{{ $academic->count() }}</span>
     </h4>
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         @if($academic->isEmpty())
             <div class="px-6 py-10 text-center text-sm text-gray-400">
-                No academic departments yet.
+                {{ __('faculties.no_academic_departments') }}
                 @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
-                    <a href="{{ route('dashboard.departments.create.academic') }}?faculty_id={{ $faculty->id }}" class="text-blue-600 hover:underline">Add one</a>
+                    <a href="{{ route('dashboard.departments.create.academic') }}?faculty_id={{ $faculty->id }}" class="text-blue-600 hover:underline">{{ __('faculties.add_one') }}</a>
                 @endif
             </div>
         @else
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                        <th class="px-5 py-3 text-start">Name</th>
-                        <th class="px-5 py-3 text-start">Code</th>
-                        <th class="px-5 py-3 text-start">Head</th>
-                        <th class="px-5 py-3 text-start">Status</th>
-                        <th class="px-5 py-3 text-end">Actions</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.name') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.code') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.head') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.status') }}</th>
+                        <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -169,34 +169,34 @@
                             </td>
                             <td class="px-5 py-3.5">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $department->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                    {{ $department->is_active ? 'Active' : 'Inactive' }}
+                                    {{ $department->is_active ? __('common.active') : __('common.inactive') }}
                                 </span>
                             </td>
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('dashboard.departments.show', $department) }}"
                                        class="px-3 py-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors">
-                                        View
+                                        {{ __('common.view') }}
                                     </a>
                                     @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
                                         <a href="{{ route('dashboard.departments.edit', $department) }}"
                                            class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                                            Edit
+                                            {{ __('common.edit') }}
                                         </a>
                                         @if(! $department->is_mandatory)
                                             <form method="POST" action="{{ route('dashboard.departments.destroy', $department) }}"
-                                                  onsubmit="return confirm('Delete department \'{{ addslashes($department->name) }}\'? This action cannot be undone.')">
+                                                  onsubmit="return confirm('{{ __('departments.confirm_delete', ['name' => addslashes($department->name)]) }}')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
                                                         class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                                                    Delete
+                                                    {{ __('common.delete') }}
                                                 </button>
                                             </form>
                                         @endif
                                         <a href="{{ route('dashboard.departments.assign-admin', $department) }}"
                                            class="px-3 py-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-lg transition-colors">
-                                            Assign Admin
+                                            {{ __('common.assign_admin') }}
                                         </a>
                                     @endif
                                 </div>
@@ -212,26 +212,26 @@
 {{-- Managerial Departments --}}
 <div>
     <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-1">
-        Managerial
+        {{ __('common.managerial') }}
         <span class="ml-1.5 font-medium bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full normal-case tracking-normal">{{ $managerial->count() }}</span>
     </h4>
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         @if($managerial->isEmpty())
             <div class="px-6 py-10 text-center text-sm text-gray-400">
-                No managerial departments yet.
+                {{ __('faculties.no_managerial_departments') }}
                 @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin())
-                    <a href="{{ route('dashboard.departments.create.managerial') }}?faculty_id={{ $faculty->id }}" class="text-purple-600 hover:underline">Add one</a>
+                    <a href="{{ route('dashboard.departments.create.managerial') }}?faculty_id={{ $faculty->id }}" class="text-purple-600 hover:underline">{{ __('faculties.add_one') }}</a>
                 @endif
             </div>
         @else
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                        <th class="px-5 py-3 text-start">Name</th>
-                        <th class="px-5 py-3 text-start">Code</th>
-                        <th class="px-5 py-3 text-start">Manager</th>
-                        <th class="px-5 py-3 text-start">Status</th>
-                        <th class="px-5 py-3 text-end">Actions</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.name') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.code') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('departments.manager') }}</th>
+                        <th class="px-5 py-3 text-start">{{ __('common.status') }}</th>
+                        <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -253,7 +253,7 @@
                             </td>
                             <td class="px-5 py-3.5">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $department->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                    {{ $department->is_active ? 'Active' : 'Inactive' }}
+                                    {{ $department->is_active ? __('common.active') : __('common.inactive') }}
                                 </span>
                             </td>
                             <td class="px-5 py-3.5">

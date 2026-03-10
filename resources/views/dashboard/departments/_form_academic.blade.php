@@ -16,7 +16,7 @@
 
     {{-- Logo --}}
     <div class="md:col-span-2">
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">Department Logo</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('departments.department_logo') }}</label>
         @if($isEdit && $department?->logo_path)
             <div id="current-logo-wrapper" class="mb-3 flex items-center gap-4">
                 <img src="{{ Storage::disk('public')->url($department->logo_path) }}"
@@ -26,7 +26,7 @@
                     <input type="checkbox" name="remove_logo" value="1"
                            class="rounded border-gray-300 text-red-600 focus:ring-red-400"
                            onchange="document.getElementById('current-logo-wrapper').style.opacity = this.checked ? '0.4' : '1'">
-                    Remove current logo
+                    {{ __('common.remove_current_logo') }}
                 </label>
             </div>
         @endif
@@ -35,7 +35,7 @@
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
-                Choose logo
+                {{ __('common.choose_logo') }}
                 <input type="file" name="logo" id="logo" accept="image/*" class="hidden"
                        onchange="const f=this.files[0];const p=document.getElementById('logo-preview');if(f){p.src=URL.createObjectURL(f);p.classList.remove('hidden');document.getElementById('logo-filename').textContent=f.name;}else{p.classList.add('hidden');document.getElementById('logo-filename').textContent='';}">
             </label>
@@ -45,12 +45,12 @@
         @error('logo')
             <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
         @enderror
-        <p class="mt-1.5 text-xs text-gray-400">Accepted: JPG, PNG, WebP, SVG — max 2 MB</p>
+        <p class="mt-1.5 text-xs text-gray-400">{{ __('common.logo_hint') }}</p>
     </div>
 
     {{-- Faculty --}}
     <div class="md:col-span-2">
-        <label for="faculty_id" class="block text-sm font-medium text-gray-700 mb-1.5">Faculty <span class="text-red-500">*</span></label>
+        <label for="faculty_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.faculty') }} <span class="text-red-500">*</span></label>
         <select
             id="faculty_id"
             name="faculty_id"
@@ -59,7 +59,7 @@
                    {{ $errors->has('faculty_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                    focus:outline-none focus:ring-2"
         >
-            <option value="">Select faculty...</option>
+            <option value="">{{ __('departments.select_faculty') }}</option>
             @foreach($faculties as $faculty)
                 <option value="{{ $faculty->id }}" {{ old('faculty_id', $department?->faculty_id ?? request('faculty_id')) == $faculty->id ? 'selected' : '' }}>
                     {{ $faculty->name }}
@@ -73,7 +73,7 @@
 
     {{-- Name (English) --}}
     <div>
-        <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">Name <span class="text-red-500">*</span></label>
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.name') }} <span class="text-red-500">*</span></label>
         <input
             id="name"
             type="text"
@@ -93,7 +93,7 @@
 
     {{-- Name (Arabic) --}}
     <div>
-        <label for="name_ar" class="block text-sm font-medium text-gray-700 mb-1.5">Name (Arabic) <span class="text-red-500">*</span></label>
+        <label for="name_ar" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.name_ar') }} <span class="text-red-500">*</span></label>
         <input
             id="name_ar"
             type="text"
@@ -114,7 +114,7 @@
 
     {{-- Code --}}
     <div class="md:col-span-2">
-        <label for="code" class="block text-sm font-medium text-gray-700 mb-1.5">Code <span class="text-red-500">*</span></label>
+        <label for="code" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.code') }} <span class="text-red-500">*</span></label>
         <input
             id="code"
             type="text"
@@ -135,7 +135,7 @@
 
     {{-- Head (professor) --}}
     <div class="md:col-span-2">
-        <label for="head_id" class="block text-sm font-medium text-gray-700 mb-1.5">Head <span class="text-xs font-normal text-gray-400">(optional — must be a professor)</span></label>
+        <label for="head_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.head') }} <span class="text-xs font-normal text-gray-400">{{ __('departments.head_professor_note') }}</span></label>
         <select
             id="head_id"
             name="head_id"
@@ -143,7 +143,7 @@
                    {{ $errors->has('head_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                    focus:outline-none focus:ring-2"
         >
-            <option value="">— No head assigned —</option>
+            <option value="">{{ __('departments.no_head_assigned') }}</option>
             @foreach($professors as $professor)
                 <option value="{{ $professor->id }}" {{ old('head_id', $department?->head_id) == $professor->id ? 'selected' : '' }}>
                     {{ $professor->first_name }} {{ $professor->last_name }} ({{ $professor->email }})
@@ -166,8 +166,8 @@
             class="mt-0.5 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
         <div>
-            <label for="is_preparatory" class="text-sm font-medium text-gray-700">Preparatory department</label>
-            <p class="text-xs text-gray-400 mt-0.5">For deferred-enrollment faculties — students start here before choosing a department</p>
+            <label for="is_preparatory" class="text-sm font-medium text-gray-700">{{ __('departments.preparatory_department') }}</label>
+            <p class="text-xs text-gray-400 mt-0.5">{{ __('departments.preparatory_hint') }}</p>
         </div>
     </div>
 
@@ -181,7 +181,7 @@
             {{ old('is_active', $department?->is_active ?? true) ? 'checked' : '' }}
             class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
-        <label for="is_active" class="text-sm font-medium text-gray-700">Active</label>
+        <label for="is_active" class="text-sm font-medium text-gray-700">{{ __('departments.active_label') }}</label>
     </div>
 
 </div>

@@ -15,7 +15,7 @@
 
     {{-- Title --}}
     <div class="md:col-span-2">
-        <label for="title" class="block text-sm font-medium text-gray-700 mb-1.5">Title <span class="text-red-500">*</span></label>
+        <label for="title" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.title_label') }} <span class="text-red-500">*</span></label>
         <input
             id="title"
             type="text"
@@ -33,7 +33,7 @@
 
     {{-- Body --}}
     <div class="md:col-span-2">
-        <label for="body" class="block text-sm font-medium text-gray-700 mb-1.5">Body <span class="text-red-500">*</span></label>
+        <label for="body" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.body') }} <span class="text-red-500">*</span></label>
         <textarea
             id="body"
             name="body"
@@ -50,7 +50,7 @@
 
     {{-- Type --}}
     <div>
-        <label for="type" class="block text-sm font-medium text-gray-700 mb-1.5">Type <span class="text-red-500">*</span></label>
+        <label for="type" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.type') }} <span class="text-red-500">*</span></label>
         <select
             id="type"
             name="type"
@@ -59,7 +59,7 @@
                    {{ $errors->has('type') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                    focus:outline-none focus:ring-2"
         >
-            @foreach(['general' => 'General', 'academic' => 'Academic', 'administrative' => 'Administrative', 'urgent' => 'Urgent'] as $val => $label)
+            @foreach(['general' => __('announcements.type_general'), 'academic' => __('announcements.type_academic'), 'administrative' => __('announcements.type_administrative'), 'urgent' => __('announcements.type_urgent')] as $val => $label)
                 <option value="{{ $val }}" {{ old('type', $announcement?->type ?? 'general') === $val ? 'selected' : '' }}>{{ $label }}</option>
             @endforeach
         </select>
@@ -70,7 +70,7 @@
 
     {{-- Visibility --}}
     <div>
-        <label for="visibility" class="block text-sm font-medium text-gray-700 mb-1.5">Visibility <span class="text-red-500">*</span></label>
+        <label for="visibility" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.visibility') }} <span class="text-red-500">*</span></label>
         <select
             id="visibility"
             name="visibility"
@@ -82,7 +82,7 @@
             @php
                 $defaultVis = old('visibility', $announcement?->visibility ?? array_key_first($allowedVisibilities ?? ['university' => 'University-wide']));
             @endphp
-            @foreach($allowedVisibilities ?? ['university' => 'University-wide', 'faculty' => 'Faculty', 'department' => 'Department', 'section' => 'Section'] as $val => $label)
+            @foreach($allowedVisibilities ?? ['university' => __('announcements.vis_university'), 'faculty' => __('announcements.vis_faculty'), 'department' => __('announcements.vis_department'), 'section' => __('announcements.vis_section')] as $val => $label)
                 <option value="{{ $val }}" {{ $defaultVis === $val ? 'selected' : '' }}>{{ $label }}</option>
             @endforeach
         </select>
@@ -93,14 +93,14 @@
 
     {{-- Target: Faculty --}}
     <div id="target-faculty" class="md:col-span-2" style="display:none;">
-        <label for="target_faculty" class="block text-sm font-medium text-gray-700 mb-1.5">Target Faculty</label>
+        <label for="target_faculty" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.target_faculty') }}</label>
         <select
             id="target_faculty"
             name="target_id_faculty"
             class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-200 focus:outline-none focus:ring-2"
         >
             @if($faculties->count() !== 1)
-                <option value="">Select faculty...</option>
+                <option value="">{{ __('announcements.select_faculty') }}</option>
             @endif
             @foreach($faculties as $faculty)
                 <option value="{{ $faculty->id }}"
@@ -113,14 +113,14 @@
 
     {{-- Target: Department --}}
     <div id="target-department" class="md:col-span-2" style="display:none;">
-        <label for="target_department" class="block text-sm font-medium text-gray-700 mb-1.5">Target Department</label>
+        <label for="target_department" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.target_department') }}</label>
         <select
             id="target_department"
             name="target_id_department"
             class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-200 focus:outline-none focus:ring-2"
         >
             @if($departments->count() !== 1)
-                <option value="">Select department...</option>
+                <option value="">{{ __('announcements.select_department') }}</option>
             @endif
             @foreach($departments as $dept)
                 <option value="{{ $dept->id }}"
@@ -133,13 +133,13 @@
 
     {{-- Target: Section --}}
     <div id="target-section" class="md:col-span-2" style="display:none;">
-        <label for="target_section" class="block text-sm font-medium text-gray-700 mb-1.5">Target Section</label>
+        <label for="target_section" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.target_section') }}</label>
         <select
             id="target_section"
             name="target_id_section"
             class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-200 focus:outline-none focus:ring-2"
         >
-            <option value="">Select section...</option>
+            <option value="">{{ __('announcements.select_section') }}</option>
             @foreach($sections as $section)
                 <option value="{{ $section->id }}" {{ (int) old('target_id', $announcement?->target_id) === $section->id && old('visibility', $announcement?->visibility) === 'section' ? 'selected' : '' }}>
                     {{ $section->course->code }} — {{ $section->course->name }} ({{ $section->academicTerm?->name }})
@@ -157,7 +157,7 @@
 
     {{-- Published At --}}
     <div>
-        <label for="published_at" class="block text-sm font-medium text-gray-700 mb-1.5">Published At <span class="text-xs font-normal text-gray-400">(leave blank for draft)</span></label>
+        <label for="published_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.published_at') }} <span class="text-xs font-normal text-gray-400">({{ __('announcements.leave_blank_draft') }})</span></label>
         <input
             id="published_at"
             type="datetime-local"
@@ -174,7 +174,7 @@
 
     {{-- Expires At --}}
     <div>
-        <label for="expires_at" class="block text-sm font-medium text-gray-700 mb-1.5">Expires At <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+        <label for="expires_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('announcements.expires_at') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
         <input
             id="expires_at"
             type="datetime-local"

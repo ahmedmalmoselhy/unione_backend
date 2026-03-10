@@ -1,13 +1,13 @@
 @extends('dashboard.layouts.app')
 
-@section('title', 'Enrollment Details')
-@section('heading', 'Enrollment Details')
+@section('title', __('enrollments.enrollment_details'))
+@section('heading', __('enrollments.enrollment_details'))
 
 @section('content')
 
 {{-- Breadcrumb --}}
 <nav class="flex items-center gap-2 text-sm mb-6">
-    <a href="{{ route('dashboard.enrollments.index') }}" class="text-gray-400 hover:text-gray-700 transition-colors">Enrollments</a>
+    <a href="{{ route('dashboard.enrollments.index') }}" class="text-gray-400 hover:text-gray-700 transition-colors">{{ __('enrollments.title') }}</a>
     <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
     </svg>
@@ -24,7 +24,7 @@
             </h2>
             <p class="text-sm text-gray-500 mt-0.5">
                 <span class="font-mono bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs">{{ $enrollment->student?->student_number }}</span>
-                <span class="mx-1.5">enrolled in</span>
+                <span class="mx-1.5">{{ __('enrollments.enrolled_in') }}</span>
                 <span class="font-mono bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs">{{ $enrollment->section?->course?->code }}</span>
                 {{ $enrollment->section?->course?->name }}
             </p>
@@ -38,14 +38,21 @@
                     'failed'     => 'bg-red-100 text-red-700',
                     'incomplete' => 'bg-gray-100 text-gray-500',
                 ];
+                $statusLabels = [
+                    'registered' => __('enrollments.status_registered'),
+                    'completed'  => __('enrollments.status_completed'),
+                    'dropped'    => __('enrollments.status_dropped'),
+                    'failed'     => __('enrollments.status_failed'),
+                    'incomplete' => __('enrollments.status_incomplete'),
+                ];
             @endphp
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColors[$enrollment->status] ?? 'bg-gray-100 text-gray-500' }}">
-                {{ ucfirst($enrollment->status) }}
+                {{ $statusLabels[$enrollment->status] ?? ucfirst($enrollment->status) }}
             </span>
             @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
                 <a href="{{ route('dashboard.enrollments.edit', $enrollment) }}"
                    class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                    Edit
+                    {{ __('common.edit') }}
                 </a>
             @endif
         </div>
@@ -53,27 +60,27 @@
 
     <dl class="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-5 text-sm">
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Academic Term</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('sections.academic_term') }}</dt>
             <dd class="text-gray-700">{{ $enrollment->academicTerm?->name ?? '—' }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Professor</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('sections.professor') }}</dt>
             <dd class="text-gray-700">{{ $enrollment->section?->professor?->user?->first_name }} {{ $enrollment->section?->professor?->user?->last_name }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Room</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('sections.room') }}</dt>
             <dd class="text-gray-700">{{ $enrollment->section?->room ?? '—' }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Registered At</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('enrollments.registered_at') }}</dt>
             <dd class="text-gray-700">{{ $enrollment->registered_at?->format('M d, Y h:i A') }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Dropped At</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('enrollments.dropped_at') }}</dt>
             <dd class="text-gray-700">{{ $enrollment->dropped_at?->format('M d, Y h:i A') ?? '—' }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Created</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('enrollments.created') }}</dt>
             <dd class="text-gray-700">{{ $enrollment->created_at?->format('M d, Y') }}</dd>
         </div>
     </dl>
@@ -82,30 +89,30 @@
 {{-- Grade card --}}
 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-100">
-        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Grade</h3>
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">{{ __('enrollments.grade') }}</h3>
     </div>
 
     @if($enrollment->grade)
         <div class="p-6">
             <dl class="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-5 text-sm">
                 <div>
-                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Midterm</dt>
+                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('enrollments.midterm') }}</dt>
                     <dd class="text-gray-700 text-lg font-semibold">{{ $enrollment->grade->midterm ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Coursework</dt>
+                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('enrollments.coursework') }}</dt>
                     <dd class="text-gray-700 text-lg font-semibold">{{ $enrollment->grade->coursework ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Final</dt>
+                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('enrollments.final') }}</dt>
                     <dd class="text-gray-700 text-lg font-semibold">{{ $enrollment->grade->final ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Total</dt>
+                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('enrollments.total') }}</dt>
                     <dd class="text-gray-700 text-lg font-semibold">{{ $enrollment->grade->total ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Letter Grade</dt>
+                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('enrollments.letter_grade') }}</dt>
                     <dd>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-700">
                             {{ $enrollment->grade->letter_grade ?? '—' }}
@@ -113,21 +120,21 @@
                     </dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Grade Points</dt>
+                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('enrollments.grade_points') }}</dt>
                     <dd class="text-gray-700 text-lg font-semibold">{{ $enrollment->grade->grade_points ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Graded By</dt>
+                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('enrollments.graded_by') }}</dt>
                     <dd class="text-gray-700">{{ $enrollment->grade->gradedBy?->first_name }} {{ $enrollment->grade->gradedBy?->last_name ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Graded At</dt>
+                    <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('enrollments.graded_at') }}</dt>
                     <dd class="text-gray-700">{{ $enrollment->grade->graded_at?->format('M d, Y') ?? '—' }}</dd>
                 </div>
             </dl>
         </div>
     @else
-        <div class="px-6 py-10 text-center text-sm text-gray-400">No grade recorded yet.</div>
+        <div class="px-6 py-10 text-center text-sm text-gray-400">{{ __('enrollments.no_grade') }}</div>
     @endif
 </div>
 

@@ -9,7 +9,7 @@
 
     {{-- Logo Upload --}}
     <div class="md:col-span-2">
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">University Logo</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('university.university_logo') }}</label>
 
         {{-- Current logo preview --}}
         @if($university->logo_path)
@@ -22,7 +22,7 @@
                            id="remove_logo"
                            class="rounded border-gray-300 text-red-600 focus:ring-red-400"
                            onchange="document.getElementById('current-logo-wrapper').style.opacity = this.checked ? '0.4' : '1'">
-                    Remove current logo
+                    {{ __('common.remove_current_logo') }}
                 </label>
             </div>
         @endif
@@ -33,7 +33,7 @@
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
-                Choose image
+                {{ __('common.choose_image') }}
                 <input type="file" name="logo" id="logo" accept="image/*" class="hidden"
                        onchange="
                            const file = this.files[0];
@@ -54,12 +54,12 @@
         @error('logo')
             <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>
         @enderror
-        <p class="mt-1.5 text-xs text-gray-400">Accepted: JPG, PNG, WebP, SVG — max 2 MB</p>
+        <p class="mt-1.5 text-xs text-gray-400">{{ __('common.logo_hint') }}</p>
     </div>
 
     {{-- Name (English) --}}
     <div>
-        <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">Name <span class="text-red-500">*</span></label>
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('university.name_label') }} <span class="text-red-500">*</span></label>
         <input
             id="name"
             type="text"
@@ -78,7 +78,7 @@
 
     {{-- Name (Arabic) --}}
     <div>
-        <label for="name_ar" class="block text-sm font-medium text-gray-700 mb-1.5">Name (Arabic) <span class="text-red-500">*</span></label>
+        <label for="name_ar" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('university.name_ar_label') }} <span class="text-red-500">*</span></label>
         <input
             id="name_ar"
             type="text"
@@ -98,7 +98,7 @@
 
     {{-- Address --}}
     <div class="md:col-span-2">
-        <label for="address" class="block text-sm font-medium text-gray-700 mb-1.5">Address <span class="text-red-500">*</span></label>
+        <label for="address" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('university.address_label') }} <span class="text-red-500">*</span></label>
         <input
             id="address"
             type="text"
@@ -118,8 +118,8 @@
     {{-- Phone --}}
     <div>
         <label for="phone" class="block text-sm font-medium text-gray-700 mb-1.5">
-            Phone
-            <span class="text-xs font-normal text-gray-400">(optional)</span>
+            {{ __('university.phone_label') }}
+            <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span>
         </label>
         <input
             id="phone"
@@ -140,8 +140,8 @@
     {{-- Email --}}
     <div>
         <label for="contact_email" class="block text-sm font-medium text-gray-700 mb-1.5">
-            Contact Email
-            <span class="text-xs font-normal text-gray-400">(optional)</span>
+            {{ __('university.contact_email_label') }}
+            <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span>
         </label>
         <input
             id="contact_email"
@@ -162,8 +162,8 @@
     {{-- Website --}}
     <div class="md:col-span-2">
         <label for="website" class="block text-sm font-medium text-gray-700 mb-1.5">
-            Website
-            <span class="text-xs font-normal text-gray-400">(optional)</span>
+            {{ __('university.website_label') }}
+            <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span>
         </label>
         <input
             id="website"
@@ -184,8 +184,8 @@
     {{-- Established At --}}
     <div>
         <label for="established_at" class="block text-sm font-medium text-gray-700 mb-1.5">
-            Established Date
-            <span class="text-xs font-normal text-gray-400">(optional)</span>
+            {{ __('university.established_date') }}
+            <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span>
         </label>
         <input
             id="established_at"
@@ -204,8 +204,8 @@
     {{-- President --}}
     <div>
         <label for="president_id" class="block text-sm font-medium text-gray-700 mb-1.5">
-            President
-            <span class="text-xs font-normal text-gray-400">(optional)</span>
+            {{ __('university.president_label') }}
+            <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span>
         </label>
         <select
             id="president_id"
@@ -214,7 +214,7 @@
                    {{ $errors->has('president_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                    focus:outline-none focus:ring-2"
         >
-            <option value="">— No president assigned —</option>
+            <option value="">{{ __('university.no_president_assigned') }}</option>
             @foreach($professors as $professor)
                 <option value="{{ $professor->id }}" {{ old('president_id', $university->president_id) == $professor->id ? 'selected' : '' }}>
                     {{ $professor->user->first_name }} {{ $professor->user->last_name }} ({{ $professor->user->email }})

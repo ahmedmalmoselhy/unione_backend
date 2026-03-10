@@ -29,6 +29,11 @@ class Course extends Model
         ];
     }
 
+    public function getLocalNameAttribute(): string
+    {
+        return app()->getLocale() === 'ar' ? ($this->name_ar ?: $this->name) : $this->name;
+    }
+
     public function departments(): BelongsToMany
     {
         return $this->belongsToMany(Department::class, 'department_course')

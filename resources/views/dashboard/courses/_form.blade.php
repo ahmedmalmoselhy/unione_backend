@@ -26,12 +26,12 @@
 
 {{-- Section: Course Information --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Course Information</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('courses.course_information') }}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {{-- Code --}}
         <div>
-            <label for="code" class="block text-sm font-medium text-gray-700 mb-1.5">Code <span class="text-red-500">*</span></label>
+            <label for="code" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.code') }} <span class="text-red-500">*</span></label>
             <input
                 id="code"
                 type="text"
@@ -51,7 +51,7 @@
 
         {{-- Level --}}
         <div>
-            <label for="level" class="block text-sm font-medium text-gray-700 mb-1.5">Level <span class="text-red-500">*</span></label>
+            <label for="level" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.level') }} <span class="text-red-500">*</span></label>
             <select
                 id="level"
                 name="level"
@@ -60,9 +60,9 @@
                        {{ $errors->has('level') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                        focus:outline-none focus:ring-2"
             >
-                <option value="">Select level...</option>
+                <option value="">{{ __('courses.select_level') }}</option>
                 @for($i = 1; $i <= 5; $i++)
-                    <option value="{{ $i }}" {{ (int) old('level', $course?->level) === $i ? 'selected' : '' }}>Level {{ $i }}</option>
+                    <option value="{{ $i }}" {{ (int) old('level', $course?->level) === $i ? 'selected' : '' }}>{{ __('courses.level_n', ['n' => $i]) }}</option>
                 @endfor
             </select>
             @error('level')
@@ -72,7 +72,7 @@
 
         {{-- Name (EN) --}}
         <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">Name (English) <span class="text-red-500">*</span></label>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.name_english') }} <span class="text-red-500">*</span></label>
             <input
                 id="name"
                 type="text"
@@ -92,7 +92,7 @@
 
         {{-- Name (AR) --}}
         <div>
-            <label for="name_ar" class="block text-sm font-medium text-gray-700 mb-1.5">Name (Arabic) <span class="text-red-500">*</span></label>
+            <label for="name_ar" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.name_arabic') }} <span class="text-red-500">*</span></label>
             <input
                 id="name_ar"
                 type="text"
@@ -113,7 +113,7 @@
 
         {{-- Credit Hours --}}
         <div>
-            <label for="credit_hours" class="block text-sm font-medium text-gray-700 mb-1.5">Credit Hours <span class="text-red-500">*</span></label>
+            <label for="credit_hours" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.credit_hours') }} <span class="text-red-500">*</span></label>
             <input
                 id="credit_hours"
                 type="number"
@@ -133,7 +133,7 @@
 
         {{-- Lecture Hours --}}
         <div>
-            <label for="lecture_hours" class="block text-sm font-medium text-gray-700 mb-1.5">Lecture Hours <span class="text-red-500">*</span></label>
+            <label for="lecture_hours" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.lecture_hours') }} <span class="text-red-500">*</span></label>
             <input
                 id="lecture_hours"
                 type="number"
@@ -153,7 +153,7 @@
 
         {{-- Lab Hours --}}
         <div>
-            <label for="lab_hours" class="block text-sm font-medium text-gray-700 mb-1.5">Lab Hours <span class="text-red-500">*</span></label>
+            <label for="lab_hours" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.lab_hours') }} <span class="text-red-500">*</span></label>
             <input
                 id="lab_hours"
                 type="number"
@@ -173,7 +173,7 @@
 
         {{-- Description --}}
         <div class="md:col-span-2">
-            <label for="description" class="block text-sm font-medium text-gray-700 mb-1.5">Description <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('courses.description') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
             <textarea
                 id="description"
                 name="description"
@@ -199,7 +199,7 @@
                 {{ old('is_elective', $course?->is_elective ?? false) ? 'checked' : '' }}
                 class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
-            <label for="is_elective" class="text-sm font-medium text-gray-700">Elective Course</label>
+            <label for="is_elective" class="text-sm font-medium text-gray-700">{{ __('courses.is_elective') }}</label>
         </div>
 
         {{-- Is Active (edit only) --}}
@@ -213,7 +213,7 @@
                     {{ old('is_active', $course?->is_active ?? true) ? 'checked' : '' }}
                     class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <label for="is_active" class="text-sm font-medium text-gray-700">Active</label>
+                <label for="is_active" class="text-sm font-medium text-gray-700">{{ __('courses.active') }}</label>
             </div>
         @endif
 
@@ -222,7 +222,7 @@
 
 {{-- Section: Department Assignments --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Department Assignments <span class="text-red-500">*</span></h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('courses.department_assignments') }} <span class="text-red-500">*</span></h3>
     @error('departments')
         <p class="mb-3 text-xs text-red-600">{{ $message }}</p>
     @enderror
@@ -235,13 +235,13 @@
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
-        Add Department
+        {{ __('courses.add_department') }}
     </button>
 </div>
 
 {{-- Section: Prerequisites --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Prerequisites <span class="text-xs font-normal text-gray-400">(optional)</span></h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('courses.prerequisites') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></h3>
 
     <div id="prereq-container" class="space-y-3">
         {{-- Rows rendered via JS --}}
@@ -251,7 +251,7 @@
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
-        Add Prerequisite
+        {{ __('courses.add_prerequisite') }}
     </button>
 </div>
 
@@ -262,6 +262,11 @@
     const deptGroups = @json($grouped->map(fn ($depts) => $depts->map(fn ($d) => ['id' => $d->id, 'name' => $d->name, 'code' => $d->code])));
     const courseOptions = @json($courses->map(fn ($c) => ['id' => $c->id, 'code' => $c->code, 'name' => $c->name]));
 
+    // Localized strings
+    const LNG_selectDept = @json(__('courses.select_department'));
+    const LNG_owner = @json(__('courses.owner'));
+    const LNG_selectCourse = @json(__('courses.select_course'));
+
     // Pre-selected data (for repopulation)
     let deptRows = @json(collect($oldDepts)->values());
     let prereqRows = @json(collect($oldPrereqs)->values());
@@ -270,7 +275,7 @@
     const prereqContainer = document.getElementById('prereq-container');
 
     function buildDeptOptions(selectedId) {
-        let html = '<option value="">Select department...</option>';
+        let html = `<option value="">${LNG_selectDept}</option>`;
         for (const [faculty, depts] of Object.entries(deptGroups)) {
             html += `<optgroup label="${faculty}">`;
             depts.forEach(d => {
@@ -283,7 +288,7 @@
     }
 
     function buildPrereqOptions(selectedId) {
-        let html = '<option value="">Select course...</option>';
+        let html = `<option value="">${LNG_selectCourse}</option>`;
         courseOptions.forEach(c => {
             const sel = c.id == selectedId ? 'selected' : '';
             html += `<option value="${c.id}" ${sel}>${c.code} — ${c.name}</option>`;
@@ -303,7 +308,7 @@
             <label class="flex items-center gap-1.5 text-xs text-gray-600 whitespace-nowrap">
                 <input type="checkbox" name="departments[${idx}][is_owner]" value="1" ${isOwner ? 'checked' : ''}
                     class="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"/>
-                Owner
+                ${LNG_owner}
             </label>
             <button type="button" onclick="this.parentElement.remove()" class="p-1.5 text-gray-400 hover:text-red-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -7,7 +7,7 @@
 
 {{-- Breadcrumb --}}
 <nav class="flex items-center gap-2 text-sm mb-6">
-    <a href="{{ route('dashboard.employees.index') }}" class="text-gray-400 hover:text-gray-700 transition-colors">Employees</a>
+    <a href="{{ route('dashboard.employees.index') }}" class="text-gray-400 hover:text-gray-700 transition-colors">{{ __('employees.title') }}</a>
     <svg class="w-3.5 h-3.5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
     </svg>
@@ -35,7 +35,7 @@
         </div>
         <div class="flex items-center gap-2 shrink-0">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $employee->user->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                {{ $employee->user->is_active ? 'Active' : 'Inactive' }}
+                {{ $employee->user->is_active ? __('common.active') : __('common.inactive') }}
             </span>
             @php
                 $typeStyles = [
@@ -44,9 +44,9 @@
                     'contract'  => 'bg-blue-50 text-blue-700',
                 ];
                 $typeLabels = [
-                    'full_time' => 'Full Time',
-                    'part_time' => 'Part Time',
-                    'contract'  => 'Contract',
+                    'full_time' => __('employees.type_full_time'),
+                    'part_time' => __('employees.type_part_time'),
+                    'contract'  => __('employees.type_contract'),
                 ];
             @endphp
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $typeStyles[$employee->employment_type] ?? 'bg-gray-100 text-gray-600' }}">
@@ -55,7 +55,7 @@
             @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
                 <a href="{{ route('dashboard.employees.edit', $employee) }}"
                    class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-                    Edit Employee
+                    {{ __('employees.edit_employee') }}
                 </a>
             @endif
         </div>
@@ -63,47 +63,47 @@
 
     <dl class="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-5 text-sm">
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Staff Number</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('employees.staff_number_full') }}</dt>
             <dd><span class="font-mono text-sm bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $employee->staff_number }}</span></dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Email</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('common.email') }}</dt>
             <dd class="text-gray-700">{{ $employee->user->email }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Phone</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('employees.phone') }}</dt>
             <dd class="text-gray-700">{{ $employee->user->phone ?? '—' }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">National ID</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('employees.national_id') }}</dt>
             <dd class="text-gray-700 font-mono text-xs">{{ $employee->user->national_id }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Gender</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('employees.gender') }}</dt>
             <dd class="text-gray-700">{{ ucfirst($employee->user->gender) }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Date of Birth</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('employees.date_of_birth') }}</dt>
             <dd class="text-gray-700">{{ $employee->user->date_of_birth?->format('M d, Y') ?? '—' }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Department</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('common.department') }}</dt>
             <dd class="text-gray-700">{{ $employee->department->name }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Faculty</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('common.faculty') }}</dt>
             <dd class="text-gray-700">{{ $employee->department->faculty?->name ?? '—' }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Salary</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('employees.salary') }}</dt>
             <dd class="text-gray-700">{{ $employee->salary ? number_format($employee->salary, 2) . ' EGP' : '—' }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Hire Date</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('employees.hire_date') }}</dt>
             <dd class="text-gray-700">{{ $employee->hired_at->format('M d, Y') }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Termination Date</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('employees.termination_date') }}</dt>
             <dd class="text-gray-700">{{ $employee->terminated_at?->format('M d, Y') ?? '—' }}</dd>
         </div>
     </dl>

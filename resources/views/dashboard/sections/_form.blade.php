@@ -15,12 +15,12 @@
 
 {{-- Section: Assignment --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Section Assignment</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('sections.section_assignment') }}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {{-- Course --}}
         <div>
-            <label for="course_id" class="block text-sm font-medium text-gray-700 mb-1.5">Course <span class="text-red-500">*</span></label>
+            <label for="course_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('common.course') }} <span class="text-red-500">*</span></label>
             <select
                 id="course_id"
                 name="course_id"
@@ -29,7 +29,7 @@
                        {{ $errors->has('course_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                        focus:outline-none focus:ring-2"
             >
-                <option value="">Select course...</option>
+                <option value="">{{ __('sections.select_course') }}</option>
                 @foreach($courses as $course)
                     <option value="{{ $course->id }}" {{ (int) old('course_id', $section?->course_id) === $course->id ? 'selected' : '' }}>
                         {{ $course->code }} — {{ $course->name }}
@@ -43,7 +43,7 @@
 
         {{-- Professor --}}
         <div>
-            <label for="professor_id" class="block text-sm font-medium text-gray-700 mb-1.5">Professor <span class="text-red-500">*</span></label>
+            <label for="professor_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('sections.professor') }} <span class="text-red-500">*</span></label>
             <select
                 id="professor_id"
                 name="professor_id"
@@ -52,7 +52,7 @@
                        {{ $errors->has('professor_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                        focus:outline-none focus:ring-2"
             >
-                <option value="">Select professor...</option>
+                <option value="">{{ __('sections.select_professor') }}</option>
                 @foreach($professors as $prof)
                     <option value="{{ $prof->id }}" {{ (int) old('professor_id', $section?->professor_id) === $prof->id ? 'selected' : '' }}>
                         {{ $prof->user->first_name }} {{ $prof->user->last_name }} ({{ $prof->staff_number }})
@@ -66,7 +66,7 @@
 
         {{-- Academic Term --}}
         <div>
-            <label for="academic_term_id" class="block text-sm font-medium text-gray-700 mb-1.5">Academic Term <span class="text-red-500">*</span></label>
+            <label for="academic_term_id" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('sections.academic_term') }} <span class="text-red-500">*</span></label>
             <select
                 id="academic_term_id"
                 name="academic_term_id"
@@ -75,7 +75,7 @@
                        {{ $errors->has('academic_term_id') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                        focus:outline-none focus:ring-2"
             >
-                <option value="">Select term...</option>
+                <option value="">{{ __('sections.select_term') }}</option>
                 @foreach($academicTerms as $term)
                     <option value="{{ $term->id }}" {{ (int) old('academic_term_id', $section?->academic_term_id) === $term->id ? 'selected' : '' }}>
                         {{ $term->name }}{{ $term->is_active ? ' ★' : '' }}
@@ -89,7 +89,7 @@
 
         {{-- Capacity --}}
         <div>
-            <label for="capacity" class="block text-sm font-medium text-gray-700 mb-1.5">Capacity <span class="text-red-500">*</span></label>
+            <label for="capacity" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('sections.capacity') }} <span class="text-red-500">*</span></label>
             <input
                 id="capacity"
                 type="number"
@@ -110,7 +110,7 @@
 
         {{-- Room --}}
         <div>
-            <label for="room" class="block text-sm font-medium text-gray-700 mb-1.5">Room <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <label for="room" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('sections.room') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></label>
             <input
                 id="room"
                 type="text"
@@ -138,7 +138,7 @@
                     {{ old('is_active', $section?->is_active ?? true) ? 'checked' : '' }}
                     class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <label for="is_active" class="text-sm font-medium text-gray-700">Active</label>
+                <label for="is_active" class="text-sm font-medium text-gray-700">{{ __('sections.active') }}</label>
             </div>
         @endif
 
@@ -147,7 +147,7 @@
 
 {{-- Section: Schedule --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Schedule <span class="text-xs font-normal text-gray-400">(optional)</span></h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('sections.schedule') }} <span class="text-xs font-normal text-gray-400">({{ __('common.optional') }})</span></h3>
     @error('schedule')
         <p class="mb-3 text-xs text-red-600">{{ $message }}</p>
     @enderror
@@ -160,7 +160,7 @@
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
-        Add Time Slot
+        {{ __('sections.add_time_slot') }}
     </button>
 </div>
 
@@ -171,20 +171,25 @@
     let scheduleRows = @json(collect($oldSchedule)->values());
     const container = document.getElementById('schedule-container');
 
+    // Localized strings
+    const LNG_selectDay = @json(__('sections.select_day'));
+    const LNG_lecture = @json(__('sections.type_lecture'));
+    const LNG_lab = @json(__('sections.type_lab'));
+
     function addScheduleRow(data = {}) {
         const idx = container.children.length;
         const row = document.createElement('div');
         row.className = 'flex flex-wrap items-center gap-3 bg-gray-50 rounded-lg p-3';
 
-        let dayOpts = '<option value="">Day</option>';
+        let dayOpts = `<option value="">${LNG_selectDay}</option>`;
         daysOfWeek.forEach(d => {
             const sel = d === (data.day || '') ? 'selected' : '';
             dayOpts += `<option value="${d}" ${sel}>${dayLabels[d] || d}</option>`;
         });
 
         const typeOpts = `
-            <option value="lecture" ${(data.type || 'lecture') === 'lecture' ? 'selected' : ''}>Lecture</option>
-            <option value="lab" ${data.type === 'lab' ? 'selected' : ''}>Lab</option>`;
+            <option value="lecture" ${(data.type || 'lecture') === 'lecture' ? 'selected' : ''}>${LNG_lecture}</option>
+            <option value="lab" ${data.type === 'lab' ? 'selected' : ''}>${LNG_lab}</option>`;
 
         row.innerHTML = `
             <select name="schedule[${idx}][day]" required class="px-2.5 py-2 rounded-lg border border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-200 focus:outline-none focus:ring-2">

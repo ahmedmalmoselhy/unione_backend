@@ -7,20 +7,20 @@
 @php
     $isEdit = isset($academicTerm) && $academicTerm !== null;
     $semesters = [
-        'first'  => 'First Semester',
-        'second' => 'Second Semester',
-        'summer' => 'Summer Semester',
+        'first'  => __('academic_terms.semester_first'),
+        'second' => __('academic_terms.semester_second'),
+        'summer' => __('academic_terms.semester_summer'),
     ];
 @endphp
 
 {{-- Section: Term Identity --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Term Identity</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('academic_terms.term_identity') }}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {{-- Name (EN) --}}
         <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">Name (English) <span class="text-red-500">*</span></label>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.name_english') }} <span class="text-red-500">*</span></label>
             <input
                 id="name"
                 type="text"
@@ -40,7 +40,7 @@
 
         {{-- Name (AR) --}}
         <div>
-            <label for="name_ar" class="block text-sm font-medium text-gray-700 mb-1.5">Name (Arabic) <span class="text-red-500">*</span></label>
+            <label for="name_ar" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.name_arabic') }} <span class="text-red-500">*</span></label>
             <input
                 id="name_ar"
                 type="text"
@@ -61,7 +61,7 @@
 
         {{-- Academic Year --}}
         <div>
-            <label for="academic_year" class="block text-sm font-medium text-gray-700 mb-1.5">Academic Year (Start) <span class="text-red-500">*</span></label>
+            <label for="academic_year" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.academic_year_start') }} <span class="text-red-500">*</span></label>
             <input
                 id="academic_year"
                 type="number"
@@ -82,7 +82,7 @@
 
         {{-- Semester --}}
         <div>
-            <label for="semester" class="block text-sm font-medium text-gray-700 mb-1.5">Semester <span class="text-red-500">*</span></label>
+            <label for="semester" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.semester') }} <span class="text-red-500">*</span></label>
             <select
                 id="semester"
                 name="semester"
@@ -91,7 +91,7 @@
                        {{ $errors->has('semester') ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200' }}
                        focus:outline-none focus:ring-2"
             >
-                <option value="">Select semester...</option>
+                <option value="">{{ __('academic_terms.select_semester') }}</option>
                 @foreach($semesters as $value => $label)
                     <option value="{{ $value }}" {{ old('semester', $academicTerm?->semester) === $value ? 'selected' : '' }}>
                         {{ $label }}
@@ -108,12 +108,12 @@
 
 {{-- Section: Dates --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Semester Dates</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('academic_terms.semester_dates') }}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {{-- Starts At --}}
         <div>
-            <label for="starts_at" class="block text-sm font-medium text-gray-700 mb-1.5">Semester Start <span class="text-red-500">*</span></label>
+            <label for="starts_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.semester_start') }} <span class="text-red-500">*</span></label>
             <input
                 id="starts_at"
                 type="date"
@@ -131,7 +131,7 @@
 
         {{-- Ends At --}}
         <div>
-            <label for="ends_at" class="block text-sm font-medium text-gray-700 mb-1.5">Semester End <span class="text-red-500">*</span></label>
+            <label for="ends_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.semester_end') }} <span class="text-red-500">*</span></label>
             <input
                 id="ends_at"
                 type="date"
@@ -152,12 +152,12 @@
 
 {{-- Section: Registration --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Registration Period</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('academic_terms.registration_period') }}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {{-- Registration Starts At --}}
         <div>
-            <label for="registration_starts_at" class="block text-sm font-medium text-gray-700 mb-1.5">Registration Opens <span class="text-red-500">*</span></label>
+            <label for="registration_starts_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.registration_opens') }} <span class="text-red-500">*</span></label>
             <input
                 id="registration_starts_at"
                 type="date"
@@ -175,7 +175,7 @@
 
         {{-- Registration Ends At --}}
         <div>
-            <label for="registration_ends_at" class="block text-sm font-medium text-gray-700 mb-1.5">Registration Closes <span class="text-red-500">*</span></label>
+            <label for="registration_ends_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.registration_closes') }} <span class="text-red-500">*</span></label>
             <input
                 id="registration_ends_at"
                 type="date"
@@ -193,7 +193,7 @@
 
         {{-- Withdrawal Deadline --}}
         <div>
-            <label for="withdrawal_deadline" class="block text-sm font-medium text-gray-700 mb-1.5">Withdrawal Deadline <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <label for="withdrawal_deadline" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.withdrawal_deadline') }} <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span></label>
             <input
                 id="withdrawal_deadline"
                 type="date"
@@ -213,12 +213,12 @@
 
 {{-- Section: Exams & Grading --}}
 <div class="mb-6">
-    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Exams &amp; Grading</h3>
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">{{ __('academic_terms.exams_grading') }}</h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {{-- Exam Starts At --}}
         <div>
-            <label for="exam_starts_at" class="block text-sm font-medium text-gray-700 mb-1.5">Exam Period Start <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <label for="exam_starts_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.exam_period_start') }} <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span></label>
             <input
                 id="exam_starts_at"
                 type="date"
@@ -235,7 +235,7 @@
 
         {{-- Exam Ends At --}}
         <div>
-            <label for="exam_ends_at" class="block text-sm font-medium text-gray-700 mb-1.5">Exam Period End <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <label for="exam_ends_at" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.exam_period_end') }} <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span></label>
             <input
                 id="exam_ends_at"
                 type="date"
@@ -252,7 +252,7 @@
 
         {{-- Grade Submission Deadline --}}
         <div>
-            <label for="grade_submission_deadline" class="block text-sm font-medium text-gray-700 mb-1.5">Grade Submission Deadline <span class="text-xs font-normal text-gray-400">(optional)</span></label>
+            <label for="grade_submission_deadline" class="block text-sm font-medium text-gray-700 mb-1.5">{{ __('academic_terms.grade_submission_deadline') }} <span class="text-xs font-normal text-gray-400">{{ __('common.optional') }}</span></label>
             <input
                 id="grade_submission_deadline"
                 type="date"
@@ -281,6 +281,6 @@
             {{ old('is_active', $academicTerm?->is_active ?? false) ? 'checked' : '' }}
             class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
-        <label for="is_active" class="text-sm font-medium text-gray-700">Active Term <span class="text-xs font-normal text-gray-400">(only one term can be active at a time)</span></label>
+        <label for="is_active" class="text-sm font-medium text-gray-700">{{ __('academic_terms.active_term') }} <span class="text-xs font-normal text-gray-400">{{ __('academic_terms.active_term_hint') }}</span></label>
     </div>
 @endif

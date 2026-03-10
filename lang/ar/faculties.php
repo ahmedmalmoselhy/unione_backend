@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'title'                          => 'الكليات',
+    'new_faculty'                    => 'كلية جديدة',
+    'create_faculty'                 => 'إنشاء كلية',
+    'edit_faculty'                   => 'تعديل الكلية',
+    'no_faculties_found'             => 'لا توجد كليات.',
+    'create_first'                   => 'أنشئ أول كلية.',
+    'faculty_logo'                   => 'شعار الكلية',
+    'departments'                    => 'الأقسام',
+    'confirm_delete'                 => "هل تريد حذف الكلية ':name'؟ لا يمكن التراجع عن هذا الإجراء.",
+    'enrollment_type_immediate'      => 'فوري',
+    'enrollment_type_deferred'       => 'مؤجل',
+    'enrollment_type_none'           => 'بدون أقسام',
+    'enrollment_type_hint_immediate' => 'فوري — يُخصص الطلاب إلى قسم عند التسجيل',
+    'enrollment_type_hint_deferred'  => 'مؤجل — يختار الطلاب القسم بعد التسجيل',
+    'enrollment_type_hint_none'      => 'بدون — هذه الكلية ليس لها أقسام',
+    'select_type'                    => 'اختر النوع...',
+    'no_dean_assigned'               => '— لم يتم تعيين عميد —',
+    'no_academic_departments'        => 'لا توجد أقسام أكاديمية حتى الآن.',
+    'no_managerial_departments'      => 'لا توجد أقسام إدارية حتى الآن.',
+    'add_one'                        => 'أضف قسماً',
+    'academic_btn'                   => 'أكاديمي',
+    'managerial_btn'                 => 'إداري',
+    'active_label'                   => 'نشط',
+];

@@ -46,7 +46,8 @@ class StudentController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        $faculties = Faculty::where('is_active', true)->orderBy('name')->pluck('name', 'id');
+        $nameCol   = app()->getLocale() === 'ar' ? 'name_ar' : 'name';
+        $faculties = Faculty::where('is_active', true)->orderBy('name')->pluck($nameCol, 'id');
 
         return view('dashboard.students.index', compact('students', 'faculties'));
     }

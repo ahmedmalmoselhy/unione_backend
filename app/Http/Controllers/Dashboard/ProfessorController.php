@@ -43,7 +43,8 @@ class ProfessorController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        $departments = Department::where('type', 'academic')->orderBy('name')->pluck('name', 'id');
+        $nameCol     = app()->getLocale() === 'ar' ? 'name_ar' : 'name';
+        $departments = Department::where('type', 'academic')->orderBy('name')->pluck($nameCol, 'id');
 
         return view('dashboard.professors.index', compact('professors', 'departments'));
     }

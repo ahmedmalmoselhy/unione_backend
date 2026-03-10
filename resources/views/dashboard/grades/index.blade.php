@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.app')
 
-@section('title', 'Grades')
-@section('heading', 'Grades')
+@section('title', __('grades.title'))
+@section('heading', __('grades.title'))
 
 @section('content')
 
@@ -17,7 +17,7 @@
 
 @if(session('import_errors'))
     <div class="mb-6 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 p-4">
-        <p class="font-semibold mb-2">Import failed — fix these errors and try again:</p>
+        <p class="font-semibold mb-2">{{ __('grades.import_failed') }}</p>
         <ul class="list-disc list-inside space-y-0.5 max-h-48 overflow-y-auto">
             @foreach(session('import_errors') as $err)
                 <li>{{ $err }}</li>
@@ -31,21 +31,21 @@
     'action'  => route('dashboard.grades.index'),
     'search'  => request('search'),
     'filters' => [
-        ['name' => 'term_id', 'label' => 'Term', 'value' => request('term_id'), 'options' => $terms->toArray()],
-        ['name' => 'letter_grade', 'label' => 'Grade', 'value' => request('letter_grade'), 'options' => ['A+' => 'A+', 'A' => 'A', 'B+' => 'B+', 'B' => 'B', 'C+' => 'C+', 'C' => 'C', 'D+' => 'D+', 'D' => 'D', 'F' => 'F']],
+        ['name' => 'term_id', 'label' => __('grades.term'), 'value' => request('term_id'), 'options' => $terms->toArray()],
+        ['name' => 'letter_grade', 'label' => __('grades.letter_grade'), 'value' => request('letter_grade'), 'options' => ['A+' => 'A+', 'A' => 'A', 'B+' => 'B+', 'B' => 'B', 'C+' => 'C+', 'C' => 'C', 'D+' => 'D+', 'D' => 'D', 'F' => 'F']],
     ],
 ])
 
 {{-- Header row --}}
 <div class="flex items-center justify-between mb-6">
-    <p class="text-sm text-gray-500">{{ $grades->total() }} {{ Str::plural('grade', $grades->total()) }} total</p>
+    <p class="text-sm text-gray-500">{{ $grades->total() }} {{ __('grades.title') }}</p>
     <div class="flex items-center gap-2">
         <a href="{{ route('dashboard.grades.export', request()->query()) }}"
            class="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 rounded-lg transition-colors">
             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
             </svg>
-            Export
+            {{ __('common.export') }}
         </a>
         @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
             <button onclick="document.getElementById('grades-import-modal').classList.remove('hidden')"
@@ -53,14 +53,14 @@
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                 </svg>
-                Import
+                {{ __('common.import') }}
             </button>
             <a href="{{ route('dashboard.grades.create') }}"
                class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
-                Record Grade
+                {{ __('grades.record_grade') }}
             </a>
         @endif
     </div>
@@ -72,15 +72,14 @@
         <div class="fixed inset-0 bg-black/40" onclick="document.getElementById('grades-import-modal').classList.add('hidden')"></div>
         <div class="relative bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 z-10">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-base font-semibold text-gray-900">Import Grades</h3>
+                <h3 class="text-base font-semibold text-gray-900">{{ __('grades.import_grades') }}</h3>
                 <button onclick="document.getElementById('grades-import-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
             <p class="text-sm text-gray-500 mb-4">
-                Upload a file with <code class="bg-gray-100 px-1 rounded text-xs">enrollment_id</code> as the key.
-                Existing grades for an enrollment are <strong class="text-gray-700">updated</strong>; missing ones are created.
-                <a href="{{ route('dashboard.grades.import-template') }}" class="text-blue-600 hover:underline font-medium">Download template</a>.
+                {{ __('grades.import_description') }}
+                <a href="{{ route('dashboard.grades.import-template') }}" class="text-blue-600 hover:underline font-medium">{{ __('grades.download_template') }}</a>.
             </p>
             <form action="{{ route('dashboard.grades.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -88,16 +87,16 @@
                     <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                     </svg>
-                    <label for="grades-import-file" class="cursor-pointer text-sm text-blue-600 hover:underline font-medium">Choose file</label>
+                    <label for="grades-import-file" class="cursor-pointer text-sm text-blue-600 hover:underline font-medium">{{ __('grades.choose_file') }}</label>
                     <input id="grades-import-file" name="file" type="file" accept=".csv,.xlsx,.xls" class="sr-only"
                            onchange="document.getElementById('grades-import-filename').textContent = this.files[0]?.name ?? ''">
-                    <p id="grades-import-filename" class="text-xs text-gray-400 mt-1">CSV or Excel, max 5 MB</p>
+                    <p id="grades-import-filename" class="text-xs text-gray-400 mt-1">{{ __('grades.file_hint') }}</p>
                 </div>
                 <div class="flex gap-2 justify-end">
                     <button type="button" onclick="document.getElementById('grades-import-modal').classList.add('hidden')"
-                            class="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">Cancel</button>
+                            class="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">{{ __('common.cancel') }}</button>
                     <button type="submit"
-                            class="px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">Upload &amp; Import</button>
+                            class="px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">{{ __('grades.upload_import') }}</button>
                 </div>
             </form>
         </div>
@@ -108,22 +107,22 @@
 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
     @if($grades->isEmpty())
         <div class="px-6 py-16 text-center text-sm text-gray-400">
-            No grades recorded yet. <a href="{{ route('dashboard.grades.create') }}" class="text-blue-600 hover:underline">Record the first one.</a>
+            No grades recorded yet. <a href="{{ route('dashboard.grades.create') }}" class="text-blue-600 hover:underline">{{ __('grades.no_grades_found') }}</a>
         </div>
     @else
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    <th class="px-5 py-3 text-start">Student</th>
-                    <th class="px-5 py-3 text-start">Course</th>
-                    <th class="px-5 py-3 text-start">Term</th>
-                    <th class="px-5 py-3 text-center">Midterm</th>
-                    <th class="px-5 py-3 text-center">CW</th>
-                    <th class="px-5 py-3 text-center">Final</th>
-                    <th class="px-5 py-3 text-center">Total</th>
-                    <th class="px-5 py-3 text-center">Grade</th>
-                    <th class="px-5 py-3 text-center">GPA</th>
-                    <th class="px-5 py-3 text-end">Actions</th>
+                    <th class="px-5 py-3 text-start">{{ __('grades.student') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('grades.course') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('grades.term') }}</th>
+                    <th class="px-5 py-3 text-center">{{ __('grades.midterm') }}</th>
+                    <th class="px-5 py-3 text-center">{{ __('grades.cw_short') }}</th>
+                    <th class="px-5 py-3 text-center">{{ __('grades.final') }}</th>
+                    <th class="px-5 py-3 text-center">{{ __('grades.total') }}</th>
+                    <th class="px-5 py-3 text-center">{{ __('grades.grade') }}</th>
+                    <th class="px-5 py-3 text-center">{{ __('grades.grade_points') }}</th>
+                    <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -136,7 +135,7 @@
                         <td class="px-5 py-3">
                             <span class="font-mono text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">{{ $grade->enrollment?->section?->course?->code }}</span>
                         </td>
-                        <td class="px-5 py-3 text-xs text-gray-600">{{ $grade->enrollment?->academicTerm?->name ?? '—' }}</td>
+                        <td class="px-5 py-3 text-xs text-gray-600">{{ $grade->enrollment?->academicTerm?->local_name ?? '—' }}</td>
                         <td class="px-5 py-3 text-center text-gray-600">{{ $grade->midterm ?? '—' }}</td>
                         <td class="px-5 py-3 text-center text-gray-600">{{ $grade->coursework ?? '—' }}</td>
                         <td class="px-5 py-3 text-center text-gray-600">{{ $grade->final ?? '—' }}</td>
@@ -153,20 +152,20 @@
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.grades.show', $grade) }}"
                                    class="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
-                                    View
+                                    {{ __('common.view') }}
                                 </a>
                                 @if(auth()->user()->isSystemAdmin() || auth()->user()->isFacultyAdmin() || auth()->user()->isDepartmentAdmin())
                                     <a href="{{ route('dashboard.grades.edit', $grade) }}"
                                        class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                                        Edit
+                                        {{ __('common.edit') }}
                                     </a>
                                     <form method="POST" action="{{ route('dashboard.grades.destroy', $grade) }}"
-                                          onsubmit="return confirm('Delete this grade? This action cannot be undone.')">
+                                          onsubmit="return confirm('{{ addslashes(__('grades.confirm_delete')) }}')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
                                                 class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                                            Delete
+                                            {{ __('common.delete') }}
                                         </button>
                                     </form>
                                 @endif

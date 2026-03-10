@@ -31,6 +31,11 @@ class Department extends Model
         ];
     }
 
+    public function getLocalNameAttribute(): string
+    {
+        return app()->getLocale() === 'ar' ? ($this->name_ar ?: $this->name) : $this->name;
+    }
+
     public function faculty(): BelongsTo
     {
         return $this->belongsTo(Faculty::class);

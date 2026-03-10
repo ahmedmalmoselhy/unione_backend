@@ -35,40 +35,40 @@
         </div>
         <a href="{{ route('dashboard.university.edit') }}"
            class="shrink-0 px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
-            Edit University
+            {{ __('university.edit_university') }}
         </a>
     </div>
 
     <dl class="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-5 text-sm">
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Address</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.address') }}</dt>
             <dd class="text-gray-700">{{ $university->address }}</dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Established</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.established') }}</dt>
             <dd class="text-gray-700">
                 {{ $university->established_at?->format('Y') ?? '—' }}
             </dd>
         </div>
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">President</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.president') }}</dt>
             <dd class="text-gray-700">
                 @if($university->president)
                     {{ $university->president->user->first_name }} {{ $university->president->user->last_name }}
                 @else
-                    <span class="text-gray-400">Not assigned</span>
+                    <span class="text-gray-400">{{ __('common.not_assigned') }}</span>
                 @endif
             </dd>
         </div>
         @if($university->phone)
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Phone</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.phone') }}</dt>
             <dd class="text-gray-700">{{ $university->phone }}</dd>
         </div>
         @endif
         @if($university->email)
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Email</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.email') }}</dt>
             <dd class="text-gray-700">
                 <a href="mailto:{{ $university->email }}" class="text-blue-600 hover:underline">{{ $university->email }}</a>
             </dd>
@@ -76,7 +76,7 @@
         @endif
         @if($university->website)
         <div>
-            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Website</dt>
+            <dt class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{{ __('university.website') }}</dt>
             <dd class="text-gray-700">
                 <a href="{{ $university->website }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
                     {{ $university->website }}
@@ -91,7 +91,7 @@
 {{-- Vice Presidents section header --}}
 <div class="flex items-center justify-between mb-4">
     <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">
-        Vice Presidents
+        {{ __('university.vice_presidents') }}
         <span class="ml-2 text-xs font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full normal-case tracking-normal">
             {{ $university->vicePresidents->count() }}
         </span>
@@ -101,27 +101,27 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
-        Add Vice President
+        {{ __('university.add_vice_president') }}
     </a>
 </div>
 
 <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
     @if($university->vicePresidents->isEmpty())
         <div class="px-6 py-10 text-center text-sm text-gray-400">
-            No vice presidents assigned yet.
-            <a href="{{ route('dashboard.university.vice-presidents.create') }}" class="text-blue-600 hover:underline">Add one</a>
+            {{ __('university.no_vice_presidents') }}
+            <a href="{{ route('dashboard.university.vice-presidents.create') }}" class="text-blue-600 hover:underline">{{ __('university.add_one') }}</a>
         </div>
     @else
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
                     <th class="px-5 py-3 text-start">#</th>
-                    <th class="px-5 py-3 text-start">Professor</th>
-                    <th class="px-5 py-3 text-start">Title</th>
-                    <th class="px-5 py-3 text-start">Status</th>
-                    <th class="px-5 py-3 text-start">Appointed</th>
-                    <th class="px-5 py-3 text-start">Ended</th>
-                    <th class="px-5 py-3 text-end">Actions</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.professor') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('university.title_col') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('common.status') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('university.appointed') }}</th>
+                    <th class="px-5 py-3 text-start">{{ __('university.ended') }}</th>
+                    <th class="px-5 py-3 text-end">{{ __('common.actions') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -140,7 +140,7 @@
                         </td>
                         <td class="px-5 py-3.5">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $vp->is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                {{ $vp->is_active ? 'Active' : 'Inactive' }}
+                                {{ $vp->is_active ? __('common.active') : __('common.inactive') }}
                             </span>
                         </td>
                         <td class="px-5 py-3.5 text-gray-600 text-xs">{{ $vp->appointed_at->format('Y-m-d') }}</td>
@@ -151,15 +151,15 @@
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('dashboard.university.vice-presidents.edit', $vp) }}"
                                    class="px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                                    Edit
+                                    {{ __('common.edit') }}
                                 </a>
                                 <form method="POST" action="{{ route('dashboard.university.vice-presidents.destroy', $vp) }}"
-                                      onsubmit="return confirm('Remove {{ addslashes($vp->professor->user->first_name . ' ' . $vp->professor->user->last_name) }} as vice president?')">
+                                      onsubmit="return confirm('{{ __('university.confirm_remove_vp', ['name' => addslashes($vp->professor->user->first_name . ' ' . $vp->professor->user->last_name)]) }}')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
                                             class="px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                                        Remove
+                                        {{ __('university.remove') }}
                                     </button>
                                 </form>
                             </div>

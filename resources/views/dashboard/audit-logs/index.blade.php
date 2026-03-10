@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.app')
 
-@section('title', 'Audit Log')
-@section('heading', 'Audit Log')
+@section('title', __('audit_log.title'))
+@section('heading', __('audit_log.title'))
 
 @section('content')
 
@@ -10,16 +10,16 @@
       class="bg-white rounded-2xl border border-gray-200 p-5 mb-6 flex flex-wrap gap-3 items-end">
 
     <div class="flex-1 min-w-[180px]">
-        <label class="block text-xs font-medium text-gray-500 mb-1">Search</label>
+        <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('common.search') }}</label>
         <input type="text" name="search" value="{{ request('search') }}"
-               placeholder="Description, user name or email…"
+               placeholder="{{ __('audit_log.search_placeholder') }}"
                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
     <div class="min-w-[140px]">
-        <label class="block text-xs font-medium text-gray-500 mb-1">Action</label>
+        <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('audit_log.action') }}</label>
         <select name="action" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">All actions</option>
+            <option value="">{{ __('audit_log.all_actions') }}</option>
             @foreach(['created','updated','deleted','assigned','revoked'] as $a)
                 <option value="{{ $a }}" @selected(request('action') === $a)>{{ ucfirst($a) }}</option>
             @endforeach
@@ -27,9 +27,9 @@
     </div>
 
     <div class="min-w-[160px]">
-        <label class="block text-xs font-medium text-gray-500 mb-1">Type</label>
+        <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('audit_log.type') }}</label>
         <select name="type" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">All types</option>
+            <option value="">{{ __('audit_log.all_types') }}</option>
             @foreach(['AcademicTerm','Announcement','Course','Department','Employee','Enrollment','Faculty','Grade','FacultyAdmin','DepartmentAdmin','DepartmentHead','Login','Professor','Section','Student','University','UniversityVicePresident'] as $t)
                 <option value="{{ $t }}" @selected(request('type') === $t)>{{ $t }}</option>
             @endforeach
@@ -37,13 +37,13 @@
     </div>
 
     <div class="min-w-[140px]">
-        <label class="block text-xs font-medium text-gray-500 mb-1">From</label>
+        <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('audit_log.date_from') }}</label>
         <input type="date" name="date_from" value="{{ request('date_from') }}"
                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
 
     <div class="min-w-[140px]">
-        <label class="block text-xs font-medium text-gray-500 mb-1">To</label>
+        <label class="block text-xs font-medium text-gray-500 mb-1">{{ __('audit_log.date_to') }}</label>
         <input type="date" name="date_to" value="{{ request('date_to') }}"
                class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"/>
     </div>
@@ -51,12 +51,12 @@
     <div class="flex gap-2">
         <button type="submit"
                 class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors">
-            Filter
+            {{ __('common.filter') }}
         </button>
         @if(request()->hasAny(['search','action','type','date_from','date_to']))
             <a href="{{ route('dashboard.audit-logs.index') }}"
                class="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">
-                Clear
+                {{ __('common.clear') }}
             </a>
         @endif
     </div>
@@ -64,24 +64,24 @@
 
 {{-- Results count --}}
 <p class="text-xs text-gray-400 mb-3">
-    Showing {{ $logs->firstItem() }}–{{ $logs->lastItem() }} of {{ number_format($logs->total()) }} entries
+    {{ __('audit_log.showing', ['from' => $logs->firstItem(), 'to' => $logs->lastItem(), 'total' => number_format($logs->total())]) }}
 </p>
 
 {{-- Log table --}}
 @if($logs->isEmpty())
     <div class="bg-white rounded-2xl border border-gray-200 p-12 text-center text-sm text-gray-400">
-        No audit log entries found.
+        {{ __('audit_log.no_entries') }}
     </div>
 @else
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-6">
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-gray-100 text-left">
-                    <th class="px-5 py-3 font-medium text-gray-500 w-40">When</th>
-                    <th class="px-5 py-3 font-medium text-gray-500 w-24">Action</th>
-                    <th class="px-5 py-3 font-medium text-gray-500 w-36">Type</th>
-                    <th class="px-5 py-3 font-medium text-gray-500">Description</th>
-                    <th class="px-5 py-3 font-medium text-gray-500 w-44">Performed by</th>
+                    <th class="px-5 py-3 font-medium text-gray-500 w-40">{{ __('audit_log.when') }}</th>
+                    <th class="px-5 py-3 font-medium text-gray-500 w-24">{{ __('audit_log.action') }}</th>
+                    <th class="px-5 py-3 font-medium text-gray-500 w-36">{{ __('audit_log.type') }}</th>
+                    <th class="px-5 py-3 font-medium text-gray-500">{{ __('audit_log.description') }}</th>
+                    <th class="px-5 py-3 font-medium text-gray-500 w-44">{{ __('audit_log.performed_by') }}</th>
                     <th class="px-5 py-3 font-medium text-gray-500 w-10"></th>
                 </tr>
             </thead>
@@ -114,7 +114,7 @@
                                 <p class="font-medium text-gray-900 text-xs">{{ $log->user->first_name }} {{ $log->user->last_name }}</p>
                                 <p class="text-gray-400 text-xs truncate">{{ $log->user->email }}</p>
                             @else
-                                <span class="text-gray-400 text-xs">System</span>
+                                <span class="text-gray-400 text-xs">{{ __('audit_log.system') }}</span>
                             @endif
                         </td>
                         <td class="px-5 py-3 text-end">
@@ -139,7 +139,7 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     @if($log->old_values)
                                         <div>
-                                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Before</p>
+                                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{{ __('audit_log.before') }}</p>
                                             <div class="rounded-lg bg-red-50 border border-red-100 p-3 space-y-1">
                                                 @foreach($log->old_values as $key => $val)
                                                     <div class="flex items-center gap-2 text-xs">
@@ -152,7 +152,7 @@
                                     @endif
                                     @if($log->new_values)
                                         <div>
-                                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">After</p>
+                                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{{ __('audit_log.after') }}</p>
                                             <div class="rounded-lg bg-green-50 border border-green-100 p-3 space-y-1">
                                                 @foreach($log->new_values as $key => $val)
                                                     <div class="flex items-center gap-2 text-xs">
