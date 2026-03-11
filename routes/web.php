@@ -41,6 +41,7 @@ Route::middleware('portal')->group(function () {
 
     Route::get('/home', [\App\Http\Controllers\Portal\HomeController::class, 'index'])->name('portal.home');
     Route::get('/profile', [\App\Http\Controllers\Portal\ProfileController::class, 'show'])->name('portal.profile');
+    Route::patch('/profile', [\App\Http\Controllers\Portal\ProfileController::class, 'update'])->name('portal.profile.update');
     Route::get('/schedule', [\App\Http\Controllers\Portal\ScheduleController::class, 'index'])->name('portal.schedule');
 
     // Announcements
