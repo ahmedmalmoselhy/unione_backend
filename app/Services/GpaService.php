@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Student;
+use App\Models\StudentTermGpa;
 use Illuminate\Support\Facades\DB;
 
 class GpaService
@@ -41,6 +42,65 @@ class GpaService
             'gpa'               => $gpa,
             'academic_standing' => self::deriveStanding($gpa),
         ]);
+
+        // Also refresh every per-term GPA for this student
+        self::recalculateAllTerms($studentId);
+    }
+
+    /**
+     * Recompute semester GPA for every term the student has graded courses in,
+     * and remove stale records for terms where all grades have been deleted.
+     */
+    public static function recalculateAllTerms(int $studentId): void
+    {
+        $termIds = DB::table('grades')
+            ->join('enrollments', 'grades.enrollment_id', '=', 'enrollments.id')
+            ->join('sections',    'enrollments.section_id', '=', 'sections.id')
+            ->join('courses',     'sections.course_id', '=', 'courses.id')
+            ->where('enrollments.student_id', $studentId)
+            ->whereNotNull('grades.grade_points')
+            ->where('courses.credit_hours', '>', 0)
+            ->distinct()
+            ->pluck('enrollments.academic_term_id');
+
+        foreach ($termIds as $termId) {
+            self::recalculateTerm($studentId, $termId);
+        }
+
+        // Remove records for terms that no longer have any graded courses
+        StudentTermGpa::where('student_id', $studentId)
+            ->whereNotIn('academic_term_id', $termIds)
+            ->delete();
+    }
+
+    /**
+     * Recompute the semester GPA for one specific student + term combination.
+     */
+    public static function recalculateTerm(int $studentId, int $termId): void
+    {
+        $result = DB::table('grades')
+            ->join('enrollments', 'grades.enrollment_id', '=', 'enrollments.id')
+            ->join('sections',    'enrollments.section_id', '=', 'sections.id')
+            ->join('courses',     'sections.course_id', '=', 'courses.id')
+            ->where('enrollments.student_id', $studentId)
+            ->where('enrollments.academic_term_id', $termId)
+            ->whereNotNull('grades.grade_points')
+            ->where('courses.credit_hours', '>', 0)
+            ->selectRaw('
+                SUM(grades.grade_points * courses.credit_hours) as weighted_sum,
+                SUM(courses.credit_hours) as total_credits
+            ')
+            ->first();
+
+        $gpa          = ($result && $result->total_credits > 0)
+            ? round($result->weighted_sum / $result->total_credits, 2)
+            : null;
+        $creditHours  = $result?->total_credits ?? 0;
+
+        StudentTermGpa::updateOrCreate(
+            ['student_id' => $studentId, 'academic_term_id' => $termId],
+            ['gpa' => $gpa, 'credit_hours' => $creditHours],
+        );
     }
 
     /**

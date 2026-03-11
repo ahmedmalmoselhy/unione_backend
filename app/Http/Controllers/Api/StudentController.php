@@ -117,16 +117,20 @@ class StudentController extends Controller
             ->student()
             ->firstOrFail();
 
+        // Index semester GPAs keyed by academic_term_id for O(1) lookup
+        $termGpas = $student->termGpas()->get()->keyBy('academic_term_id');
+
         $grades = $student->enrollments()
             ->with(['section.course', 'section.academicTerm', 'grade'])
             ->whereHas('grade')
             ->latest()
             ->get()
-            ->map(function ($enrollment) {
+            ->map(function ($enrollment) use ($termGpas) {
                 $section = $enrollment->section;
                 $course  = $section?->course;
                 $term    = $section?->academicTerm;
                 $grade   = $enrollment->grade;
+                $termGpa = $term ? $termGpas->get($term->id)?->gpa : null;
 
                 return [
                     'enrollment_id' => $enrollment->id,
@@ -142,6 +146,7 @@ class StudentController extends Controller
                         'name'          => $term->name,
                         'academic_year' => $term->academic_year,
                         'semester'      => $term->semester,
+                        'semester_gpa'  => $termGpa !== null ? (float) $termGpa : null,
                     ] : null,
                     'grade' => [
                         'midterm'      => $grade->midterm,

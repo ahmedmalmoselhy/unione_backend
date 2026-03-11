@@ -132,11 +132,15 @@ test('student can retrieve their grades', function () {
         'graded_at'     => now(),
     ]);
 
+    // Trigger GPA recalculation so semester_gpa is populated
+    \App\Services\GpaService::recalculate($student->id);
+
     $this->actingAs($user, 'sanctum')
          ->getJson('/api/student/grades')
          ->assertOk()
          ->assertJsonStructure(['grades'])
-         ->assertJsonCount(1, 'grades');
+         ->assertJsonCount(1, 'grades')
+         ->assertJsonPath('grades.0.academic_term.semester_gpa', 4);
 });
 
 test('student with no grades gets empty grades list', function () {

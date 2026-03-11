@@ -56,4 +56,9 @@ class Student extends Model
     {
         return $this->hasMany(StudentDepartmentHistory::class);
     }
+
+    public function termGpas(): HasMany
+    {
+        return $this->hasMany(StudentTermGpa::class);
+    }
 }

@@ -35,8 +35,18 @@
 <div class="space-y-6">
     @foreach($byTerm as $termName => $enrollments)
     <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div class="px-5 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40">
+        <div class="px-5 py-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 flex items-center justify-between">
             <h3 class="font-semibold text-gray-900 dark:text-white">{{ $termName }}</h3>
+            @php $tGpa = $termGpas->get($termName); @endphp
+            @if($tGpa && $tGpa->gpa !== null)
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                Semester GPA:
+                <span class="font-bold {{ (float)$tGpa->gpa >= 3 ? 'text-green-600 dark:text-green-400' : ((float)$tGpa->gpa >= 2 ? 'text-amber-500' : 'text-red-500') }}">
+                    {{ number_format($tGpa->gpa, 2) }}
+                </span>
+                <span class="text-gray-400">({{ $tGpa->credit_hours }} cr)</span>
+            </span>
+            @endif
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">

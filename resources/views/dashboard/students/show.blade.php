@@ -96,6 +96,24 @@
                 @endif
             </dd>
         </div>
+        @if($student->termGpas->isNotEmpty())
+        <div class="col-span-full">
+            <dt class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Semester GPA</dt>
+            <dd>
+                <div class="flex flex-wrap gap-2">
+                    @foreach($student->termGpas->sortByDesc(fn ($t) => $t->academicTerm?->academic_year) as $termGpa)
+                    @php $tgVal = $termGpa->gpa !== null ? (float) $termGpa->gpa : null; @endphp
+                    <span class="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800">
+                        <span class="text-gray-500 dark:text-gray-400">{{ $termGpa->academicTerm?->name ?? '—' }}:</span>
+                        <span class="font-semibold {{ $tgVal !== null && $tgVal >= 3 ? 'text-green-600 dark:text-green-400' : ($tgVal !== null && $tgVal >= 2 ? 'text-amber-500' : 'text-red-500') }}">
+                            {{ $tgVal !== null ? number_format($tgVal, 2) : '—' }}
+                        </span>
+                    </span>
+                    @endforeach
+                </div>
+            </dd>
+        </div>
+        @endif
         <div>
             <dt class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{{ __('students.enrolled_at') }}</dt>
             <dd class="text-gray-700 dark:text-gray-300">{{ $student->enrolled_at?->format('M d, Y') }}</dd>

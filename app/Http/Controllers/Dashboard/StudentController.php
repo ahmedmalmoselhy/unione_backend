@@ -58,6 +58,7 @@ class StudentController extends Controller
             'user',
             'faculty',
             'department',
+            'termGpas.academicTerm',
             'enrollments.section.course',
             'enrollments.section.academicTerm',
             'departmentHistory.fromDepartment',

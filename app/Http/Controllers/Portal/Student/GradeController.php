@@ -26,10 +26,16 @@ class GradeController extends Controller
         // Group by academic term
         $byTerm = $enrollments->groupBy(fn ($e) => $e->section?->academicTerm?->name ?? 'Unknown');
 
+        // Index semester GPAs keyed by term name for view lookup
+        $termGpas = $student->termGpas()
+            ->with('academicTerm')
+            ->get()
+            ->keyBy(fn ($tg) => $tg->academicTerm?->name ?? '');
+
         // Calculate cumulative GPA from graded enrollments
         $gpa              = $student->gpa;
         $academicStanding = $student->academic_standing;
 
-        return view('portal.student.grades', compact('byTerm', 'gpa', 'academicStanding'));
+        return view('portal.student.grades', compact('byTerm', 'gpa', 'academicStanding', 'termGpas'));
     }
 }

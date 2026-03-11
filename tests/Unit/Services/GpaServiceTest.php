@@ -152,3 +152,120 @@ test('recalculate sets dismissal standing when GPA is below 1.0', function () {
     $student->refresh();
     expect($student->academic_standing)->toBe('dismissal');
 });
+
+// ── GpaService::recalculateTerm ────────────────────────────────────────────────
+
+test('recalculateTerm stores semester GPA for the specified term', function () {
+    ['faculty' => $fac, 'department' => $dept] = makeFacultyDeptFixture();
+    ['student' => $student] = makeStudent($fac, $dept);
+    $user = $student->user;
+
+    $term    = makeOpenTerm();
+    $section = makeSection($term);
+    $section->course()->update(['credit_hours' => 3]);
+
+    $enrollment = Enrollment::create([
+        'student_id'       => $student->id,
+        'section_id'       => $section->id,
+        'academic_term_id' => $term->id,
+        'status'           => 'completed',
+        'registered_at'    => now(),
+    ]);
+    Grade::create([
+        'enrollment_id' => $enrollment->id,
+        'grade_points'  => 3.5,
+        'graded_by'     => $user->id,
+        'graded_at'     => now(),
+    ]);
+
+    GpaService::recalculateTerm($student->id, $term->id);
+
+    $this->assertDatabaseHas('student_term_gpas', [
+        'student_id'       => $student->id,
+        'academic_term_id' => $term->id,
+        'credit_hours'     => 3,
+    ]);
+    $termGpa = \App\Models\StudentTermGpa::where('student_id', $student->id)
+        ->where('academic_term_id', $term->id)
+        ->first();
+    expect((float) $termGpa->gpa)->toBe(3.5);
+});
+
+test('recalculate also stores a semester GPA record for each graded term', function () {
+    ['faculty' => $fac, 'department' => $dept] = makeFacultyDeptFixture();
+    ['student' => $student] = makeStudent($fac, $dept);
+    $user = $student->user;
+
+    $termA = makeOpenTerm();
+    $termB = makeClosedTerm();
+
+    $sectionA = makeSection($termA);
+    $sectionA->course()->update(['credit_hours' => 3]);
+
+    $sectionB = makeSection($termB);
+    $sectionB->course()->update(['credit_hours' => 2]);
+
+    foreach ([[$sectionA, $termA, 4.0], [$sectionB, $termB, 2.0]] as [$sec, $term, $pts]) {
+        $enrollment = Enrollment::create([
+            'student_id'       => $student->id,
+            'section_id'       => $sec->id,
+            'academic_term_id' => $term->id,
+            'status'           => 'completed',
+            'registered_at'    => now(),
+        ]);
+        Grade::create([
+            'enrollment_id' => $enrollment->id,
+            'grade_points'  => $pts,
+            'graded_by'     => $user->id,
+            'graded_at'     => now(),
+        ]);
+    }
+
+    GpaService::recalculate($student->id);
+
+    $this->assertDatabaseHas('student_term_gpas', ['student_id' => $student->id, 'academic_term_id' => $termA->id]);
+    $this->assertDatabaseHas('student_term_gpas', ['student_id' => $student->id, 'academic_term_id' => $termB->id]);
+
+    $tgA = \App\Models\StudentTermGpa::where('student_id', $student->id)->where('academic_term_id', $termA->id)->first();
+    $tgB = \App\Models\StudentTermGpa::where('student_id', $student->id)->where('academic_term_id', $termB->id)->first();
+
+    expect((float) $tgA->gpa)->toBe(4.0);
+    expect((float) $tgB->gpa)->toBe(2.0);
+
+    // Cumulative: (4.0*3 + 2.0*2) / (3+2) = 16/5 = 3.20
+    $student->refresh();
+    expect((float) $student->gpa)->toBe(3.2);
+});
+
+test('recalculate removes stale term GPA records when grade is deleted', function () {
+    ['faculty' => $fac, 'department' => $dept] = makeFacultyDeptFixture();
+    ['student' => $student] = makeStudent($fac, $dept);
+    $user = $student->user;
+
+    $term    = makeOpenTerm();
+    $section = makeSection($term);
+    $section->course()->update(['credit_hours' => 3]);
+
+    $enrollment = Enrollment::create([
+        'student_id'       => $student->id,
+        'section_id'       => $section->id,
+        'academic_term_id' => $term->id,
+        'status'           => 'completed',
+        'registered_at'    => now(),
+    ]);
+    $grade = Grade::create([
+        'enrollment_id' => $enrollment->id,
+        'grade_points'  => 3.0,
+        'graded_by'     => $user->id,
+        'graded_at'     => now(),
+    ]);
+
+    GpaService::recalculate($student->id);
+    $this->assertDatabaseHas('student_term_gpas', ['student_id' => $student->id, 'academic_term_id' => $term->id]);
+
+    // Delete the grade and recalculate
+    $grade->delete();
+    GpaService::recalculate($student->id);
+
+    $this->assertDatabaseMissing('student_term_gpas', ['student_id' => $student->id, 'academic_term_id' => $term->id]);
+});
