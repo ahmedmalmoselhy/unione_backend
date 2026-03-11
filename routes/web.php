@@ -19,6 +19,7 @@ use App\Http\Controllers\Dashboard\NotificationController;
 use App\Http\Controllers\Dashboard\ProfessorController;
 use App\Http\Controllers\Dashboard\SectionController;
 use App\Http\Controllers\Dashboard\ScheduleController;
+use App\Http\Controllers\Dashboard\RatingController;
 use App\Http\Controllers\Dashboard\StudentController;
 use App\Http\Controllers\Dashboard\UniversityController;
 use App\Http\Controllers\Dashboard\UniversityVicePresidentController;
@@ -65,6 +66,24 @@ Route::middleware('portal')->group(function () {
     Route::get('/sections', [\App\Http\Controllers\Portal\Professor\SectionController::class, 'index'])->name('portal.sections.index');
     Route::get('/sections/{section}', [\App\Http\Controllers\Portal\Professor\SectionController::class, 'show'])->name('portal.sections.show');
     Route::post('/sections/{section}/grades', [\App\Http\Controllers\Portal\Professor\SectionController::class, 'postGrade'])->name('portal.sections.grade');
+
+    // Professor: attendance
+    Route::get('/sections/{section}/attendance', [\App\Http\Controllers\Portal\Professor\AttendanceController::class, 'index'])->name('portal.attendance.index');
+    Route::post('/sections/{section}/attendance', [\App\Http\Controllers\Portal\Professor\AttendanceController::class, 'store'])->name('portal.attendance.store');
+    Route::get('/sections/{section}/attendance/{session}', [\App\Http\Controllers\Portal\Professor\AttendanceController::class, 'show'])->name('portal.attendance.show');
+    Route::put('/sections/{section}/attendance/{session}', [\App\Http\Controllers\Portal\Professor\AttendanceController::class, 'update'])->name('portal.attendance.update');
+
+    // Professor: section announcements
+    Route::get('/sections/{section}/announcements', [\App\Http\Controllers\Portal\Professor\SectionAnnouncementController::class, 'index'])->name('portal.section-announcements.index');
+    Route::post('/sections/{section}/announcements', [\App\Http\Controllers\Portal\Professor\SectionAnnouncementController::class, 'store'])->name('portal.section-announcements.store');
+    Route::delete('/sections/{section}/announcements/{announcement}', [\App\Http\Controllers\Portal\Professor\SectionAnnouncementController::class, 'destroy'])->name('portal.section-announcements.destroy');
+
+    // Student: attendance
+    Route::get('/attendance', [\App\Http\Controllers\Portal\Student\AttendanceController::class, 'index'])->name('portal.student.attendance');
+
+    // Student: ratings
+    Route::get('/ratings', [\App\Http\Controllers\Portal\Student\RatingController::class, 'index'])->name('portal.ratings.index');
+    Route::post('/ratings', [\App\Http\Controllers\Portal\Student\RatingController::class, 'store'])->name('portal.ratings.store');
 });
 
 /*
@@ -158,6 +177,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::resource('grades', GradeController::class);
 
             Route::resource('announcements', AnnouncementController::class);
+
+            Route::get('/ratings', [RatingController::class, 'index'])->name('ratings.index');
 
             // Assign department admin (system admin + faculty admin of that faculty)
             Route::get('/departments/{department}/assign-admin', [AdminAssignmentController::class, 'editDepartmentAdmin'])->name('departments.assign-admin');

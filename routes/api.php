@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\AnnouncementController;
+use App\Http\Controllers\Api\AttendanceController;
+use App\Http\Controllers\Api\CourseRatingController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfessorController;
 use App\Http\Controllers\Api\ProfessorGradeController;
+use App\Http\Controllers\Api\SectionAnnouncementController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\StudentEnrollmentController;
 use App\Http\Controllers\Auth\AuthController;
@@ -45,6 +48,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::delete('/enrollments/{enrollment}', [StudentEnrollmentController::class, 'destroy']);
         Route::get('/grades',      [StudentController::class, 'grades']);
         Route::get('/schedule',    [StudentController::class, 'schedule']);
+        Route::get('/attendance',  [AttendanceController::class, 'studentAttendance']);
+        Route::get('/sections/{section}/announcements', [SectionAnnouncementController::class, 'studentIndex']);
+        Route::get('/ratings',     [CourseRatingController::class, 'index']);
+        Route::post('/ratings',    [CourseRatingController::class, 'store']);
     });
 
     // ── Professor portal ─────────────────────────────────────────────────
@@ -55,6 +62,13 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('/sections/{section}/students', [ProfessorController::class, 'sectionStudents']);
         Route::get('/sections/{section}/grades',   [ProfessorGradeController::class, 'index']);
         Route::post('/sections/{section}/grades',  [ProfessorGradeController::class, 'store']);
+        Route::get('/sections/{section}/attendance',              [AttendanceController::class, 'index']);
+        Route::post('/sections/{section}/attendance',             [AttendanceController::class, 'store']);
+        Route::get('/sections/{section}/attendance/{session}',    [AttendanceController::class, 'show']);
+        Route::put('/sections/{section}/attendance/{session}',    [AttendanceController::class, 'update']);
+        Route::get('/sections/{section}/announcements',           [SectionAnnouncementController::class, 'index']);
+        Route::post('/sections/{section}/announcements',          [SectionAnnouncementController::class, 'store']);
+        Route::delete('/sections/{section}/announcements/{announcement}', [SectionAnnouncementController::class, 'destroy']);
     });
 
     // ── Announcements (any authenticated user) ───────────────────────────

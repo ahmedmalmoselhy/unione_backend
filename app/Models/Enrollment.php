@@ -44,4 +44,9 @@ class Enrollment extends Model
     {
         return $this->hasOne(Grade::class);
     }
+
+    public function rating(): HasOne
+    {
+        return $this->hasOne(CourseRating::class);
+    }
 }

@@ -45,4 +45,14 @@ class Section extends Model
     {
         return $this->hasMany(Enrollment::class);
     }
+
+    public function attendanceSessions(): HasMany
+    {
+        return $this->hasMany(AttendanceSession::class);
+    }
+
+    public function sectionAnnouncements(): HasMany
+    {
+        return $this->hasMany(SectionAnnouncement::class);
+    }
 }
