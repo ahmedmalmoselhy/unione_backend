@@ -212,3 +212,37 @@ test('enrollment not belonging to section is rejected', function () {
 test('unauthenticated user cannot submit grades', function () {
     $this->postJson('/api/professor/sections/1/grades', [])->assertUnauthorized();
 });
+
+test('posting a grade via API recalculates student GPA and academic standing', function () {
+    ['department' => $dept] = makeFacultyDeptFixture();
+    ['user' => $profUser, 'professor' => $professor] = makeProfessor($dept);
+
+    ['faculty' => $fac, 'department' => $sd] = makeFacultyDeptFixture();
+    ['student' => $student] = makeStudent($fac, $sd);
+
+    $term       = AcademicTerm::create([
+        'name'                   => 'GPA Integration Term',
+        'name_ar'                => 'فصل تكامل',
+        'academic_year'          => 2027,
+        'semester'               => 'first',
+        'starts_at'              => today()->subMonth()->toDateString(),
+        'ends_at'                => today()->addMonths(3)->toDateString(),
+        'registration_starts_at' => today()->subMonths(2)->toDateString(),
+        'registration_ends_at'   => today()->subMonth()->toDateString(),
+    ]);
+    $section    = makeProfessorSection($professor, $term);
+    $enrollment = makeEnrollment($student, $section, $term);
+
+    $this->actingAs($profUser, 'sanctum')
+         ->postJson("/api/professor/sections/{$section->id}/grades", [
+             'enrollment_id' => $enrollment->id,
+             'total'         => 95,
+             'letter_grade'  => 'A',
+             'grade_points'  => 4.00,
+         ])
+         ->assertCreated();
+
+    $student->refresh();
+    expect((float) $student->gpa)->toBe(4.0);
+    expect($student->academic_standing)->toBe('good_standing');
+});

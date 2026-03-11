@@ -14,8 +14,8 @@ use App\Models\AuditLog;
 use App\Models\Enrollment;
 use App\Models\Grade;
 use App\Models\Student;
+use App\Services\GpaService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class GradeController extends Controller
 {
@@ -209,21 +209,7 @@ class GradeController extends Controller
 
     private function recalculateGpa(int $studentId): void
     {
-        $result = DB::table('grades')
-            ->join('enrollments', 'grades.enrollment_id', '=', 'enrollments.id')
-            ->join('sections', 'enrollments.section_id', '=', 'sections.id')
-            ->join('courses', 'sections.course_id', '=', 'courses.id')
-            ->where('enrollments.student_id', $studentId)
-            ->whereNotNull('grades.grade_points')
-            ->where('courses.credit_hours', '>', 0)
-            ->selectRaw('SUM(grades.grade_points * courses.credit_hours) as weighted_sum, SUM(courses.credit_hours) as total_credits')
-            ->first();
-
-        $gpa = ($result && $result->total_credits > 0)
-            ? round($result->weighted_sum / $result->total_credits, 2)
-            : null;
-
-        Student::where('id', $studentId)->update(['gpa' => $gpa]);
+        GpaService::recalculate($studentId);
     }
 
     private function formData(): array

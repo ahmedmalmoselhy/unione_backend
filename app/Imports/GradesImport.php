@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Enrollment;
 use App\Models\Grade;
+use App\Services\GpaService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -86,7 +87,9 @@ class GradesImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
         }
 
         DB::transaction(function () use ($validRows) {
+            $affectedStudentIds = [];
             foreach ($validRows as $row) {
+                $enrollment = Enrollment::find($row['enrollment_id']);
                 Grade::updateOrCreate(
                     ['enrollment_id' => $row['enrollment_id']],
                     array_merge($row, [
@@ -94,7 +97,13 @@ class GradesImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
                         'graded_at' => now(),
                     ]),
                 );
+                if ($enrollment?->student_id) {
+                    $affectedStudentIds[] = $enrollment->student_id;
+                }
                 $this->importedCount++;
+            }
+            foreach (array_unique($affectedStudentIds) as $studentId) {
+                GpaService::recalculate($studentId);
             }
         });
     }

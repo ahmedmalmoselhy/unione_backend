@@ -17,6 +17,7 @@ class Student extends Model
         'semester',
         'enrollment_status',
         'gpa',
+        'academic_standing',
         'enrolled_at',
         'graduated_at',
     ];
@@ -24,9 +25,10 @@ class Student extends Model
     protected function casts(): array
     {
         return [
-            'gpa' => 'decimal:2',
-            'enrolled_at' => 'date',
-            'graduated_at' => 'date',
+            'gpa'               => 'decimal:2',
+            'academic_standing' => 'string',
+            'enrolled_at'       => 'date',
+            'graduated_at'      => 'date',
         ];
     }
 

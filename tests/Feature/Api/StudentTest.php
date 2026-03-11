@@ -17,7 +17,8 @@ test('student can retrieve own profile', function () {
     $response->assertOk()
              ->assertJsonPath('student.student_number', $student->student_number)
              ->assertJsonPath('student.faculty.id', $faculty->id)
-             ->assertJsonPath('student.department.id', $dept->id);
+             ->assertJsonPath('student.department.id', $dept->id)
+             ->assertJsonStructure(['student' => ['academic_standing']]);
 });
 
 test('user without a student record gets 404 on profile', function () {

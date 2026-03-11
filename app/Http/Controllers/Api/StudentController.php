@@ -28,6 +28,7 @@ class StudentController extends Controller
                 'semester'          => $student->semester,
                 'enrollment_status' => $student->enrollment_status,
                 'gpa'               => $student->gpa,
+                'academic_standing' => $student->academic_standing,
                 'enrolled_at'       => $student->enrolled_at?->toDateString(),
                 'graduated_at'      => $student->graduated_at?->toDateString(),
                 'faculty'           => $student->faculty ? [

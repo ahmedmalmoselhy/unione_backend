@@ -79,7 +79,22 @@
         </div>
         <div>
             <dt class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{{ __('students.gpa') }}</dt>
-            <dd class="text-gray-700 dark:text-gray-300">{{ $student->gpa ?? '—' }}</dd>
+            <dd class="text-gray-700 dark:text-gray-300">
+                {{ $student->gpa !== null ? number_format($student->gpa, 2) : '—' }}
+                @if($student->academic_standing)
+                @php
+                    $standingConfig = match($student->academic_standing) {
+                        'good_standing' => ['label' => 'Good Standing', 'class' => 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'],
+                        'probation'     => ['label' => 'Probation',     'class' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'],
+                        'dismissal'     => ['label' => 'Dismissal',     'class' => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'],
+                        default         => ['label' => ucfirst(str_replace('_', ' ', $student->academic_standing)), 'class' => 'bg-gray-100 text-gray-700'],
+                    };
+                @endphp
+                <span class="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full {{ $standingConfig['class'] }}">
+                    {{ $standingConfig['label'] }}
+                </span>
+                @endif
+            </dd>
         </div>
         <div>
             <dt class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{{ __('students.enrolled_at') }}</dt>

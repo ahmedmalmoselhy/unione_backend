@@ -7,6 +7,7 @@ use App\Models\Enrollment;
 use App\Models\Grade;
 use App\Models\Section;
 use App\Notifications\GradePosted;
+use App\Services\GpaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -108,6 +109,11 @@ class ProfessorGradeController extends Controller
                 letterGrade: $grade->letter_grade,
                 total:       $grade->total,
             ));
+        }
+
+        // Recalculate cumulative GPA and academic standing
+        if ($enrollment->student_id) {
+            GpaService::recalculate($enrollment->student_id);
         }
 
         return response()->json(['grade' => $grade], $isNew ? 201 : 200);

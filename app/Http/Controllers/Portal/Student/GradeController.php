@@ -27,8 +27,9 @@ class GradeController extends Controller
         $byTerm = $enrollments->groupBy(fn ($e) => $e->section?->academicTerm?->name ?? 'Unknown');
 
         // Calculate cumulative GPA from graded enrollments
-        $gpa = $student->gpa;
+        $gpa              = $student->gpa;
+        $academicStanding = $student->academic_standing;
 
-        return view('portal.student.grades', compact('byTerm', 'gpa'));
+        return view('portal.student.grades', compact('byTerm', 'gpa', 'academicStanding'));
     }
 }

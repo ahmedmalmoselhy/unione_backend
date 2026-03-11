@@ -6,11 +6,24 @@
 @section('content')
 
 @if($gpa !== null)
-<div class="mb-6 inline-flex items-center gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-3">
+<div class="mb-6 inline-flex items-center gap-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-5 py-3">
     <span class="text-sm text-gray-500 dark:text-gray-400">Cumulative GPA</span>
     <span class="text-2xl font-bold {{ $gpa >= 3 ? 'text-green-600 dark:text-green-400' : ($gpa >= 2 ? 'text-amber-500' : 'text-red-500') }}">
         {{ number_format($gpa, 2) }} / 4.00
     </span>
+    @if($academicStanding)
+    @php
+        $standingConfig = match($academicStanding) {
+            'good_standing' => ['label' => 'Good Standing', 'class' => 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'],
+            'probation'     => ['label' => 'Academic Probation', 'class' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'],
+            'dismissal'     => ['label' => 'Academic Dismissal', 'class' => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'],
+            default         => ['label' => ucfirst(str_replace('_', ' ', $academicStanding)), 'class' => 'bg-gray-100 text-gray-700'],
+        };
+    @endphp
+    <span class="text-xs font-semibold px-2.5 py-1 rounded-full {{ $standingConfig['class'] }}">
+        {{ $standingConfig['label'] }}
+    </span>
+    @endif
 </div>
 @endif
 

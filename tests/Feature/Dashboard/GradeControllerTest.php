@@ -96,7 +96,9 @@ test('storing a grade recalculates student GPA', function () {
          ]);
 
     // GPA = (4.00 * 3 credit_hours) / 3 = 4.00
-    expect((float) Student::find($student->id)->gpa)->toBe(4.0);
+    $fresh = Student::find($student->id);
+    expect((float) $fresh->gpa)->toBe(4.0);
+    expect($fresh->academic_standing)->toBe('good_standing');
 });
 
 test('employee cannot store grades', function () {
@@ -161,7 +163,9 @@ test('updating a grade recalculates student GPA', function () {
              'grade_points'  => 4.00,
          ]);
 
-    expect((float) Student::find($student->id)->gpa)->toBe(4.0);
+    $fresh = Student::find($student->id);
+    expect((float) $fresh->gpa)->toBe(4.0);
+    expect($fresh->academic_standing)->toBe('good_standing');
 });
 
 // ── destroy ──────────────────────────────────────────────────────────────────
@@ -202,5 +206,7 @@ test('deleting a grade sets student GPA to null when no grades remain', function
     $this->actingAs($admin)
          ->delete(route('dashboard.grades.destroy', $grade));
 
-    expect(Student::find($student->id)->gpa)->toBeNull();
+    $fresh = Student::find($student->id);
+    expect($fresh->gpa)->toBeNull();
+    expect($fresh->academic_standing)->toBeNull();
 });
