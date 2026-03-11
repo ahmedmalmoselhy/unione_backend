@@ -34,6 +34,8 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     // Auth utilities
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
+    Route::patch('/auth/profile', [AuthController::class, 'updateProfile']);
 
     // ── Student portal ───────────────────────────────────────────────────
     Route::middleware('api.role:student')->prefix('student')->group(function () {
@@ -41,13 +43,18 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('/enrollments', [StudentController::class, 'enrollments']);
         Route::post('/enrollments', [StudentEnrollmentController::class, 'store']);
         Route::delete('/enrollments/{enrollment}', [StudentEnrollmentController::class, 'destroy']);
+        Route::get('/grades',      [StudentController::class, 'grades']);
+        Route::get('/schedule',    [StudentController::class, 'schedule']);
     });
 
     // ── Professor portal ─────────────────────────────────────────────────
     Route::middleware('api.role:professor')->prefix('professor')->group(function () {
         Route::get('/profile',  [ProfessorController::class, 'profile']);
         Route::get('/sections', [ProfessorController::class, 'sections']);
-        Route::post('/sections/{section}/grades', [ProfessorGradeController::class, 'store']);
+        Route::get('/schedule', [ProfessorController::class, 'schedule']);
+        Route::get('/sections/{section}/students', [ProfessorController::class, 'sectionStudents']);
+        Route::get('/sections/{section}/grades',   [ProfessorGradeController::class, 'index']);
+        Route::post('/sections/{section}/grades',  [ProfessorGradeController::class, 'store']);
     });
 
     // ── Announcements (any authenticated user) ───────────────────────────

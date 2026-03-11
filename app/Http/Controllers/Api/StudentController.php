@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicTerm;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -103,5 +104,128 @@ class StudentController extends Controller
             });
 
         return response()->json(['enrollments' => $enrollments]);
+    }
+
+    /**
+     * GET /api/student/grades
+     * Returns all graded enrollments for the authenticated student.
+     */
+    public function grades(Request $request): JsonResponse
+    {
+        $student = $request->user()
+            ->student()
+            ->firstOrFail();
+
+        $grades = $student->enrollments()
+            ->with(['section.course', 'section.academicTerm', 'grade'])
+            ->whereHas('grade')
+            ->latest()
+            ->get()
+            ->map(function ($enrollment) {
+                $section = $enrollment->section;
+                $course  = $section?->course;
+                $term    = $section?->academicTerm;
+                $grade   = $enrollment->grade;
+
+                return [
+                    'enrollment_id' => $enrollment->id,
+                    'status'        => $enrollment->status,
+                    'course' => $course ? [
+                        'id'           => $course->id,
+                        'code'         => $course->code,
+                        'name'         => $course->name,
+                        'credit_hours' => $course->credit_hours,
+                    ] : null,
+                    'academic_term' => $term ? [
+                        'id'            => $term->id,
+                        'name'          => $term->name,
+                        'academic_year' => $term->academic_year,
+                        'semester'      => $term->semester,
+                    ] : null,
+                    'grade' => [
+                        'midterm'      => $grade->midterm,
+                        'final'        => $grade->final,
+                        'coursework'   => $grade->coursework,
+                        'total'        => $grade->total,
+                        'letter_grade' => $grade->letter_grade,
+                        'grade_points' => $grade->grade_points,
+                        'graded_at'    => $grade->graded_at?->toDateTimeString(),
+                    ],
+                ];
+            });
+
+        return response()->json(['grades' => $grades]);
+    }
+
+    /**
+     * GET /api/student/schedule
+     * Returns the authenticated student's schedule for the active academic term.
+     */
+    public function schedule(Request $request): JsonResponse
+    {
+        $student = $request->user()
+            ->student()
+            ->firstOrFail();
+
+        $currentTerm = AcademicTerm::where('is_active', true)->latest('academic_year')->first();
+
+        $enrollments = $student->enrollments()
+            ->with(['section.course', 'section.professor.user', 'section.academicTerm'])
+            ->when($currentTerm, fn ($q) => $q->where('academic_term_id', $currentTerm->id))
+            ->whereIn('status', ['registered', 'completed'])
+            ->get();
+
+        if ($enrollments->isEmpty() && $currentTerm) {
+            $enrollments = $student->enrollments()
+                ->with(['section.course', 'section.professor.user', 'section.academicTerm'])
+                ->whereIn('status', ['registered', 'completed'])
+                ->get();
+        }
+
+        $scheduleEntries = $enrollments->flatMap(function ($enrollment) {
+            $section  = $enrollment->section;
+            $schedule = $section?->schedule ?? [];
+
+            $courseData = [
+                'id'   => $section?->course?->id,
+                'code' => $section?->course?->code ?? '',
+                'name' => $section?->course?->name ?? '',
+            ];
+            $professorName = $section?->professor?->user
+                ? $section->professor->user->first_name . ' ' . $section->professor->user->last_name
+                : null;
+
+            if (empty($schedule)) {
+                return collect([[
+                    'day'        => 'Unscheduled',
+                    'start_time' => null,
+                    'end_time'   => null,
+                    'room'       => $section?->room,
+                    'type'       => 'lecture',
+                    'course'     => $courseData,
+                    'professor'  => $professorName,
+                ]]);
+            }
+
+            return collect($schedule)->map(fn ($slot) => [
+                'day'        => ucfirst(strtolower($slot['day'] ?? '')),
+                'start_time' => $slot['start_time'] ?? null,
+                'end_time'   => $slot['end_time'] ?? null,
+                'room'       => $section?->room,
+                'type'       => $slot['type'] ?? 'lecture',
+                'course'     => $courseData,
+                'professor'  => $professorName,
+            ]);
+        })->values();
+
+        return response()->json([
+            'academic_term'   => $currentTerm ? [
+                'id'            => $currentTerm->id,
+                'name'          => $currentTerm->name,
+                'academic_year' => $currentTerm->academic_year,
+                'semester'      => $currentTerm->semester,
+            ] : null,
+            'schedule' => $scheduleEntries,
+        ]);
     }
 }

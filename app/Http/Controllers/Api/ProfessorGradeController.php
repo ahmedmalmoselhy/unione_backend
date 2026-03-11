@@ -13,6 +13,51 @@ use Illuminate\Http\Request;
 class ProfessorGradeController extends Controller
 {
     /**
+     * GET /api/professor/sections/{section}/grades
+     * Returns all grades posted in the professor's section.
+     */
+    public function index(Request $request, Section $section): JsonResponse
+    {
+        $professor = $request->user()->professor;
+
+        if (! $professor) {
+            return response()->json(['message' => 'Professor record not found.'], 404);
+        }
+
+        if ((int) $section->professor_id !== $professor->id) {
+            return response()->json(['message' => 'Forbidden.'], 403);
+        }
+
+        $grades = $section->enrollments()
+            ->with(['student.user', 'grade'])
+            ->whereHas('grade')
+            ->get()
+            ->map(function ($enrollment) {
+                $student = $enrollment->student;
+                $user    = $student?->user;
+                $grade   = $enrollment->grade;
+
+                return [
+                    'enrollment_id'  => $enrollment->id,
+                    'student' => $student ? [
+                        'id'             => $student->id,
+                        'student_number' => $student->student_number,
+                        'name'           => $user ? $user->first_name . ' ' . $user->last_name : null,
+                    ] : null,
+                    'midterm'      => $grade->midterm,
+                    'final'        => $grade->final,
+                    'coursework'   => $grade->coursework,
+                    'total'        => $grade->total,
+                    'letter_grade' => $grade->letter_grade,
+                    'grade_points' => $grade->grade_points,
+                    'graded_at'    => $grade->graded_at?->toDateTimeString(),
+                ];
+            });
+
+        return response()->json(['grades' => $grades]);
+    }
+
+    /**
      * Submit or update a grade for an enrollment in the professor's section.
      * POST /api/professor/sections/{section}/grades
      */
