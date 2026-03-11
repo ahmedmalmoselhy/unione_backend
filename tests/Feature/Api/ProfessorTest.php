@@ -82,3 +82,108 @@ test('professor with no sections gets an empty list', function () {
          ->assertOk()
          ->assertJsonCount(0, 'sections');
 });
+
+// ── GET /api/professor/schedule ──────────────────────────────────────────────
+
+test('professor can retrieve their schedule', function () {
+    $term    = makeOpenTerm();
+    $section = makeSection($term);
+    $profUser = $section->professor->user;
+
+    $this->actingAs($profUser, 'sanctum')
+         ->getJson('/api/professor/schedule')
+         ->assertOk()
+         ->assertJsonStructure(['schedule']);
+});
+
+test('professor with no active-term sections gets empty schedule', function () {
+    ['department' => $dept] = makeFacultyDeptFixture();
+    ['user' => $user] = makeProfessor($dept);
+
+    $this->actingAs($user, 'sanctum')
+         ->getJson('/api/professor/schedule')
+         ->assertOk()
+         ->assertJsonStructure(['schedule']);
+});
+
+// ── GET /api/professor/sections/{section}/students ───────────────────────────
+
+test('professor can list students in their section', function () {
+    ['faculty' => $fac, 'department' => $dept] = makeFacultyDeptFixture();
+    ['student' => $student] = makeStudent($fac, $dept);
+
+    $term    = makeOpenTerm();
+    $section = makeSection($term);
+    $profUser = $section->professor->user;
+
+    \App\Models\Enrollment::create([
+        'student_id'       => $student->id,
+        'section_id'       => $section->id,
+        'academic_term_id' => $term->id,
+        'status'           => 'registered',
+        'registered_at'    => now(),
+    ]);
+
+    $this->actingAs($profUser, 'sanctum')
+         ->getJson("/api/professor/sections/{$section->id}/students")
+         ->assertOk()
+         ->assertJsonStructure(['students'])
+         ->assertJsonCount(1, 'students');
+});
+
+test('professor cannot list students in another professor\'s section', function () {
+    $term     = makeOpenTerm();
+    $section  = makeSection($term);
+    $section2 = makeSection($term);
+    $otherUser = $section2->professor->user;
+
+    $this->actingAs($otherUser, 'sanctum')
+         ->getJson("/api/professor/sections/{$section->id}/students")
+         ->assertForbidden();
+});
+
+// ── GET /api/professor/sections/{section}/grades ─────────────────────────────
+
+test('professor can list grades in their section', function () {
+    ['faculty' => $fac, 'department' => $dept] = makeFacultyDeptFixture();
+    ['student' => $student] = makeStudent($fac, $dept);
+
+    $term    = makeOpenTerm();
+    $section = makeSection($term);
+    $profUser = $section->professor->user;
+
+    $enrollment = \App\Models\Enrollment::create([
+        'student_id'       => $student->id,
+        'section_id'       => $section->id,
+        'academic_term_id' => $term->id,
+        'status'           => 'registered',
+        'registered_at'    => now(),
+    ]);
+    \App\Models\Grade::create([
+        'enrollment_id' => $enrollment->id,
+        'midterm'       => 40,
+        'final'         => 50,
+        'total'         => 90,
+        'letter_grade'  => 'A',
+        'grade_points'  => 4.0,
+        'graded_by'     => $profUser->id,
+        'graded_at'     => now(),
+    ]);
+
+    $this->actingAs($profUser, 'sanctum')
+         ->getJson("/api/professor/sections/{$section->id}/grades")
+         ->assertOk()
+         ->assertJsonStructure(['grades'])
+         ->assertJsonCount(1, 'grades');
+});
+
+test('professor cannot list grades in another professor\'s section', function () {
+    $term     = makeOpenTerm();
+    $section  = makeSection($term);
+    $section2 = makeSection($term);
+    $otherUser = $section2->professor->user;
+
+    $this->actingAs($otherUser, 'sanctum')
+         ->getJson("/api/professor/sections/{$section->id}/grades")
+         ->assertForbidden();
+});

@@ -104,3 +104,78 @@ test('student with no enrollments gets an empty list', function () {
          ->assertOk()
          ->assertJsonCount(0, 'enrollments');
 });
+
+// ── GET /api/student/grades ─────────────────────────────────────────────────
+
+test('student can retrieve their grades', function () {
+    ['faculty' => $faculty, 'department' => $dept] = makeFacultyDeptFixture();
+    ['user' => $user, 'student' => $student] = makeStudent($faculty, $dept);
+
+    $term    = makeOpenTerm();
+    $section = makeSection($term);
+    $enrollment = Enrollment::create([
+        'student_id'       => $student->id,
+        'section_id'       => $section->id,
+        'academic_term_id' => $term->id,
+        'status'           => 'completed',
+        'registered_at'    => now()->subMonth(),
+    ]);
+    Grade::create([
+        'enrollment_id' => $enrollment->id,
+        'midterm'       => 40,
+        'final'         => 50,
+        'total'         => 90,
+        'letter_grade'  => 'A',
+        'grade_points'  => 4.0,
+        'graded_by'     => $user->id,
+        'graded_at'     => now(),
+    ]);
+
+    $this->actingAs($user, 'sanctum')
+         ->getJson('/api/student/grades')
+         ->assertOk()
+         ->assertJsonStructure(['grades'])
+         ->assertJsonCount(1, 'grades');
+});
+
+test('student with no grades gets empty grades list', function () {
+    ['faculty' => $faculty, 'department' => $dept] = makeFacultyDeptFixture();
+    ['user' => $user] = makeStudent($faculty, $dept);
+
+    $this->actingAs($user, 'sanctum')
+         ->getJson('/api/student/grades')
+         ->assertOk()
+         ->assertJsonCount(0, 'grades');
+});
+
+// ── GET /api/student/schedule ────────────────────────────────────────────────
+
+test('student can retrieve their schedule', function () {
+    ['faculty' => $faculty, 'department' => $dept] = makeFacultyDeptFixture();
+    ['user' => $user, 'student' => $student] = makeStudent($faculty, $dept);
+
+    $term    = makeOpenTerm();
+    $section = makeSection($term);
+    Enrollment::create([
+        'student_id'       => $student->id,
+        'section_id'       => $section->id,
+        'academic_term_id' => $term->id,
+        'status'           => 'registered',
+        'registered_at'    => now(),
+    ]);
+
+    $this->actingAs($user, 'sanctum')
+         ->getJson('/api/student/schedule')
+         ->assertOk()
+         ->assertJsonStructure(['schedule']);
+});
+
+test('student with no active-term enrollment gets empty schedule', function () {
+    ['faculty' => $faculty, 'department' => $dept] = makeFacultyDeptFixture();
+    ['user' => $user] = makeStudent($faculty, $dept);
+
+    $this->actingAs($user, 'sanctum')
+         ->getJson('/api/student/schedule')
+         ->assertOk()
+         ->assertJsonStructure(['schedule']);
+});
