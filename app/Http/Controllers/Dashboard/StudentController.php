@@ -6,6 +6,7 @@ use App\Exports\StudentsExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\StoreStudentRequest;
 use App\Imports\StudentsImport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Dashboard\UpdateStudentRequest;
 use App\Models\AuditLog;
@@ -323,6 +324,53 @@ class StudentController extends Controller
         }
 
         return $redirect;
+    }
+
+    /**
+     * GET /dashboard/students/{student}/transcript/pdf
+     * Downloads a PDF transcript for the given student.
+     */
+    public function transcriptPdf(Student $student)
+    {
+        $student->load([
+            'user',
+            'faculty',
+            'department',
+            'termGpas.academicTerm',
+            'enrollments' => fn ($q) => $q
+                ->where('status', 'completed')
+                ->whereHas('grade')
+                ->with(['section.course', 'section.academicTerm', 'grade']),
+        ]);
+
+        $termGpas = $student->termGpas->keyBy('academic_term_id');
+
+        $terms = $student->enrollments
+            ->filter(fn ($e) => $e->section?->academicTerm)
+            ->groupBy(fn ($e) => $e->section->academicTerm->id)
+            ->map(function ($termEnrollments) use ($termGpas) {
+                $term         = $termEnrollments->first()->section->academicTerm;
+                $termGpa      = $termGpas->get($term->id);
+                $totalCredits = $termEnrollments->sum(fn ($e) => $e->section->course->credit_hours ?? 0);
+
+                $courses = $termEnrollments->map(fn ($e) => [
+                    'course' => $e->section->course,
+                    'grade'  => $e->grade,
+                ])->values();
+
+                return [
+                    'academic_term' => $term,
+                    'term_gpa'      => $termGpa ? (float) $termGpa->gpa : null,
+                    'term_credits'  => $totalCredits,
+                    'courses'       => $courses,
+                ];
+            })
+            ->sortBy(fn ($t) => $t['academic_term']->id)
+            ->values();
+
+        $pdf = Pdf::loadView('dashboard.students.transcript-pdf', compact('student', 'terms'));
+
+        return $pdf->download("transcript-{$student->student_number}.pdf");
     }
 
     private function formData(): array

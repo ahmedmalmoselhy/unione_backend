@@ -169,6 +169,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
             Route::resource('students', StudentController::class);
             Route::post('/students/{student}/transfer', [StudentController::class, 'transfer'])->name('students.transfer');
+            Route::get('/students/{student}/transcript/pdf', [StudentController::class, 'transcriptPdf'])->name('students.transcript.pdf');
 
             // Enrollments (export only)
             Route::get('/enrollments/export', [EnrollmentController::class, 'export'])->name('enrollments.export');

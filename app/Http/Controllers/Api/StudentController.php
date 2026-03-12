@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AcademicTerm;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -393,5 +395,186 @@ class StudentController extends Controller
             ],
             'terms' => $terms,
         ]);
+    }
+
+    /**
+     * GET /api/student/transcript/pdf
+     * Downloads the authenticated student's transcript as a PDF file.
+     */
+    public function transcriptPdf(Request $request)
+    {
+        $student = $request->user()
+            ->student()
+            ->with(['user', 'faculty', 'department'])
+            ->firstOrFail();
+
+        $student->load([
+            'termGpas.academicTerm',
+            'enrollments' => fn ($q) => $q
+                ->where('status', 'completed')
+                ->whereHas('grade')
+                ->with(['section.course', 'section.academicTerm', 'grade']),
+        ]);
+
+        $termGpas = $student->termGpas->keyBy('academic_term_id');
+
+        $terms = $student->enrollments
+            ->filter(fn ($e) => $e->section?->academicTerm)
+            ->groupBy(fn ($e) => $e->section->academicTerm->id)
+            ->map(function ($termEnrollments) use ($termGpas) {
+                $term         = $termEnrollments->first()->section->academicTerm;
+                $termGpa      = $termGpas->get($term->id);
+                $totalCredits = $termEnrollments->sum(fn ($e) => $e->section->course->credit_hours ?? 0);
+
+                $courses = $termEnrollments->map(fn ($e) => [
+                    'course' => $e->section->course,
+                    'grade'  => $e->grade,
+                ])->values();
+
+                return [
+                    'academic_term' => $term,
+                    'term_gpa'      => $termGpa ? (float) $termGpa->gpa : null,
+                    'term_credits'  => $totalCredits,
+                    'courses'       => $courses,
+                ];
+            })
+            ->sortBy(fn ($t) => $t['academic_term']->id)
+            ->values();
+
+        $pdf = Pdf::loadView('dashboard.students.transcript-pdf', compact('student', 'terms'));
+
+        return $pdf->download("transcript-{$student->student_number}.pdf");
+    }
+
+    /**
+     * GET /api/student/schedule/ics
+     * Downloads the authenticated student's schedule as an RFC 5545 iCalendar (.ics) file.
+     */
+    public function scheduleIcs(Request $request): \Illuminate\Http\Response
+    {
+        $student = $request->user()
+            ->student()
+            ->firstOrFail();
+
+        $currentTerm = AcademicTerm::where('is_active', true)->latest('academic_year')->first();
+
+        $enrollments = $student->enrollments()
+            ->with(['section.course', 'section.professor.user', 'section.academicTerm'])
+            ->when($currentTerm, fn ($q) => $q->where('academic_term_id', $currentTerm->id))
+            ->whereIn('status', ['registered', 'completed'])
+            ->get();
+
+        // Fallback: if no active term, pull all registered/completed sections
+        if ($enrollments->isEmpty() && $currentTerm) {
+            $enrollments = $student->enrollments()
+                ->with(['section.course', 'section.professor.user', 'section.academicTerm'])
+                ->whereIn('status', ['registered', 'completed'])
+                ->get();
+        }
+
+        // iCal weekday abbreviations keyed by lowercase day name
+        $rruleDayMap = [
+            'monday'    => 'MO',
+            'tuesday'   => 'TU',
+            'wednesday' => 'WE',
+            'thursday'  => 'TH',
+            'friday'    => 'FR',
+            'saturday'  => 'SA',
+            'sunday'    => 'SU',
+        ];
+
+        // Carbon integer day-of-week (Sunday = 0, Monday = 1 … Saturday = 6)
+        $carbonDowMap = [
+            'sunday'    => Carbon::SUNDAY,
+            'monday'    => Carbon::MONDAY,
+            'tuesday'   => Carbon::TUESDAY,
+            'wednesday' => Carbon::WEDNESDAY,
+            'thursday'  => Carbon::THURSDAY,
+            'friday'    => Carbon::FRIDAY,
+            'saturday'  => Carbon::SATURDAY,
+        ];
+
+        $uid    = 0;
+        $events = '';
+
+        foreach ($enrollments as $enrollment) {
+            $section = $enrollment->section;
+            if (! $section) {
+                continue;
+            }
+
+            $slots  = $section->schedule ?? [];
+            $term   = $section->academicTerm;
+            $course = $section->course;
+
+            $professorName = $section->professor?->user
+                ? $section->professor->user->first_name . ' ' . $section->professor->user->last_name
+                : '';
+
+            // Use term dates when available; fall back to sane defaults
+            $termStart = $term?->starts_at ? (clone $term->starts_at)->startOfDay() : Carbon::now()->startOfWeek();
+            $termEnd   = $term?->ends_at   ? (clone $term->ends_at)->endOfDay()     : Carbon::now()->addMonths(4);
+
+            $untilStr = $termEnd->format('Ymd') . 'T235959';
+
+            foreach ($slots as $slot) {
+                $day  = strtolower($slot['day'] ?? '');
+                $rruleDay = $rruleDayMap[$day] ?? null;
+                $carbonDow = $carbonDowMap[$day] ?? null;
+
+                if (! $rruleDay || ! $carbonDow) {
+                    continue;
+                }
+
+                $startTime = $slot['start_time'] ?? null;
+                $endTime   = $slot['end_time'] ?? null;
+
+                if (! $startTime || ! $endTime) {
+                    continue;
+                }
+
+                // Find the first occurrence of this weekday on or after the term start date
+                $firstDay = (clone $termStart);
+                if ($firstDay->dayOfWeek !== $carbonDow) {
+                    $firstDay->next($carbonDow);
+                }
+
+                $dateStr   = $firstDay->format('Ymd');
+                $startFmt  = str_replace(':', '', $startTime) . '00';   // HH:MM → HHMMSS
+                $endFmt    = str_replace(':', '', $endTime) . '00';
+
+                $dtStart = "{$dateStr}T{$startFmt}";
+                $dtEnd   = "{$dateStr}T{$endFmt}";
+
+                $uid++;
+                $summary  = ($course?->code ?? '') . ' - ' . ($course?->name ?? '');
+                $location = $section->room ?? '';
+                $desc     = $professorName ? "Instructor: {$professorName}" : '';
+
+                $events .= "BEGIN:VEVENT\r\n";
+                $events .= "UID:unione-{$student->id}-{$uid}@unione.local\r\n";
+                $events .= "DTSTART:{$dtStart}\r\n";
+                $events .= "DTEND:{$dtEnd}\r\n";
+                $events .= "RRULE:FREQ=WEEKLY;BYDAY={$rruleDay};UNTIL={$untilStr}\r\n";
+                $events .= "SUMMARY:{$summary}\r\n";
+                $events .= "LOCATION:{$location}\r\n";
+                if ($desc) {
+                    $events .= "DESCRIPTION:{$desc}\r\n";
+                }
+                $events .= "END:VEVENT\r\n";
+            }
+        }
+
+        $ics  = "BEGIN:VCALENDAR\r\n";
+        $ics .= "VERSION:2.0\r\n";
+        $ics .= "PRODID:-//UniOne//Student Schedule//EN\r\n";
+        $ics .= "CALSCALE:GREGORIAN\r\n";
+        $ics .= "METHOD:PUBLISH\r\n";
+        $ics .= $events;
+        $ics .= "END:VCALENDAR\r\n";
+
+        return response($ics, 200)
+            ->header('Content-Type', 'text/calendar; charset=utf-8')
+            ->header('Content-Disposition', 'attachment; filename="schedule.ics"');
     }
 }

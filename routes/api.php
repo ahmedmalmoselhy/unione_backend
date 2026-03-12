@@ -49,8 +49,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::delete('/enrollments/{enrollment}', [StudentEnrollmentController::class, 'destroy']);
         Route::get('/grades',          [StudentController::class, 'grades']);
         Route::get('/transcript',      [StudentController::class, 'transcript']);
+        Route::get('/transcript/pdf',  [StudentController::class, 'transcriptPdf']);
         Route::get('/academic-history',[StudentController::class, 'academicHistory']);
-        Route::get('/schedule',    [StudentController::class, 'schedule']);
+        Route::get('/schedule',        [StudentController::class, 'schedule']);
+        Route::get('/schedule/ics',    [StudentController::class, 'scheduleIcs']);
         Route::get('/attendance',  [AttendanceController::class, 'studentAttendance']);
         Route::get('/sections/{section}/announcements', [SectionAnnouncementController::class, 'studentIndex']);
         Route::get('/ratings',     [CourseRatingController::class, 'index']);
