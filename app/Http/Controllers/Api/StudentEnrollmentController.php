@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\DispatchWebhooks;
 use App\Models\Enrollment;
 use App\Models\EnrollmentWaitlist;
 use App\Models\Section;
@@ -122,6 +123,16 @@ class StudentEnrollmentController extends Controller
         $enrollment->load('section.course', 'academicTerm');
 
         $request->user()->notify(new EnrollmentConfirmed($enrollment));
+
+        DispatchWebhooks::dispatch('enrollment.confirmed', [
+            'event'       => 'enrollment.confirmed',
+            'student'     => $student->student_number,
+            'course_code' => $enrollment->section->course->code ?? null,
+            'course_name' => $enrollment->section->course->name ?? null,
+            'section_id'  => $enrollment->section_id,
+            'term'        => $enrollment->academicTerm->name ?? null,
+            'enrolled_at' => $enrollment->registered_at?->toDateTimeString(),
+        ]);
 
         return response()->json(['enrollment' => $enrollment], 201);
     }

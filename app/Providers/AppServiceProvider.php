@@ -59,5 +59,19 @@ class AppServiceProvider extends ServiceProvider
                 ? Limit::perMinute(60)->by($request->user()->id)
                 : Limit::perMinute(60)->by($request->ip());
         });
+
+        // Enrollment mutations: 10 per minute per user to prevent flooding
+        RateLimiter::for('api.enroll', function (Request $request) {
+            return $request->user()
+                ? Limit::perMinute(10)->by('enroll|' . $request->user()->id)
+                : Limit::perMinute(5)->by($request->ip());
+        });
+
+        // Grade submission: 30 per minute per professor
+        RateLimiter::for('api.grade', function (Request $request) {
+            return $request->user()
+                ? Limit::perMinute(30)->by('grade|' . $request->user()->id)
+                : Limit::perMinute(5)->by($request->ip());
+        });
     }
 }

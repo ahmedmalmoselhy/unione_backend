@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\SectionAnnouncementController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\StudentEnrollmentController;
 use App\Http\Controllers\Api\StudentWaitlistController;
+use App\Http\Controllers\Api\TokenController;
+use App\Http\Controllers\Api\WebhookController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use Illuminate\Support\Facades\Route;
@@ -41,12 +43,17 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::post('/auth/change-password', [AuthController::class, 'changePassword']);
     Route::patch('/auth/profile', [AuthController::class, 'updateProfile']);
 
+    // ── Token / session management ────────────────────────────────────────
+    Route::get('/auth/tokens', [TokenController::class, 'index']);
+    Route::delete('/auth/tokens', [TokenController::class, 'destroyAll']);
+    Route::delete('/auth/tokens/{tokenId}', [TokenController::class, 'destroy']);
+
     // ── Student portal ───────────────────────────────────────────────────
     Route::middleware('api.role:student')->prefix('student')->group(function () {
         Route::get('/profile',     [StudentController::class, 'profile']);
         Route::get('/enrollments', [StudentController::class, 'enrollments']);
-        Route::post('/enrollments', [StudentEnrollmentController::class, 'store']);
-        Route::delete('/enrollments/{enrollment}', [StudentEnrollmentController::class, 'destroy']);
+        Route::post('/enrollments', [StudentEnrollmentController::class, 'store'])->middleware('throttle:api.enroll');
+        Route::delete('/enrollments/{enrollment}', [StudentEnrollmentController::class, 'destroy'])->middleware('throttle:api.enroll');
         Route::get('/grades',          [StudentController::class, 'grades']);
         Route::get('/transcript',      [StudentController::class, 'transcript']);
         Route::get('/transcript/pdf',  [StudentController::class, 'transcriptPdf']);
@@ -68,7 +75,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('/schedule', [ProfessorController::class, 'schedule']);
         Route::get('/sections/{section}/students', [ProfessorController::class, 'sectionStudents']);
         Route::get('/sections/{section}/grades',   [ProfessorGradeController::class, 'index']);
-        Route::post('/sections/{section}/grades',  [ProfessorGradeController::class, 'store']);
+        Route::post('/sections/{section}/grades',  [ProfessorGradeController::class, 'store'])->middleware('throttle:api.grade');
         Route::get('/sections/{section}/attendance',              [AttendanceController::class, 'index']);
         Route::post('/sections/{section}/attendance',             [AttendanceController::class, 'store']);
         Route::get('/sections/{section}/attendance/{session}',    [AttendanceController::class, 'show']);
@@ -87,4 +94,13 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead']);
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+
+    // ── Webhook management (admin only) ───────────────────────────────────
+    Route::middleware('api.role:admin,faculty_admin,department_admin')->prefix('admin')->group(function () {
+        Route::get('/webhooks', [WebhookController::class, 'index']);
+        Route::post('/webhooks', [WebhookController::class, 'store']);
+        Route::patch('/webhooks/{webhook}', [WebhookController::class, 'update']);
+        Route::delete('/webhooks/{webhook}', [WebhookController::class, 'destroy']);
+        Route::get('/webhooks/{webhook}/deliveries', [WebhookController::class, 'deliveries']);
+    });
 });

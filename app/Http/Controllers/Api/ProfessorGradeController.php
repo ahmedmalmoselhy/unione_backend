@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\DispatchWebhooks;
 use App\Models\Enrollment;
 use App\Models\Grade;
 use App\Models\Section;
@@ -114,6 +115,17 @@ class ProfessorGradeController extends Controller
         // Recalculate cumulative GPA and academic standing
         if ($enrollment->student_id) {
             GpaService::recalculate($enrollment->student_id);
+        }
+
+        if ($isNew) {
+            DispatchWebhooks::dispatch('grade.posted', [
+                'event'        => 'grade.posted',
+                'student'      => $enrollment->student?->student_number,
+                'course_code'  => $enrollment->section->course->code ?? null,
+                'letter_grade' => $grade->letter_grade,
+                'total'        => $grade->total,
+                'grade_points' => $grade->grade_points,
+            ]);
         }
 
         return response()->json(['grade' => $grade], $isNew ? 201 : 200);

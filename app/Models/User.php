@@ -137,4 +137,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(StudentDepartmentHistory::class, 'switched_by');
     }
+
+    public function webhooks(): HasMany
+    {
+        return $this->hasMany(Webhook::class);
+    }
 }
