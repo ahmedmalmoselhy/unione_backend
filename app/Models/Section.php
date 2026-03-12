@@ -46,6 +46,11 @@ class Section extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    public function waitlists(): HasMany
+    {
+        return $this->hasMany(EnrollmentWaitlist::class);
+    }
+
     public function attendanceSessions(): HasMany
     {
         return $this->hasMany(AttendanceSession::class);

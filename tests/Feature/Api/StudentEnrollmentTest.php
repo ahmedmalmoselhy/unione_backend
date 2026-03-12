@@ -38,7 +38,7 @@ test('student cannot enroll when registration period is closed', function () {
          ->assertJsonFragment(['message' => 'Registration period is not open.']);
 });
 
-test('student cannot enroll in a full section', function () {
+test('student is added to waitlist when section is full', function () {
     ['faculty' => $faculty, 'department' => $dept] = makeFacultyDeptFixture();
     ['user' => $user, 'student' => $student] = makeStudent($faculty, $dept);
 
@@ -60,8 +60,14 @@ test('student cannot enroll in a full section', function () {
 
     $this->actingAs($user, 'sanctum')
          ->postJson('/api/student/enrollments', ['section_id' => $section->id])
-         ->assertUnprocessable()
-         ->assertJsonFragment(['message' => 'Section is at full capacity.']);
+         ->assertStatus(202)
+         ->assertJsonPath('waitlist.position', 1);
+
+    $this->assertDatabaseHas('enrollment_waitlist', [
+        'student_id' => $student->id,
+        'section_id' => $section->id,
+        'position'   => 1,
+    ]);
 });
 
 test('student cannot enroll in the same section twice', function () {

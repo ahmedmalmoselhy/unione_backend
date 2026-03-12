@@ -234,4 +234,74 @@ class StudentController extends Controller
             'schedule' => $scheduleEntries,
         ]);
     }
+
+    /**
+     * GET /api/student/transcript
+     * Returns the student's full academic transcript grouped by term.
+     */
+    public function transcript(Request $request): JsonResponse
+    {
+        $student = $request->user()
+            ->student()
+            ->with(['user', 'faculty', 'department'])
+            ->firstOrFail();
+
+        $termGpas = $student->termGpas()->get()->keyBy('academic_term_id');
+
+        $enrollments = $student->enrollments()
+            ->with(['section.course', 'section.academicTerm', 'grade'])
+            ->whereHas('grade')
+            ->whereIn('status', ['completed'])
+            ->get();
+
+        $terms = $enrollments->groupBy(fn ($e) => $e->section->academicTerm->id)
+            ->map(function ($termEnrollments) use ($termGpas) {
+                $term        = $termEnrollments->first()->section->academicTerm;
+                $termGpa     = $termGpas->get($term->id);
+                $totalCredits = $termEnrollments->sum(fn ($e) => $e->section->course->credit_hours ?? 0);
+
+                $courses = $termEnrollments->map(fn ($e) => [
+                    'course' => [
+                        'id'           => $e->section->course->id,
+                        'code'         => $e->section->course->code,
+                        'name'         => $e->section->course->name,
+                        'credit_hours' => $e->section->course->credit_hours,
+                    ],
+                    'grade' => [
+                        'midterm'      => $e->grade->midterm,
+                        'final'        => $e->grade->final,
+                        'coursework'   => $e->grade->coursework,
+                        'total'        => $e->grade->total,
+                        'letter_grade' => $e->grade->letter_grade,
+                        'grade_points' => $e->grade->grade_points,
+                    ],
+                ])->values();
+
+                return [
+                    'academic_term' => [
+                        'id'            => $term->id,
+                        'name'          => $term->name,
+                        'academic_year' => $term->academic_year,
+                        'semester'      => $term->semester,
+                    ],
+                    'term_gpa'     => $termGpa ? (float) $termGpa->gpa : null,
+                    'term_credits' => $totalCredits,
+                    'courses'      => $courses,
+                ];
+            })
+            ->sortBy(fn ($t) => $t['academic_term']['id'])
+            ->values();
+
+        return response()->json([
+            'student' => [
+                'student_number'    => $student->student_number,
+                'name'              => $student->user->first_name . ' ' . $student->user->last_name,
+                'faculty'           => $student->faculty?->name,
+                'department'        => $student->department?->name,
+                'gpa'               => $student->gpa,
+                'academic_standing' => $student->academic_standing,
+            ],
+            'terms' => $terms,
+        ]);
+    }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ProfessorGradeController;
 use App\Http\Controllers\Api\SectionAnnouncementController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\StudentEnrollmentController;
+use App\Http\Controllers\Api\StudentWaitlistController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use Illuminate\Support\Facades\Route;
@@ -47,11 +48,14 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::post('/enrollments', [StudentEnrollmentController::class, 'store']);
         Route::delete('/enrollments/{enrollment}', [StudentEnrollmentController::class, 'destroy']);
         Route::get('/grades',      [StudentController::class, 'grades']);
+        Route::get('/transcript',  [StudentController::class, 'transcript']);
         Route::get('/schedule',    [StudentController::class, 'schedule']);
         Route::get('/attendance',  [AttendanceController::class, 'studentAttendance']);
         Route::get('/sections/{section}/announcements', [SectionAnnouncementController::class, 'studentIndex']);
         Route::get('/ratings',     [CourseRatingController::class, 'index']);
         Route::post('/ratings',    [CourseRatingController::class, 'store']);
+        Route::get('/waitlist',    [StudentWaitlistController::class, 'index']);
+        Route::delete('/waitlist/{section}', [StudentWaitlistController::class, 'destroy']);
     });
 
     // ── Professor portal ─────────────────────────────────────────────────
