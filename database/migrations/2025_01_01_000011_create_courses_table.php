@@ -14,11 +14,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('name_ar');
             $table->text('description')->nullable();
-            $table->tinyInteger('credit_hours')->unsigned();
-            $table->tinyInteger('lecture_hours')->unsigned();
-            $table->tinyInteger('lab_hours')->unsigned()->default(0);
+            $table->unsignedTinyInteger('credit_hours');
+            $table->unsignedTinyInteger('lecture_hours');
+            $table->unsignedTinyInteger('lab_hours')->default(0);
             // The academic year level this course is typically taken in (1–5)
-            $table->tinyInteger('level')->unsigned();
+            $table->unsignedTinyInteger('level');
             $table->boolean('is_elective')->default(false);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

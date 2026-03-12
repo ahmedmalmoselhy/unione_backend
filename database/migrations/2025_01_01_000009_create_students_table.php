@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('faculty_id')->constrained('faculties')->restrictOnDelete();
             // Nullable: null for faculties with enrollment_type = 'none'
             $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
-            $table->tinyInteger('academic_year')->unsigned()->default(1);
+            $table->unsignedTinyInteger('academic_year')->default(1);
             $table->enum('semester', ['first', 'second', 'summer'])->default('first');
             $table->enum('enrollment_status', [
                 'active',

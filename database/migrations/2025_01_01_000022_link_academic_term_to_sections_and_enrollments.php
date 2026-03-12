@@ -46,7 +46,7 @@ return new class extends Migration
             $table->dropColumn('academic_term_id');
 
             // Restore original columns
-            $table->smallInteger('academic_year')->unsigned()->after('professor_id');
+            $table->unsignedSmallInteger('academic_year')->after('professor_id');
             $table->enum('semester', ['first', 'second', 'summer'])->after('academic_year');
             $table->index(['course_id', 'academic_year', 'semester']);
         });

@@ -12,9 +12,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('course_id')->constrained('courses')->restrictOnDelete();
             $table->foreignId('professor_id')->constrained('professors')->restrictOnDelete();
-            $table->smallInteger('academic_year')->unsigned();
+            $table->unsignedSmallInteger('academic_year');
             $table->enum('semester', ['first', 'second', 'summer']);
-            $table->smallInteger('capacity')->unsigned();
+            $table->unsignedSmallInteger('capacity');
             $table->string('room')->nullable();
             // JSON: [{day, start_time, end_time, type: 'lecture'|'lab'}]
             $table->json('schedule')->nullable();
