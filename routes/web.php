@@ -7,6 +7,7 @@ use App\Http\Controllers\Dashboard\AuditLogController;
 use App\Http\Controllers\Dashboard\AuthController;
 use App\Http\Controllers\Dashboard\ChangePasswordController;
 use App\Http\Controllers\Dashboard\CourseController;
+use App\Http\Controllers\Dashboard\DashboardStatsController;
 use App\Http\Controllers\Dashboard\DepartmentController;
 use App\Http\Controllers\Dashboard\DepartmentHeadController;
 use App\Http\Controllers\Dashboard\EmployeeController;
@@ -158,6 +159,9 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
             Route::resource('sections', SectionController::class);
 
             Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
+
+            // Statistics API (charts-ready JSON)
+            Route::get('/stats', [DashboardStatsController::class, 'index'])->name('stats.index');
 
             // Students (export + import before resource)
             Route::get('/students/export', [StudentController::class, 'export'])->name('students.export');

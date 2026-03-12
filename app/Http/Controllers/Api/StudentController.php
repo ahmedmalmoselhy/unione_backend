@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AcademicTerm;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class StudentController extends Controller
 {
@@ -300,6 +301,95 @@ class StudentController extends Controller
                 'department'        => $student->department?->name,
                 'gpa'               => $student->gpa,
                 'academic_standing' => $student->academic_standing,
+            ],
+            'terms' => $terms,
+        ]);
+    }
+
+    /**
+     * GET /api/student/academic-history
+     * Full term-by-term history including all enrollment statuses,
+     * plus credit-hour progress toward graduation.
+     */
+    public function academicHistory(Request $request): JsonResponse
+    {
+        $student = $request->user()
+            ->student()
+            ->with(['user', 'faculty', 'department'])
+            ->firstOrFail();
+
+        $termGpas = $student->termGpas()->with('academicTerm')->get()->keyBy('academic_term_id');
+
+        // All enrollments — not filtered by status or grade existence
+        $allEnrollments = $student->enrollments()
+            ->with(['section.course', 'section.academicTerm', 'grade'])
+            ->get();
+
+        // Credits earned = sum of credit hours from *completed* enrollments only
+        $creditsEarned = $allEnrollments
+            ->where('status', 'completed')
+            ->sum(fn ($e) => $e->section?->course?->credit_hours ?? 0);
+
+        $creditsRequired = $student->department?->required_credit_hours;
+
+        $terms = $allEnrollments
+            ->filter(fn ($e) => $e->section?->academicTerm !== null)
+            ->groupBy(fn ($e) => $e->section->academicTerm->id)
+            ->map(function (Collection $termEnrollments) use ($termGpas) {
+                $term    = $termEnrollments->first()->section->academicTerm;
+                $termGpa = $termGpas->get($term->id);
+
+                $courses = $termEnrollments->map(fn ($e) => [
+                    'enrollment_id' => $e->id,
+                    'status'        => $e->status,
+                    'registered_at' => $e->registered_at?->toDateTimeString(),
+                    'dropped_at'    => $e->dropped_at?->toDateTimeString(),
+                    'course'        => [
+                        'id'           => $e->section->course->id,
+                        'code'         => $e->section->course->code,
+                        'name'         => $e->section->course->name,
+                        'credit_hours' => $e->section->course->credit_hours,
+                    ],
+                    'grade' => $e->grade ? [
+                        'letter_grade' => $e->grade->letter_grade,
+                        'total'        => $e->grade->total,
+                        'grade_points' => $e->grade->grade_points,
+                    ] : null,
+                ])->values();
+
+                return [
+                    'academic_term' => [
+                        'id'            => $term->id,
+                        'name'          => $term->name,
+                        'academic_year' => $term->academic_year,
+                        'semester'      => $term->semester,
+                    ],
+                    'term_gpa'     => $termGpa ? (float) $termGpa->gpa : null,
+                    'term_credits' => $termGpa ? (int) $termGpa->credit_hours : null,
+                    'courses'      => $courses,
+                ];
+            })
+            ->sortBy(fn ($t) => $t['academic_term']['id'])
+            ->values();
+
+        return response()->json([
+            'student' => [
+                'student_number'    => $student->student_number,
+                'name'              => $student->user->first_name . ' ' . $student->user->last_name,
+                'faculty'           => $student->faculty?->name,
+                'department'        => $student->department?->name,
+                'enrollment_status' => $student->enrollment_status,
+                'academic_year'     => $student->academic_year,
+                'semester'          => $student->semester,
+                'gpa'               => $student->gpa,
+                'academic_standing' => $student->academic_standing,
+            ],
+            'progress' => [
+                'credits_earned'   => $creditsEarned,
+                'credits_required' => $creditsRequired,
+                'progress_pct'     => ($creditsRequired && $creditsRequired > 0)
+                    ? round(min($creditsEarned / $creditsRequired * 100, 100), 1)
+                    : null,
             ],
             'terms' => $terms,
         ]);

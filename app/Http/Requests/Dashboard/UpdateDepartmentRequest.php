@@ -33,9 +33,10 @@ class UpdateDepartmentRequest extends FormRequest
                     $fail('The head of a managerial department must have an active employee role.');
                 }
             }],
-            'is_active'      => ['boolean'],
-            'logo'           => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
-            'remove_logo'    => ['nullable', 'boolean'],
+            'is_active'             => ['boolean'],
+            'logo'                  => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
+            'remove_logo'           => ['nullable', 'boolean'],
+            'required_credit_hours' => ['nullable', 'integer', 'min:1', 'max:500'],
         ];
     }
 }

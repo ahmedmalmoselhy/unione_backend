@@ -134,14 +134,15 @@ class DepartmentController extends Controller
         }
 
         $department->update([
-            'faculty_id'     => $request->faculty_id,
-            'name'           => $request->name,
-            'name_ar'        => $request->name_ar,
-            'code'           => strtoupper($request->code),
-            'logo_path'      => $logoPath,
-            'is_preparatory' => $department->type === 'academic' && $request->boolean('is_preparatory'),
-            'head_id'        => $request->head_id,
-            'is_active'      => $request->boolean('is_active'),
+            'faculty_id'            => $request->faculty_id,
+            'name'                  => $request->name,
+            'name_ar'               => $request->name_ar,
+            'code'                  => strtoupper($request->code),
+            'logo_path'             => $logoPath,
+            'is_preparatory'        => $department->type === 'academic' && $request->boolean('is_preparatory'),
+            'head_id'               => $request->head_id,
+            'is_active'             => $request->boolean('is_active'),
+            'required_credit_hours' => $request->filled('required_credit_hours') ? (int) $request->required_credit_hours : null,
         ]);
 
         AuditLog::record(

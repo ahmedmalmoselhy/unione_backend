@@ -20,14 +20,16 @@ class Department extends Model
         'head_id',
         'is_active',
         'is_mandatory',
+        'required_credit_hours',
     ];
 
     protected function casts(): array
     {
         return [
-            'is_preparatory' => 'boolean',
-            'is_active'      => 'boolean',
-            'is_mandatory'   => 'boolean',
+            'is_preparatory'        => 'boolean',
+            'is_active'             => 'boolean',
+            'is_mandatory'          => 'boolean',
+            'required_credit_hours' => 'integer',
         ];
     }
 
