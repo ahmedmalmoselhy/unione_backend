@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfessorController;
 use App\Http\Controllers\Api\ProfessorGradeController;
 use App\Http\Controllers\Api\SectionAnnouncementController;
+use App\Http\Controllers\Api\SectionExamScheduleController;
 use App\Http\Controllers\Api\SectionTeachingAssistantController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\StudentEnrollmentController;
@@ -101,6 +102,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('/sections/{section}/teaching-assistants', [SectionTeachingAssistantController::class, 'index']);
         Route::post('/sections/{section}/teaching-assistants', [SectionTeachingAssistantController::class, 'store']);
         Route::delete('/sections/{section}/teaching-assistants/{sectionTeachingAssistant}', [SectionTeachingAssistantController::class, 'destroy']);
+        Route::get('/sections/{section}/exam-schedule', [SectionExamScheduleController::class, 'show']);
+        Route::post('/sections/{section}/exam-schedule', [SectionExamScheduleController::class, 'store']);
+        Route::patch('/sections/{section}/exam-schedule', [SectionExamScheduleController::class, 'update']);
+        Route::post('/sections/{section}/exam-schedule/publish', [SectionExamScheduleController::class, 'publish']);
         Route::get('/webhooks', [WebhookController::class, 'index']);
         Route::post('/webhooks', [WebhookController::class, 'store']);
         Route::patch('/webhooks/{webhook}', [WebhookController::class, 'update']);
