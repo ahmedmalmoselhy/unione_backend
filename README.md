@@ -19,9 +19,9 @@ This README reflects the **currently implemented behavior** in this repository.
 - Forgot/reset password flow with expiring reset tokens and email delivery.
 - Personal access-token management (list tokens, revoke one, revoke all).
 - Middleware-driven role access:
-	- `dashboard`, `portal`
-	- `admin`, `university.admin`, `scoped.admin`
-	- `api.role`
+  - `dashboard`, `portal`
+- `admin`, `university.admin`, `scoped.admin`
+- `api.role`
 - Forced password-change flow (`must_change_password`) for newly assigned admins.
 - Locale middleware supports English/Arabic for web and API (`X-Locale`, `?locale=`, `Accept-Language`).
 
@@ -51,15 +51,15 @@ Role assignment features:
 - University vice-president CRUD.
 - Faculty CRUD (dean, logo, enrollment type, active state).
 - Faculty observer auto-creates mandatory managerial departments:
-	- Students Care
-	- Students Affairs
-	- Legal
-	- Plus a `General` academic department when faculty enrollment type is `deferred`.
+- Students Care
+- Students Affairs
+- Legal
+- Plus a `General` academic department when faculty enrollment type is `deferred`.
 - Department CRUD for academic/managerial departments.
 - Course CRUD with:
-	- prerequisite graph
-	- multi-department ownership (`department_course` with owner flag)
-	- bilingual names and academic metadata
+- prerequisite graph
+- multi-department ownership (`department_course` with owner flag)
+- bilingual names and academic metadata
 - Section CRUD with professor assignment, capacity, room, and structured weekly schedule.
 - Academic term CRUD with registration/exam/grade timeline fields and active-term switching.
 
@@ -96,14 +96,14 @@ API-only waitlist capabilities:
 - Grade import/export support (CSV/XLS/XLSX).
 - Student notifications when grades are posted.
 - GPA service recalculates:
-	- cumulative GPA (credit-hour weighted)
-	- per-term GPA
-	- academic standing (`good_standing`, `probation`, `dismissal`)
+- cumulative GPA (credit-hour weighted)
+- per-term GPA
+- academic standing (`good_standing`, `probation`, `dismissal`)
 - Student API endpoints for:
-	- grades
-	- transcript JSON
-	- transcript PDF
-	- full academic history with credit progress toward required department credit hours
+- grades
+- transcript JSON
+- transcript PDF
+- full academic history with credit progress toward required department credit hours
 
 ### 7) Attendance Management
 
@@ -118,10 +118,10 @@ API-only waitlist capabilities:
 Announcement capabilities:
 
 - Dashboard announcement CRUD with visibility targeting:
-	- university
-	- faculty
-	- department
-	- section
+- university
+- faculty
+- department
+- section
 - Publish/expiry behavior for active visibility.
 - Scope-aware announcement management for faculty/department admins.
 - Read-tracking (`announcement_reads`) for users.
@@ -134,10 +134,10 @@ Section announcements:
 Notification inboxes:
 
 - Dashboard, portal, and API all support:
-	- list
-	- mark one read
-	- mark all read
-	- delete
+- list
+- mark one read
+- mark all read
+- delete
 - API includes unread filtering and unread counts.
 
 ### 9) Ratings and Feedback
@@ -146,20 +146,20 @@ Notification inboxes:
 - One rating per enrollment (upsert behavior for edits).
 - Optional text feedback/comment.
 - Dashboard ratings analytics by professor with:
-	- average rating
-	- total ratings
-	- star-level distribution breakdown
+- average rating
+- total ratings
+- star-level distribution breakdown
 
 ### 10) Integrations and Webhooks
 
 - Admin/faculty_admin/department_admin API routes for webhook registration and management.
 - Ownership isolation: users can only manage their own webhooks.
 - Supported outbound events:
-	- `enrollment.confirmed`
-	- `grade.posted`
+- `enrollment.confirmed`
+- `grade.posted`
 - Signed webhook delivery headers:
-	- `X-UniOne-Event`
-	- `X-UniOne-Signature` (HMAC SHA-256)
+- `X-UniOne-Event`
+- `X-UniOne-Signature` (HMAC SHA-256)
 - Delivery history endpoint (latest attempts per webhook).
 - Failure tracking with auto-disable after 10 consecutive failures.
 - Dispatch implemented as queued job (`DispatchWebhooks`).
@@ -193,11 +193,11 @@ Template downloads are available for supported import flows.
 - Role-aware dashboard home views (system, university, faculty, department scopes).
 - Data-health indicators (e.g., departments without head, sections without professor).
 - Dashboard stats endpoint returns:
-	- overview counts
-	- enrollment status distribution
-	- grade distribution
-	- GPA distribution
-	- section fill rates
+- overview counts
+- enrollment status distribution
+- grade distribution
+- GPA distribution
+- section fill rates
 - Dashboard schedule board with faculty/department/term/level filtering.
 
 ### 14) Portal Experience
@@ -232,11 +232,11 @@ Protected API groups include:
 ## Security and Reliability Controls
 
 - API rate limits:
-	- `api.login`: 5/min per IP
-	- `api.password`: 3/min per IP
-	- `api`: 60/min per user/IP
-	- `api.enroll`: 10/min per user
-	- `api.grade`: 30/min per user
+- `api.login`: 5/min per IP
+- `api.password`: 3/min per IP
+- `api`: 60/min per user/IP
+- `api.enroll`: 10/min per user
+- `api.grade`: 30/min per user
 - Scoped query patterns for faculty/department admins.
 - Soft delete support for users and announcements.
 
@@ -280,4 +280,3 @@ Starts:
 ```bash
 composer test
 ```
-
