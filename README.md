@@ -20,8 +20,8 @@ This README reflects the **currently implemented behavior** in this repository.
 - Personal access-token management (list tokens, revoke one, revoke all).
 - Middleware-driven role access:
   - `dashboard`, `portal`
-- `admin`, `university.admin`, `scoped.admin`
-- `api.role`
+  - `admin`, `university.admin`, `scoped.admin`
+  - `api.role`
 - Forced password-change flow (`must_change_password`) for newly assigned admins.
 - Locale middleware supports English/Arabic for web and API (`X-Locale`, `?locale=`, `Accept-Language`).
 
