@@ -60,7 +60,7 @@ Role assignment features:
 - prerequisite graph
 - multi-department ownership (`department_course` with owner flag)
 - bilingual names and academic metadata
-- Section CRUD with professor assignment, teaching assistant assignment APIs, exam schedule publishing APIs, capacity, room, and structured weekly schedule.
+- Section CRUD with professor assignment, teaching assistant assignment APIs, exam schedule publishing APIs, group project management APIs, capacity, room, and structured weekly schedule.
 - Academic term CRUD with registration/exam/grade timeline fields and active-term switching.
 
 ### 4) People and Academic Records Management

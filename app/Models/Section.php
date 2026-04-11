@@ -71,4 +71,9 @@ class Section extends Model
     {
         return $this->hasOne(ExamSchedule::class);
     }
+
+    public function groupProjects(): HasMany
+    {
+        return $this->hasMany(GroupProject::class);
+    }
 }
