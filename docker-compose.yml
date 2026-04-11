@@ -1,0 +1,119 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: unione_backend:latest
+    container_name: unione_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+      - /var/www/html/public/build
+    ports:
+      - "8080:80"
+    environment:
+      - APP_NAME=Laravel
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8080
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=unione_backend
+      - DB_USERNAME=unione_user
+      - DB_PASSWORD=unione_password
+      - CACHE_STORE=file
+      - SESSION_DRIVER=file
+      - QUEUE_CONNECTION=database
+      - MAIL_MAILER=log
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - unione_network
+
+  db:
+    image: postgres:16-alpine
+    container_name: unione_db
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: unione_backend
+      POSTGRES_USER: unione_user
+      POSTGRES_PASSWORD: unione_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U unione_user -d unione_backend"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - unione_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: unione_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    networks:
+      - unione_network
+
+  # Optional: Queue Worker (separate container)
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: unione_worker
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+      - /var/www/html/public/build
+    environment:
+      - ENTRYPOINT_SETUP=false
+      - APP_NAME=Laravel
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=unione_backend
+      - DB_USERNAME=unione_user
+      - DB_PASSWORD=unione_password
+      - CACHE_STORE=file
+      - SESSION_DRIVER=file
+      - QUEUE_CONNECTION=database
+      - MAIL_MAILER=log
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    command: php artisan queue:work --tries=3 --timeout=90
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      app:
+        condition: service_started
+    networks:
+      - unione_network
+
+networks:
+  unione_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

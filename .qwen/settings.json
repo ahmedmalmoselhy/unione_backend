@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir *)",
+      "Bash(docker *)",
+      "Bash(netstat *)",
+      "Bash(findstr *)",
+      "Bash(docker-compose *)",
+      "Bash(timeout *)",
+      "Bash(ping *)",
+      "Bash(curl *)",
+      "Bash(select-object *)",
+      "Bash(echo.)"
+    ]
+  },
+  "$version": 3
+}
