@@ -21,16 +21,18 @@ This project is fully containerized with Docker, providing a complete developmen
 ### Development Mode
 
 1. **Start all services:**
+
    ```bash
    docker-compose up -d
    ```
 
 2. **Access the application:**
-   - Web Application: http://localhost:8080
+   - Web Application: <http://localhost:8080>
    - PostgreSQL: localhost:5433 (mapped from container's 5432)
    - Redis: localhost:6380 (mapped from container's 6379)
 
 3. **View logs:**
+
    ```bash
    # All services
    docker-compose logs -f
@@ -42,6 +44,7 @@ This project is fully containerized with Docker, providing a complete developmen
    ```
 
 4. **Stop services:**
+
    ```bash
    docker-compose down
    ```
@@ -56,7 +59,7 @@ docker-compose -f docker-compose.prod.yml up -d --build
 
 ## 📁 Docker Files Structure
 
-```
+```bash
 ├── Dockerfile                      # Main application image
 ├── docker-compose.yml              # Development environment
 ├── docker-compose.prod.yml         # Production environment
@@ -143,13 +146,14 @@ DB_PASSWORD=unione_password
 ```
 
 To customize these, you can:
+
 1. Create a `.env` file in the project root
 2. Override in docker-compose.yml using `${VAR:-default}` syntax
 3. Use docker-compose.override.yml for local development
 
 ## 🏗️ Architecture
 
-```
+```bash
 ┌─────────────────────────────────────────┐
 │           Docker Network                 │
 │                                          │
@@ -181,6 +185,7 @@ All services have health checks configured:
 - **Worker**: Process health verification
 
 View health status:
+
 ```bash
 docker-compose ps
 docker inspect --format='{{.State.Health.Status}}' unione_app
