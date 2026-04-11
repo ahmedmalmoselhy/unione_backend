@@ -1,6 +1,9 @@
 <?php
 
 use App\Models\ExamSchedule;
+use App\Models\Enrollment;
+use App\Notifications\ExamSchedulePublished;
+use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\actingAs;
 
@@ -9,6 +12,17 @@ test('admin can manage section exam schedule lifecycle', function () {
 
     $term = makeOpenTerm('EXAM');
     $section = makeSection($term, 40);
+
+    ['faculty' => $faculty, 'department' => $department] = makeFacultyDeptFixture('EXAM_NOTIFY');
+    ['user' => $studentUser, 'student' => $student] = makeStudent($faculty, $department);
+
+    Enrollment::create([
+        'student_id' => $student->id,
+        'section_id' => $section->id,
+        'academic_term_id' => $term->id,
+        'status' => 'registered',
+        'registered_at' => now(),
+    ]);
 
     actingAs($admin, 'sanctum')
         ->getJson("/api/admin/sections/{$section->id}/exam-schedule")
@@ -46,10 +60,22 @@ test('admin can manage section exam schedule lifecycle', function () {
         ->assertOk()
         ->assertJsonPath('exam_schedule.id', $scheduleId);
 
+    Notification::fake();
+
     actingAs($admin, 'sanctum')
         ->postJson("/api/admin/sections/{$section->id}/exam-schedule/publish")
         ->assertOk()
         ->assertJsonPath('exam_schedule.is_published', true);
+
+    Notification::assertSentTo(
+        $studentUser,
+        ExamSchedulePublished::class,
+        function ($notification, array $channels) use ($section): bool {
+            return $notification->examSchedule->section_id === $section->id
+                && in_array('database', $channels, true)
+                && in_array('mail', $channels, true);
+        }
+    );
 
     actingAs($admin, 'sanctum')
         ->patchJson("/api/admin/sections/{$section->id}/exam-schedule", [

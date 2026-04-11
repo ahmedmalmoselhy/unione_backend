@@ -94,7 +94,7 @@ API-only waitlist capabilities:
 - Professor/API and professor/portal grade submission/update per section enrollment.
 - Dashboard grade CRUD for admins.
 - Grade import/export support (CSV/XLS/XLSX).
-- Student notifications when grades are posted.
+- Student notifications when grades are posted (in-app + email).
 - GPA service recalculates:
 - cumulative GPA (credit-hour weighted)
 - per-term GPA
@@ -129,7 +129,8 @@ Announcement capabilities:
 Section announcements:
 
 - Professors can post section announcements (API + portal flow).
-- Enrolled students receive in-app notification on new section announcement.
+- Enrolled students receive in-app + email notification on new section announcement.
+- Enrolled students receive in-app + email notification when section exam schedules are published.
 
 Notification inboxes:
 

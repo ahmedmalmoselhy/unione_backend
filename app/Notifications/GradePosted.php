@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Enrollment;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class GradePosted extends Notification
@@ -15,7 +16,28 @@ class GradePosted extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        $channels = ['database'];
+
+        if (! empty($notifiable->email)) {
+            $channels[] = 'mail';
+        }
+
+        return $channels;
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $section = $this->enrollment->section;
+        $course  = $section->course;
+
+        $gradeText = $this->letterGrade
+            ? "Your final grade is {$this->letterGrade}" . ($this->total !== null ? " ({$this->total}/100)." : '.')
+            : ($this->total !== null ? "Your final score is {$this->total}/100." : 'Your final grade has been published.');
+
+        return (new MailMessage)
+            ->subject("Final grade published: {$course->code}")
+            ->line("Course: {$course->code} - {$course->name}")
+            ->line($gradeText);
     }
 
     public function toArray(object $notifiable): array

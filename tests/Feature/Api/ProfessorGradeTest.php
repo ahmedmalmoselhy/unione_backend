@@ -5,6 +5,8 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Grade;
 use App\Models\Section;
+use App\Notifications\GradePosted;
+use Illuminate\Support\Facades\Notification;
 
 // ── helpers ─────────────────────────────────────────────────────────────────
 
@@ -53,11 +55,13 @@ function makeEnrollment(\App\Models\Student $student, Section $section, Academic
 // ── POST /api/professor/sections/{section}/grades ────────────────────────────
 
 test('professor can submit a grade for a student in their section', function () {
+    Notification::fake();
+
     ['department' => $dept] = makeFacultyDeptFixture();
     ['user' => $profUser, 'professor' => $professor] = makeProfessor($dept);
 
     ['faculty' => $fac, 'department' => $sd] = makeFacultyDeptFixture();
-    ['student' => $student] = makeStudent($fac, $sd);
+    ['user' => $studentUser, 'student' => $student] = makeStudent($fac, $sd);
 
     $term       = AcademicTerm::create([
         'name'                   => 'Grade Term',
@@ -90,6 +94,16 @@ test('professor can submit a grade for a student in their section', function () 
         'letter_grade'  => 'B',
         'graded_by'     => $profUser->id,
     ]);
+
+    Notification::assertSentTo(
+        $studentUser,
+        GradePosted::class,
+        function ($notification, array $channels) use ($enrollment): bool {
+            return $notification->enrollment->id === $enrollment->id
+                && in_array('database', $channels, true)
+                && in_array('mail', $channels, true);
+        }
+    );
 });
 
 test('professor can update an existing grade', function () {

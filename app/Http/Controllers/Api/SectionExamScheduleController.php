@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Section;
+use App\Notifications\ExamSchedulePublished;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -104,6 +105,16 @@ class SectionExamScheduleController extends Controller
             'is_published' => true,
             'published_at' => now(),
         ])->save();
+
+        $examSchedule->load('section.course');
+
+        $section->enrollments()
+            ->whereIn('status', ['registered', 'completed'])
+            ->with('student.user')
+            ->get()
+            ->each(function ($enrollment) use ($examSchedule) {
+                $enrollment->student?->user?->notify(new ExamSchedulePublished($examSchedule));
+            });
 
         return response()->json([
             'message' => 'Exam schedule published successfully.',

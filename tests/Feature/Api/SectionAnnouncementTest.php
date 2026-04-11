@@ -5,6 +5,8 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Section;
 use App\Models\SectionAnnouncement;
+use App\Notifications\SectionAnnouncementPosted;
+use Illuminate\Support\Facades\Notification;
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -83,6 +85,8 @@ test('professor cannot list announcements for another professor\'s section', fun
 // ── POST /api/professor/sections/{section}/announcements ─────────────────────
 
 test('professor can post an announcement and students get notified', function () {
+    Notification::fake();
+
     ['department' => $dept] = makeFacultyDeptFixture();
     ['user' => $profUser, 'professor' => $professor] = makeProfessor($dept);
 
@@ -106,11 +110,15 @@ test('professor can post an announcement and students get notified', function ()
         'title'      => 'Quiz Next Week',
     ]);
 
-    // Student should have a database notification
-    $this->assertDatabaseHas('notifications', [
-        'notifiable_id'   => $studentUser->id,
-        'notifiable_type' => \App\Models\User::class,
-    ]);
+    Notification::assertSentTo(
+        $studentUser,
+        SectionAnnouncementPosted::class,
+        function ($notification, array $channels): bool {
+            return $notification->announcement->title === 'Quiz Next Week'
+                && in_array('database', $channels, true)
+                && in_array('mail', $channels, true);
+        }
+    );
 });
 
 test('professor cannot post an empty announcement', function () {
