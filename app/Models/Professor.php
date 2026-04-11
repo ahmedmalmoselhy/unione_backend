@@ -39,4 +39,9 @@ class Professor extends Model
     {
         return $this->hasMany(Section::class);
     }
+
+    public function teachingAssistantSections(): HasMany
+    {
+        return $this->hasMany(SectionTeachingAssistant::class);
+    }
 }

@@ -60,4 +60,9 @@ class Section extends Model
     {
         return $this->hasMany(SectionAnnouncement::class);
     }
+
+    public function teachingAssistants(): HasMany
+    {
+        return $this->hasMany(SectionTeachingAssistant::class);
+    }
 }
