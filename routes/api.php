@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdvancedAnalyticsController;
 use App\Http\Controllers\Admin\BulkOperationController;
 use App\Http\Controllers\Admin\QueueHealthController;
 use App\Http\Controllers\Api\AnnouncementController;
@@ -160,6 +161,13 @@ Route::prefix('v1')->group(function () {
             Route::post('/bulk/enroll', [BulkOperationController::class, 'enrollStudents']);
             Route::post('/bulk/grades', [BulkOperationController::class, 'updateGrades']);
             Route::post('/bulk/transfer', [BulkOperationController::class, 'transferStudents']);
+
+            // Advanced analytics (admin only)
+            Route::get('/analytics/enrollment-trends', [AdvancedAnalyticsController::class, 'enrollmentTrends']);
+            Route::get('/analytics/student-performance/{studentId}', [AdvancedAnalyticsController::class, 'predictStudentPerformance']);
+            Route::get('/analytics/course-demand', [AdvancedAnalyticsController::class, 'courseDemand']);
+            Route::get('/analytics/professor-workload', [AdvancedAnalyticsController::class, 'professorWorkload']);
+            Route::get('/analytics/attendance', [AdvancedAnalyticsController::class, 'attendanceAnalytics']);
         });
     });
 });
