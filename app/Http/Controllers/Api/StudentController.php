@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\AcademicTerm;
+use App\Services\CacheService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -18,10 +19,17 @@ class StudentController extends Controller
      */
     public function profile(Request $request): JsonResponse
     {
-        $student = $request->user()
-            ->student()
-            ->with(['faculty', 'department'])
-            ->firstOrFail();
+        $user = $request->user();
+        $cacheKey = CacheService::key('student:profile', $user->id);
+
+        $student = CacheService::remember(
+            $cacheKey,
+            fn () => $user->student()
+                ->with(['faculty:id,name,code', 'department:id,name,code'])
+                ->firstOrFail(),
+            ttl: 1800, // 30 minutes
+            tags: [CacheService::TAG_ORGANIZATION, CacheService::TAG_USER]
+        );
 
         return response()->json([
             'student' => [
@@ -61,8 +69,8 @@ class StudentController extends Controller
 
         $enrollments = $student->enrollments()
             ->with([
-                'section.course',
-                'section.academicTerm',
+                'section.course:id,code,name,credit_hours',
+                'section.academicTerm:id,name,academic_year,semester',
                 'grade',
             ])
             ->latest()

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AnnouncementController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\CourseRatingController;
+use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfessorController;
 use App\Http\Controllers\Api\ProfessorGradeController;
@@ -18,6 +19,13 @@ use App\Http\Controllers\Api\WebhookController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Health Check — publicly accessible
+|--------------------------------------------------------------------------
+*/
+Route::get('/health', HealthController::class);
 
 /*
 |--------------------------------------------------------------------------

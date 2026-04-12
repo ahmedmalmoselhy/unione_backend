@@ -9,6 +9,7 @@ use App\Models\EnrollmentWaitlist;
 use App\Models\Section;
 use App\Notifications\EnrollmentConfirmed;
 use App\Notifications\WaitlistPromoted;
+use App\Services\CacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -123,6 +124,9 @@ class StudentEnrollmentController extends Controller
         $enrollment->load('section.course', 'academicTerm');
 
         $request->user()->notify(new EnrollmentConfirmed($enrollment));
+
+        // Invalidate cached student data
+        CacheService::invalidateTags([CacheService::TAG_USER, CacheService::TAG_ANALYTICS]);
 
         DispatchWebhooks::dispatch('enrollment.confirmed', [
             'event'       => 'enrollment.confirmed',
