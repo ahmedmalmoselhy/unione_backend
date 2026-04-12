@@ -18,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(append: [
             \App\Http\Middleware\SetLocale::class,
             \App\Http\Middleware\AddRateLimitHeaders::class,
+            \App\Http\Middleware\MobileApiOptimizer::class,
+            \App\Http\Middleware\FieldSelector::class,
         ]);
         $middleware->alias([
             'dashboard'        => \App\Http\Middleware\DashboardMiddleware::class,
