@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\QueueHealthController;
 use App\Http\Controllers\Api\AnnouncementController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\CourseRatingController;
+use App\Http\Controllers\Api\BroadcastingChannelController;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfessorController;
@@ -116,6 +117,10 @@ Route::prefix('v1')->group(function () {
         Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
         Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead']);
         Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+
+        // ── Broadcasting / Real-time ─────────────────────────────────────────
+        Route::get('/broadcasting/auth', [BroadcastingChannelController::class, 'auth']);
+        Route::get('/broadcasting/config', [BroadcastingChannelController::class, 'config']);
 
         // ── Webhook management (admin only) ───────────────────────────────────
         Route::middleware('api.role:admin,faculty_admin,department_admin')->prefix('admin')->group(function () {
