@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AnnouncementController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\CourseRatingController;
 use App\Http\Controllers\Api\BroadcastingChannelController;
+use App\Http\Controllers\Api\DataPrivacyController;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfessorController;
@@ -122,6 +123,12 @@ Route::prefix('v1')->group(function () {
         // ── Broadcasting / Real-time ─────────────────────────────────────────
         Route::get('/broadcasting/auth', [BroadcastingChannelController::class, 'auth']);
         Route::get('/broadcasting/config', [BroadcastingChannelController::class, 'config']);
+
+        // ── Data Privacy & GDPR ──────────────────────────────────────────────
+        Route::get('/privacy/export', [DataPrivacyController::class, 'export']);
+        Route::post('/privacy/export/download', [DataPrivacyController::class, 'exportDownload']);
+        Route::post('/privacy/anonymize', [DataPrivacyController::class, 'anonymize']);
+        Route::delete('/privacy/account', [DataPrivacyController::class, 'deleteAccount']);
 
         // ── Webhook management (admin only) ───────────────────────────────────
         Route::middleware('api.role:admin,faculty_admin,department_admin')->prefix('admin')->group(function () {
