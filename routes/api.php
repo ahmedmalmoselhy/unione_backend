@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\IntegrationMarketplaceController;
 use App\Http\Controllers\Admin\AdvancedAnalyticsController;
 use App\Http\Controllers\Admin\BulkOperationController;
 use App\Http\Controllers\Admin\QueueHealthController;
@@ -168,6 +169,11 @@ Route::prefix('v1')->group(function () {
             Route::get('/analytics/course-demand', [AdvancedAnalyticsController::class, 'courseDemand']);
             Route::get('/analytics/professor-workload', [AdvancedAnalyticsController::class, 'professorWorkload']);
             Route::get('/analytics/attendance', [AdvancedAnalyticsController::class, 'attendanceAnalytics']);
+
+            // Integration marketplace (admin only)
+            Route::get('/integrations', [IntegrationMarketplaceController::class, 'index']);
+            Route::get('/integrations/{integration}/test', [IntegrationMarketplaceController::class, 'testConnection']);
+            Route::post('/integrations/{integration}/sync', [IntegrationMarketplaceController::class, 'sync']);
         });
     });
 });
