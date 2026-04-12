@@ -1,0 +1,37 @@
+parameters:
+    # Laravel-specific configuration
+    paths:
+        - app
+        - tests
+    
+    # Exclude vendor and generated files
+    excludePaths:
+        - tests/TestCase.php
+        - tests/Pest.php
+        - app/Http/Kernel.php
+    
+    # Analysis level (0-9, 9 is strictest)
+    level: 6
+    
+    # Use Larastan's Laravel integration
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    
+    # Report unused suppressed errors
+    reportUnmatchedIgnoredErrors: false
+    
+    # Include PHPDoc types for better analysis
+    treatPhpDocTypesAsCertain: true
+    
+    # Custom error format for CI
+    checkUninitializedProperties: true
+    checkDynamicProperties: false
+    
+    # Enable rule-specific configurations
+    universalObjectCratesClasses:
+        - stdClass
+        - Illuminate\Http\Request
+        - Illuminate\Http\JsonResponse
+        - Illuminate\Http\RedirectResponse
+        - Illuminate\View\View
+        - Illuminate\Http\Response

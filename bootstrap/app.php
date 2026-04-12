@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->api(append: [
             \App\Http\Middleware\SetLocale::class,
+            \App\Http\Middleware\AddRateLimitHeaders::class,
         ]);
         $middleware->alias([
             'dashboard'        => \App\Http\Middleware\DashboardMiddleware::class,
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'scoped.admin'     => \App\Http\Middleware\ScopedAdminMiddleware::class,
             'force.password'   => \App\Http\Middleware\ForcePasswordChange::class,
             'api.role'         => \App\Http\Middleware\EnsureApiRole::class,
+            'api.rate.headers' => \App\Http\Middleware\AddRateLimitHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
