@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BulkOperationController;
 use App\Http\Controllers\Admin\QueueHealthController;
 use App\Http\Controllers\Api\AnnouncementController;
 use App\Http\Controllers\Api\AttendanceController;
@@ -147,6 +148,11 @@ Route::prefix('v1')->group(function () {
             Route::get('/queue/health', [QueueHealthController::class, 'health']);
             Route::get('/queue/failed', [QueueHealthController::class, 'failedJobs']);
             Route::delete('/queue/failed/clear', [QueueHealthController::class, 'clearFailedJobs']);
+
+            // Bulk operations (admin only)
+            Route::post('/bulk/enroll', [BulkOperationController::class, 'enrollStudents']);
+            Route::post('/bulk/grades', [BulkOperationController::class, 'updateGrades']);
+            Route::post('/bulk/transfer', [BulkOperationController::class, 'transferStudents']);
         });
     });
 });
